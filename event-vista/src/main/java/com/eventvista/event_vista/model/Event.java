@@ -4,11 +4,16 @@ package com.eventvista.event_vista.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Objects;
 
 @Entity
 public class Event {
+
+    @OneToMany
+    private User user;
+
     @Id
     @GeneratedValue
     private int id;
@@ -17,8 +22,15 @@ public class Event {
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String name;
 
+    @NotBlank(message = "Field must have valid event date entered")
+    @DateTimeFormat
     private String date;
+
+    @NotBlank(message = "Field must have valid event time entered")
+    @DateTimeFormat
     private String time;
+
+    @Size(max = 500, message = "Field must be less than 500 characters")
     private String notes;
 
     @ManyToOne
@@ -30,6 +42,7 @@ public class Event {
     @ManyToMany
     private Client client;
 
+    //constructor
     public Event() {
     }
 
@@ -44,6 +57,8 @@ public class Event {
         this.client = client;
     }
 
+
+    //getters and setters
     public int getId() {
         return id;
     }
