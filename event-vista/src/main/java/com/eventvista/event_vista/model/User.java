@@ -1,41 +1,34 @@
 package com.eventvista.event_vista.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Objects;
+public class User extends AbstractEntity {
+    @NotNull
+    private String username;
 
-@Entity
-public class User {
-    @Id
-    @GeneratedValue
-    private int id;
+    @NotNull
+    private String pwHash;
 
-    // Constructor
-    public User() {
+    // Static method to use the bcrypt dependency for encoding
+    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+    public User() {}
+
+    public User(String username, String password) {
+        this.username = username;
+        this.pwHash = encoder.encode(password);
     }
 
-    // Getters and setters
-    public int getId() {
-        return id;
+    public String getUsername() {
+        return username;
     }
 
-
-
-    // Override
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User that = (User) o;
-        return id == that.getId();
+    // Instance method to use the bcrypt multi-step matcher (.equals is not enough)
+    public boolean isMatchingPassword(String password) {
+        return encoder.matches(password, pwHash);
     }
 
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
 
