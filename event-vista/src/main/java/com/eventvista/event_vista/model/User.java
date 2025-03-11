@@ -29,5 +29,6 @@ public class User extends AbstractEntity {
         return encoder.matches(password, pwHash);
     }
 
+
 }
 
