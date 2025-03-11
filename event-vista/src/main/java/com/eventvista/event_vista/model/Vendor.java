@@ -17,21 +17,21 @@ public class Vendor {
     @GeneratedValue
     private int id;
 
-    @NotBlank(message = "Field must have valid venue name entered")
+    @NotBlank(message = "Field must have valid vendor name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String name;
 
-    @NotBlank(message = "Field must have valid venue location entered")
+    @NotBlank(message = "Field must have valid vendor location entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String location;
 
     @ManyToMany
     private Set<Service> services = new HashSet<>();
 
-    @NotBlank(message ="Field must have valid venue phone number entered")
+    @NotBlank(message ="Field must have valid vendor phone number entered")
     private PhoneNumber phoneNumber;
 
-    @NotBlank(message ="Field must have valid venue email entered")
+    @NotBlank(message ="Field must have valid vendor email entered")
     @Email(message = "Field must have valid email entered")
     private String emailAddress;
 
