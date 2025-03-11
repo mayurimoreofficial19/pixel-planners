@@ -42,7 +42,7 @@ public class Event {
     @ManyToMany
     private Client client;
 
-    //constructor
+    // Constructor
     public Event() {
     }
 
@@ -58,7 +58,7 @@ public class Event {
     }
 
 
-    //getters and setters
+    // Getters and setters
     public int getId() {
         return id;
     }

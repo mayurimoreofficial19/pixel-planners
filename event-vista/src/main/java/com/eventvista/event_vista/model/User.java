@@ -12,11 +12,11 @@ public class User {
     @GeneratedValue
     private int id;
 
-    //constructor
+    // Constructor
     public User() {
     }
 
-    //getters and setters
+    // Getters and setters
     public int getId() {
         return id;
     }
@@ -26,12 +26,12 @@ public class User {
         this.id = id;
     }
 
-    //override
+    // Override
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Event that = (Event) o;
+        User that = (User) o;
         return id == that.getId();
     }
 

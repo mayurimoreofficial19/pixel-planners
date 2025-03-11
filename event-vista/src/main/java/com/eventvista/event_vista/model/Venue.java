@@ -26,20 +26,21 @@ public class Venue {
     @NotBlank(message ="Field must have valid venue capacity entered")
     private Integer capacity;
 
-    //phoneNumber
+    @NotBlank(message ="Field must have valid venue phone number entered")
+    private PhoneNumber phoneNumber;
 
     @NotBlank(message ="Field must have valid venue email entered")
-    @Email
+    @Email(message = "Field must have valid email entered")
     private String emailAddress;
 
     @Size(max = 500, message = "Field must be less than 500 characters")
     private String notes;
 
-    //constructor
+    // Constructor
     public Venue() {
     }
 
-    //getters and setters
+    // Getters and setters
     public int getId() {
         return id;
     }
