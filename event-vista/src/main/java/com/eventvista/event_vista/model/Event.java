@@ -39,7 +39,7 @@ public class Event {
     @ManyToMany
     private Vendor vendor;
 
-    @ManyToMany
+    @ManyToOne
     private Client client;
 
     // Constructor

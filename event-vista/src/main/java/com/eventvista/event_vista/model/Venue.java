@@ -3,9 +3,14 @@ package com.eventvista.event_vista.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 
 @Entity
@@ -36,17 +41,28 @@ public class Venue {
     @Size(max = 500, message = "Field must be less than 500 characters")
     private String notes;
 
+    private List<String> photoUrls = new ArrayList<>();
+
+    @OneToMany(mappedBy = "venue")
+    private List<Event> events = new ArrayList<>();
+
+
     // Constructor
     public Venue() {
+    }
+
+    public Venue(String name, String location, int capacity, PhoneNumber phoneNumber, String emailAddress, String notes) {
+        this.name = name;
+        this.location = location;
+        this.capacity = capacity;
+        this.phoneNumber = phoneNumber;
+        this.emailAddress = emailAddress;
+        this.notes = notes;
     }
 
     // Getters and setters
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -73,6 +89,14 @@ public class Venue {
         this.capacity = capacity;
     }
 
+    public PhoneNumber getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public String getEmailAddress() {
         return emailAddress;
     }
@@ -87,6 +111,40 @@ public class Venue {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public List<String> getPhotoUrls() {
+        return photoUrls;
+    }
+
+    public void setPhotoUrls(List<String> photoUrls) {
+        this.photoUrls = photoUrls;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Venue that = (Venue) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
 
