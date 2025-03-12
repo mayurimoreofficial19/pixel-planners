@@ -16,7 +16,7 @@ public class Service {
     @GeneratedValue
     private int id;
 
-    @NotBlank(message = "Field must have valid venue name entered")
+    @NotBlank(message = "Field must have valid service or skill name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String name;
 
