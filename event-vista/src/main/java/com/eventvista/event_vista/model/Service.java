@@ -20,8 +20,8 @@ public class Service {
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String name;
 
-    @ManyToMany(mappedBy = "services")
-    private Set<Vendor> vendors = new HashSet<>();
+    @ManyToMany(mappedBy = "service")
+    private Set<Vendor> vendor = new HashSet<>();
 
     // Constructor
     public Service() {
@@ -45,12 +45,12 @@ public class Service {
         this.name = name;
     }
 
-    public Set<Vendor> getVendors() {
-        return vendors;
+    public Set<Vendor> getVendor() {
+        return vendor;
     }
 
-    public void setVendors(Set<Vendor> vendors) {
-        this.vendors = vendors;
+    public void setVendor(Set<Vendor> vendor) {
+        this.vendor = vendor;
     }
 
     @Override

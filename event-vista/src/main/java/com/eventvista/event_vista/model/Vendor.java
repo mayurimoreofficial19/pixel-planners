@@ -1,5 +1,6 @@
 package com.eventvista.event_vista.model;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
@@ -11,6 +12,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@Entity
 public class Vendor {
 
     @Id
@@ -26,7 +28,7 @@ public class Vendor {
     private String location;
 
     @ManyToMany
-    private Set<Service> services = new HashSet<>();
+    private Set<Service> service = new HashSet<>();
 
     @NotBlank(message ="Field must have valid vendor phone number entered")
     private PhoneNumber phoneNumber;
@@ -38,8 +40,8 @@ public class Vendor {
     @Size(max = 500, message = "Field must be less than 500 characters")
     private String notes;
 
-    @ManyToMany(mappedBy = "vendors")
-    private Set<Event> events = new HashSet<>();
+    @ManyToMany(mappedBy = "vendor")
+    private Set<Event> event = new HashSet<>();
 
     // Constructor
     public Vendor() {
@@ -73,12 +75,12 @@ public class Vendor {
         this.location = location;
     }
 
-    public Set<Service> getServices() {
-        return services;
+    public Set<Service> getService() {
+        return service;
     }
 
-    public void setServices(Set<Service> services) {
-        this.services = services;
+    public void setService(Set<Service> service) {
+        this.service = service;
     }
 
     public PhoneNumber getPhoneNumber() {
@@ -105,12 +107,12 @@ public class Vendor {
         this.notes = notes;
     }
 
-    public Set<Event> getEvents() {
-        return events;
+    public Set<Event> getEvent() {
+        return event;
     }
 
-    public void setEvents(Set<Event> events) {
-        this.events = events;
+    public void setEvent(Set<Event> event) {
+        this.event = event;
     }
 
     @Override

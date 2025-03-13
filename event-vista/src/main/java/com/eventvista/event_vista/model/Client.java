@@ -34,7 +34,7 @@ public class Client {
     private String notes;
 
     @OneToMany(mappedBy = "client")
-    private List<Event> events = new ArrayList<>();
+    private List<Event> event = new ArrayList<>();
 
     public Client() {
     }
@@ -82,12 +82,12 @@ public class Client {
         this.notes = notes;
     }
 
-    public List<Event> getEvents() {
-        return events;
+    public List<Event> getEvent() {
+        return event;
     }
 
-    public void setEvents(List<Event> events) {
-        this.events = events;
+    public void setEvent(List<Event> event) {
+        this.event = event;
     }
 
     @Override
