@@ -1,5 +1,6 @@
 package com.eventvista.event_vista.model;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
@@ -11,6 +12,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@Entity
 public class Vendor {
 
     @Id
@@ -45,7 +47,7 @@ public class Vendor {
     public Vendor() {
     }
 
-    public Vendor(String name, String location, PhoneNumber phoneNumber, String emailAddress, String notes) {
+    public Vendor(String name, String location, Set<Service> services, PhoneNumber phoneNumber, String emailAddress, String notes) {
         this.name = name;
         this.location = location;
         this.phoneNumber = phoneNumber;

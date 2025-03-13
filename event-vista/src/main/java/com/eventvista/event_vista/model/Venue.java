@@ -43,7 +43,7 @@ public class Venue {
 
     private List<String> photoUrls = new ArrayList<>();
 
-    @OneToMany(mappedBy = "venue")
+    @OneToMany(mappedBy = "venues")
     private List<Event> events = new ArrayList<>();
 
 

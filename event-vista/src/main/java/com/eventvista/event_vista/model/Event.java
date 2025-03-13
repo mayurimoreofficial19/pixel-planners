@@ -6,7 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Event {
@@ -37,7 +39,7 @@ public class Event {
     private Venue venue;
 
     @ManyToMany
-    private Vendor vendor;
+    private Set<Vendor> vendors = new HashSet<>();
 
     @ManyToOne
     private Client client;
@@ -46,14 +48,14 @@ public class Event {
     public Event() {
     }
 
-    public Event(int id, String name, String date, String time, String notes, Venue venue, Vendor vendor, Client client) {
+    public Event(int id, String name, String date, String time, String notes, Venue venue, Set<Vendor> vendors, Client client) {
         this.id = id;
         this.name = name;
         this.date = date;
         this.time = time;
         this.notes = notes;
         this.venue = venue;
-        this.vendor = vendor;
+        this.vendors = vendors;
         this.client = client;
     }
 
@@ -99,16 +101,12 @@ public class Event {
         return venue;
     }
 
-    public void setVenue(Venue venue) {
-        this.venue = venue;
+    public Set<Vendor> getVendors() {
+        return vendors;
     }
 
-    public Vendor getVendor() {
-        return vendor;
-    }
-
-    public void setVendor(Vendor vendor) {
-        this.vendor = vendor;
+    public void setVendors(Set<Vendor> vendors) {
+        this.vendors = vendors;
     }
 
     public Client getClient() {
