@@ -28,8 +28,9 @@ public class Client {
     @Email(message = "Please provide a valid email address")
     private String email;
 
-
-    private String phoneNumber;
+    @NotBlank(message ="Field must have valid client phone number entered")
+    private String phoneNumberInput;
+    private PhoneNumber phoneNumber;
 
     private String notes;
 
@@ -39,10 +40,11 @@ public class Client {
     public Client() {
     }
 
-    public Client(String name, String email, String phoneNumber, String notes) {
+    public Client(String name, String email, String phoneNumberInput, String notes) {
         this.name = name;
         this.email = email;
-        this.phoneNumber = phoneNumber;
+        this.phoneNumberInput = phoneNumberInput;
+        this.phoneNumber = new PhoneNumber(phoneNumberInput); // Initialize PhoneNumber
         this.notes = notes;
     }
 
@@ -66,12 +68,17 @@ public class Client {
         this.email = email;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhoneNumberInput() {
+        return phoneNumberInput;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhoneNumberInput(String phoneNumberInput) {
+        this.phoneNumberInput = phoneNumberInput;
+        this.phoneNumber = new PhoneNumber(phoneNumberInput); // Reinitialize when set
+    }
+
+    public PhoneNumber getPhoneNumber() {
+        return phoneNumber;
     }
 
     public String getNotes() {

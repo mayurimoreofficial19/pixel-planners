@@ -2,6 +2,15 @@ package com.eventvista.event_vista.model;
 
 public class PhoneNumber {
 
+    private String phoneNumber;
+    private boolean isValid;
+
+    // Constructor that takes a phone number as input
+    public PhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+        this.isValid = validatePhoneNumber(phoneNumber);
+    }
+
     private static boolean validatePhoneNumber(String phoneNumber) {
         // Validate phone numbers of format "1234567890" or "+11234567890"
         if (phoneNumber.matches("\\+\\d(-\\d{3}){2}-\\d{4}"))
@@ -26,6 +35,26 @@ public class PhoneNumber {
         else
             return false;
     }
+
+    // Getters
+    public boolean isValid() {
+        return isValid;
+    }
+
+    public String getphoneNumber() {
+        return phoneNumber;
+    }
+
+    // Override the toString method for easy output
+    @Override
+    public String toString() {
+        if (isValid) {
+            return "Phone Number " + this.phoneNumber + " is valid.";
+        } else {
+            return "Phone Number " + this.phoneNumber + " is invalid.";
+        }
+    }
+
 }
 
 

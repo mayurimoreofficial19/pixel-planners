@@ -31,6 +31,7 @@ public class Vendor {
     private Set<Service> services = new HashSet<>();
 
     @NotBlank(message ="Field must have valid vendor phone number entered")
+    private String phoneNumberInput;
     private PhoneNumber phoneNumber;
 
     @NotBlank(message ="Field must have valid vendor email entered")
@@ -47,10 +48,11 @@ public class Vendor {
     public Vendor() {
     }
 
-    public Vendor(String name, String location, Set<Service> services, PhoneNumber phoneNumber, String emailAddress, String notes) {
+    public Vendor(String name, String location, Set<Service> services,  String phoneNumberInput, String emailAddress, String notes) {
         this.name = name;
         this.location = location;
-        this.phoneNumber = phoneNumber;
+        this.phoneNumberInput = phoneNumberInput;
+        this.phoneNumber = new PhoneNumber(phoneNumberInput); // Initialize PhoneNumber
         this.emailAddress = emailAddress;
         this.notes = notes;
     }
@@ -83,14 +85,18 @@ public class Vendor {
         this.services = services;
     }
 
+    public String getPhoneNumberInput() {
+        return phoneNumberInput;
+    }
+
+    public void setPhoneNumberInput(String phoneNumberInput) {
+        this.phoneNumberInput = phoneNumberInput;
+        this.phoneNumber = new PhoneNumber(phoneNumberInput); // Reinitialize when set
+    }
+
     public PhoneNumber getPhoneNumber() {
         return phoneNumber;
     }
-
-    public void setPhoneNumber(PhoneNumber phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
     public String getEmailAddress() {
         return emailAddress;
     }

@@ -32,7 +32,9 @@ public class Venue {
     private Integer capacity;
 
     @NotBlank(message ="Field must have valid venue phone number entered")
+    private String phoneNumberInput;
     private PhoneNumber phoneNumber;
+
 
     @NotBlank(message ="Field must have valid venue email entered")
     @Email(message = "Field must have valid email entered")
@@ -51,11 +53,12 @@ public class Venue {
     public Venue() {
     }
 
-    public Venue(String name, String location, int capacity, PhoneNumber phoneNumber, String emailAddress, String notes) {
+    public Venue(String name, String location, int capacity, String phoneNumberInput, String emailAddress, String notes) {
         this.name = name;
         this.location = location;
         this.capacity = capacity;
-        this.phoneNumber = phoneNumber;
+        this.phoneNumberInput = phoneNumberInput;
+        this.phoneNumber = new PhoneNumber(phoneNumberInput); // Initialize PhoneNumber
         this.emailAddress = emailAddress;
         this.notes = notes;
     }
@@ -89,14 +92,18 @@ public class Venue {
         this.capacity = capacity;
     }
 
+    public String getPhoneNumberInput() {
+        return phoneNumberInput;
+    }
+
+    public void setPhoneNumberInput(String phoneNumberInput) {
+        this.phoneNumberInput = phoneNumberInput;
+        this.phoneNumber = new PhoneNumber(phoneNumberInput); // Reinitialize when set
+    }
+
     public PhoneNumber getPhoneNumber() {
         return phoneNumber;
     }
-
-    public void setPhoneNumber(PhoneNumber phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
     public String getEmailAddress() {
         return emailAddress;
     }
