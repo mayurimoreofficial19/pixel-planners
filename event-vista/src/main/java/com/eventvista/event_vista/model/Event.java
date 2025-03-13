@@ -39,7 +39,7 @@ public class Event {
     private Venue venue;
 
     @ManyToMany
-    private Set<Vendor> vendor = new HashSet<>();
+    private Set<Vendor> vendors = new HashSet<>();
 
     @ManyToOne
     private Client client;
@@ -48,14 +48,14 @@ public class Event {
     public Event() {
     }
 
-    public Event(int id, String name, String date, String time, String notes, Venue venue, Set<Vendor> vendor, Client client) {
+    public Event(int id, String name, String date, String time, String notes, Venue venue, Set<Vendor> vendors, Client client) {
         this.id = id;
         this.name = name;
         this.date = date;
         this.time = time;
         this.notes = notes;
         this.venue = venue;
-        this.vendor = vendor;
+        this.vendors = vendors;
         this.client = client;
     }
 
@@ -101,12 +101,12 @@ public class Event {
         return venue;
     }
 
-    public Set<Vendor> getVendor() {
-        return vendor;
+    public Set<Vendor> getVendors() {
+        return vendors;
     }
 
-    public void setVendor(Set<Vendor> vendor) {
-        this.vendor = vendor;
+    public void setVendors(Set<Vendor> vendors) {
+        this.vendors = vendors;
     }
 
     public Client getClient() {

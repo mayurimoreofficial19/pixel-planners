@@ -43,8 +43,8 @@ public class Venue {
 
     private List<String> photoUrls = new ArrayList<>();
 
-    @OneToMany(mappedBy = "venue")
-    private List<Event> event = new ArrayList<>();
+    @OneToMany(mappedBy = "venues")
+    private List<Event> events = new ArrayList<>();
 
 
     // Constructor
@@ -121,12 +121,12 @@ public class Venue {
         this.photoUrls = photoUrls;
     }
 
-    public List<Event> getEvent() {
-        return event;
+    public List<Event> getEvents() {
+        return events;
     }
 
-    public void setEvent(List<Event> event) {
-        this.event = event;
+    public void setEvents(List<Event> events) {
+        this.events = events;
     }
 
     @Override

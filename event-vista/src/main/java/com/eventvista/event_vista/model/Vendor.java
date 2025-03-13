@@ -28,7 +28,7 @@ public class Vendor {
     private String location;
 
     @ManyToMany
-    private Set<Service> service = new HashSet<>();
+    private Set<Service> services = new HashSet<>();
 
     @NotBlank(message ="Field must have valid vendor phone number entered")
     private PhoneNumber phoneNumber;
@@ -40,14 +40,14 @@ public class Vendor {
     @Size(max = 500, message = "Field must be less than 500 characters")
     private String notes;
 
-    @ManyToMany(mappedBy = "vendor")
-    private Set<Event> event = new HashSet<>();
+    @ManyToMany(mappedBy = "vendors")
+    private Set<Event> events = new HashSet<>();
 
     // Constructor
     public Vendor() {
     }
 
-    public Vendor(String name, String location, PhoneNumber phoneNumber, String emailAddress, String notes) {
+    public Vendor(String name, String location, Set<Service> services, PhoneNumber phoneNumber, String emailAddress, String notes) {
         this.name = name;
         this.location = location;
         this.phoneNumber = phoneNumber;
@@ -75,12 +75,12 @@ public class Vendor {
         this.location = location;
     }
 
-    public Set<Service> getService() {
-        return service;
+    public Set<Service> getServices() {
+        return services;
     }
 
-    public void setService(Set<Service> service) {
-        this.service = service;
+    public void setServices(Set<Service> services) {
+        this.services = services;
     }
 
     public PhoneNumber getPhoneNumber() {
@@ -107,12 +107,12 @@ public class Vendor {
         this.notes = notes;
     }
 
-    public Set<Event> getEvent() {
-        return event;
+    public Set<Event> getEvents() {
+        return events;
     }
 
-    public void setEvent(Set<Event> event) {
-        this.event = event;
+    public void setEvents(Set<Event> events) {
+        this.events = events;
     }
 
     @Override
