@@ -1,7 +1,5 @@
 package com.eventvista.event_vista.model;
 
-import java.util.regex.Pattern;
-
 public class PhoneNumber {
 
     private String phoneNumber;

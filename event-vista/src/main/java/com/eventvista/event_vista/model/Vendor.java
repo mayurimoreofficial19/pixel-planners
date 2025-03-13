@@ -1,5 +1,6 @@
 package com.eventvista.event_vista.model;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
@@ -11,17 +12,18 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@Entity
 public class Vendor {
 
     @Id
     @GeneratedValue
     private int id;
 
-    @NotBlank(message = "Field must have valid venue name entered")
+    @NotBlank(message = "Field must have valid vendor name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String name;
 
-    @NotBlank(message = "Field must have valid venue location entered")
+    @NotBlank(message = "Field must have valid vendor location entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String location;
 
@@ -32,7 +34,7 @@ public class Vendor {
     private String phoneNumberInput;
     private PhoneNumber phoneNumber;
 
-    @NotBlank(message ="Field must have valid venue email entered")
+    @NotBlank(message ="Field must have valid vendor email entered")
     @Email(message = "Field must have valid email entered")
     private String emailAddress;
 
@@ -46,7 +48,7 @@ public class Vendor {
     public Vendor() {
     }
 
-    public Vendor(String name, String location, String phoneNumberInput, String emailAddress, String notes) {
+    public Vendor(String name, String location, Set<Service> services,  String phoneNumberInput, String emailAddress, String notes) {
         this.name = name;
         this.location = location;
         this.phoneNumberInput = phoneNumberInput;
