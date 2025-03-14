@@ -10,11 +10,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class Service {
-
-    @Id
-    @GeneratedValue
-    private int id;
+public class Service extends AbstractEntity {
 
     @NotBlank(message = "Field must have valid service or skill name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
@@ -32,10 +28,6 @@ public class Service {
     }
 
     // Getters and setters
-    public int getId() {
-        return id;
-    }
-
 
     public String getName() {
         return name;
@@ -58,16 +50,4 @@ public class Service {
         return name;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Service that = (Service) o;
-        return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

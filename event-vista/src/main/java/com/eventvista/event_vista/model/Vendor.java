@@ -13,11 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-public class Vendor {
-
-    @Id
-    @GeneratedValue
-    private int id;
+public class Vendor extends AbstractEntity{
 
     @NotBlank(message = "Field must have valid vendor name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
@@ -57,9 +53,6 @@ public class Vendor {
         this.notes = notes;
     }
     // Getters and setters
-    public int getId() {
-        return id;
-    }
 
     public String getName() {
         return name;
@@ -126,17 +119,5 @@ public class Vendor {
         return name;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Vendor that = (Vendor) o;
-        return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 
 }

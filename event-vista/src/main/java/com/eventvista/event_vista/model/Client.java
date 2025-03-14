@@ -14,11 +14,7 @@ import java.util.Objects;
 
 
 @Entity
-public class Client {
-
-    @Id
-    @GeneratedValue
-    private int id;
+public class Client extends AbstractEntity {
 
     @NotBlank(message = "Client name is required")
     @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
@@ -46,10 +42,6 @@ public class Client {
         this.phoneNumberInput = phoneNumberInput;
         this.phoneNumber = new PhoneNumber(phoneNumberInput); // Initialize PhoneNumber
         this.notes = notes;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getName() {
@@ -102,16 +94,4 @@ public class Client {
         return name;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Client that = (Client) o;
-        return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
