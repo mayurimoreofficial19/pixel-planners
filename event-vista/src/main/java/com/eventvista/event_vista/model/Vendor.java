@@ -51,6 +51,7 @@ public class Vendor {
     public Vendor(String name, String location, Set<Service> services,  String phoneNumberInput, String emailAddress, String notes) {
         this.name = name;
         this.location = location;
+        this.services = services;
         this.phoneNumberInput = phoneNumberInput;
         this.phoneNumber = new PhoneNumber(phoneNumberInput); // Initialize PhoneNumber
         this.emailAddress = emailAddress;
