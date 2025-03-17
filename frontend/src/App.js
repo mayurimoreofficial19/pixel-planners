@@ -1,17 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import WelcomePage from './components/WelcomePage';
+import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Start page for our event planner app
-        </p>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<WelcomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
