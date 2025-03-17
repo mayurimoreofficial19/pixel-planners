@@ -14,11 +14,7 @@ import java.util.Objects;
 
 
 @Entity
-public class Venue {
-
-    @Id
-    @GeneratedValue
-    private int id;
+public class Venue extends AbstractEntity {
 
     @NotBlank(message = "Field must have valid venue name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
@@ -64,9 +60,6 @@ public class Venue {
     }
 
     // Getters and setters
-    public int getId() {
-        return id;
-    }
 
     public String getName() {
         return name;
@@ -140,18 +133,6 @@ public class Venue {
     public String toString() {
         return name;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Venue that = (Venue) o;
-        return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+    
 }
 
