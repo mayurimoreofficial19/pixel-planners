@@ -13,7 +13,7 @@ public class Guest extends AbstractEntity{
     public String name;
 
     @Email
-    public String email;
+    public String emailAddress;
 
     @Enumerated(EnumType.STRING)
     private RSVPStatus rsvpStatus = RSVPStatus.PENDING;
@@ -24,9 +24,9 @@ public class Guest extends AbstractEntity{
 
     public Guest() {}
 
-    public Guest(String name, String email, GuestList guestList) {
+    public Guest(String name, String emailAddress, GuestList guestList) {
         this.name = name;
-        this.email = email;
+        this.emailAddress = emailAddress;
         this.guestList = guestList;
         //this.rsvpStatus = RSVPStatus.PENDING;
     }
@@ -39,12 +39,12 @@ public class Guest extends AbstractEntity{
         this.name = name;
     }
 
-    public @Email String getEmail() {
-        return email;
+    public @Email String getEmailAddress() {
+        return emailAddress;
     }
 
-    public void setEmail(@Email String email) {
-        this.email = email;
+    public void setEmailAddress(@Email String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     public RSVPStatus getRsvpStatus() {
