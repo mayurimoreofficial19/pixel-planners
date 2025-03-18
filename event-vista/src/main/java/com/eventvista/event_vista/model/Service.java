@@ -1,5 +1,6 @@
 package com.eventvista.event_vista.model;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
@@ -10,6 +11,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@Entity
 public class Service extends AbstractEntity {
 
     @NotBlank(message = "Field must have valid service or skill name entered")
