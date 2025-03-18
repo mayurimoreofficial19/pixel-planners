@@ -1,11 +1,17 @@
 package com.eventvista.event_vista.model;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class PhoneNumber {
 
     private String phoneNumber;
     private boolean isValid;
 
-    // Constructor that takes a phone number as input
+    // Empty Constructor and Constructor that takes a phone number as input
+    public PhoneNumber() {
+    }
+
     public PhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
         this.isValid = validatePhoneNumber(phoneNumber);
@@ -41,7 +47,7 @@ public class PhoneNumber {
         return isValid;
     }
 
-    public String getphoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 

@@ -3,30 +3,32 @@ package com.eventvista.event_vista.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
 public class Event extends AbstractEntity{
 
-    @OneToMany
+    @ManyToOne
     private User user;
 
     @NotBlank(message = "Field must have valid event name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String name;
 
-    @NotBlank(message = "Field must have valid event date entered")
-    @DateTimeFormat
-    private String date;
+    @NotNull(message = "Field must have valid event date entered")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate date;
 
-    @NotBlank(message = "Field must have valid event time entered")
-    @DateTimeFormat
-    private String time;
+    @NotNull(message = "Field must have valid event time entered")
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime time;
 
     @Size(max = 500, message = "Field must be less than 500 characters")
     private String notes;
@@ -41,10 +43,11 @@ public class Event extends AbstractEntity{
     private Client client;
 
     // Constructor
+
     public Event() {
     }
 
-    public Event(String name, String date, String time, String notes, Venue venue, Set<Vendor> vendors, Client client) {
+    public Event(String name, LocalDate date, LocalTime time, String notes, Venue venue, Set<Vendor> vendors, Client client) {
         this.name = name;
         this.date = date;
         this.time = time;
@@ -57,6 +60,7 @@ public class Event extends AbstractEntity{
 
     // Getters and setters
 
+
     public String getName() {
         return name;
     }
@@ -65,19 +69,19 @@ public class Event extends AbstractEntity{
         this.name = name;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
-    public String getTime() {
+    public LocalTime getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(LocalTime time) {
         this.time = time;
     }
 
@@ -89,8 +93,20 @@ public class Event extends AbstractEntity{
         this.notes = notes;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Venue getVenue() {
         return venue;
+    }
+
+    public void setVenue(Venue venue) {
+        this.venue = venue;
     }
 
     public Set<Vendor> getVendors() {

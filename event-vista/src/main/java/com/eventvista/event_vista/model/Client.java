@@ -1,16 +1,12 @@
 package com.eventvista.event_vista.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 @Entity
@@ -25,7 +21,7 @@ public class Client extends AbstractEntity {
     private String email;
 
     @NotBlank(message ="Field must have valid client phone number entered")
-    private String phoneNumberInput;
+    @Embedded
     private PhoneNumber phoneNumber;
 
     private String notes;
@@ -36,11 +32,10 @@ public class Client extends AbstractEntity {
     public Client() {
     }
 
-    public Client(String name, String email, String phoneNumberInput, String notes) {
+    public Client(String name, String email, PhoneNumber phoneNumber, String notes) {
         this.name = name;
         this.email = email;
-        this.phoneNumberInput = phoneNumberInput;
-        this.phoneNumber = new PhoneNumber(phoneNumberInput); // Initialize PhoneNumber
+        this.phoneNumber = phoneNumber;
         this.notes = notes;
     }
 
@@ -60,17 +55,12 @@ public class Client extends AbstractEntity {
         this.email = email;
     }
 
-    public String getPhoneNumberInput() {
-        return phoneNumberInput;
-    }
-
-    public void setPhoneNumberInput(String phoneNumberInput) {
-        this.phoneNumberInput = phoneNumberInput;
-        this.phoneNumber = new PhoneNumber(phoneNumberInput); // Reinitialize when set
-    }
-
     public PhoneNumber getPhoneNumber() {
         return phoneNumber;
+    }
+
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getNotes() {
