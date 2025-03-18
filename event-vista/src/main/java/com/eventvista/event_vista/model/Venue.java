@@ -1,16 +1,14 @@
 package com.eventvista.event_vista.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
 
 
 @Entity
@@ -24,7 +22,7 @@ public class Venue extends AbstractEntity {
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String location;
 
-    @NotBlank(message ="Field must have valid venue capacity entered")
+    @NotNull(message ="Field must have valid venue capacity entered")
     private Integer capacity;
 
     @NotBlank(message ="Field must have valid venue phone number entered")
@@ -39,9 +37,11 @@ public class Venue extends AbstractEntity {
     @Size(max = 500, message = "Field must be less than 500 characters")
     private String notes;
 
+
+    @ElementCollection
     private List<String> photoUrls = new ArrayList<>();
 
-    @OneToMany(mappedBy = "venues")
+    @OneToMany(mappedBy = "venue")
     private List<Event> events = new ArrayList<>();
 
 

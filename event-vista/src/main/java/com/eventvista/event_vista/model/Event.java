@@ -16,7 +16,6 @@ import java.util.Set;
 public class Event extends AbstractEntity{
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
     private User user;
 
     @NotBlank(message = "Field must have valid event name entered")
@@ -35,19 +34,12 @@ public class Event extends AbstractEntity{
     private String notes;
 
     @ManyToOne
-    @JoinColumn(name = "venue_id")
     private Venue venue;
 
     @ManyToMany
-    @JoinTable(
-            name = "event_vendors",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "vendor_id")
-    )
     private Set<Vendor> vendors = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "client_id")
     private Client client;
 
     // Constructor
@@ -67,6 +59,7 @@ public class Event extends AbstractEntity{
 
 
     // Getters and setters
+
 
     public String getName() {
         return name;
