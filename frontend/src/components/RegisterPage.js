@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { register } from '../service/AuthService'; // Import the register function from AuthService
+import { registerUser, fetchUsers } from '../service/UserService'; // Import the createUser and fetchUsers functions from UserService
 import axios from 'axios';
 import Header from './Header';
 
@@ -9,30 +11,74 @@ const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [verifyEmail, setVerifyEmail] = useState('');
   const [error, setError] = useState('');
+  const [users, setUsers] = useState([]);
 
+  useEffect(() => {
+    const fetchAllUsers = async () => {
+      try {
+        const usersData = await fetchUsers();
+        setUsers(usersData);
+      } catch (error) {
+        console.error('Failed to fetch users', error);
+      }
+    };
+
+    fetchAllUsers();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-        if (password !== verifyPassword) {
-          setError('Passwords do not match');
-          return;
-        }
-        if (email !== verifyEmail) {
-          setError('Emails do not match');
-          return;
-        }
+    if (password !== verifyPassword) {
+      setError('Passwords do not match');
+      alert('Passwords do not match');
+      return;
+    }
+    if (email !== verifyEmail) {
+      setError('Emails do not match');
+      alert('Emails do not match');
+      return;
+    }
+
+    const isUsernameTaken = users.some(user => user.username === username);
+    const isEmailTaken = users.some(user => user.email === email);
+
+    if (isUsernameTaken) {
+      setError('Username is already taken');
+      alert('Username is already taken');
+      return;
+    }
+
+    if (isEmailTaken) {
+      setError('Email is already taken');
+      alert('Email is already taken');
+      return;
+    }
+
+              //Password must be between 5 and 30 characters
+    if (password) {
+      if (password.length < 5 || password.length > 30) {
+      alert('Passwords must be between 5 and 30 characters!');
+      e.preventDefault();
+      return false;
+      }
+    }
+
     try {
-      const response = await axios.post('/register', { username, password, verifyPassword, email, verifyEmail });
+      await register(username, email, password); // Use the register function from AuthService
+      await registerUser(username, email); // Use the createUser function from UserService
+      alert('Registration successful');
       // Handle successful registration
     } catch (error) {
+      setError('Registration failed');
+      alert('Registration failed');
       // Handle registration error
     }
   };
 
   return (
     <div>
-        <Header />
+      <Header />
       <h1>Register</h1>
       <form onSubmit={handleSubmit}>
         <div>
