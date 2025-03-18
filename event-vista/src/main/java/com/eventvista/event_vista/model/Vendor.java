@@ -1,9 +1,6 @@
 package com.eventvista.event_vista.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -26,7 +23,7 @@ public class Vendor extends AbstractEntity{
     private Set<Service> services = new HashSet<>();
 
     @NotBlank(message ="Field must have valid vendor phone number entered")
-    private String phoneNumberInput;
+    @Embedded
     private PhoneNumber phoneNumber;
 
     @NotBlank(message ="Field must have valid vendor email entered")
@@ -43,15 +40,15 @@ public class Vendor extends AbstractEntity{
     public Vendor() {
     }
 
-    public Vendor(String name, String location, Set<Service> services,  String phoneNumberInput, String emailAddress, String notes) {
+    public Vendor(String name, String location, Set<Service> services, PhoneNumber phoneNumber, String emailAddress, String notes) {
         this.name = name;
         this.location = location;
         this.services = services;
-        this.phoneNumberInput = phoneNumberInput;
-        this.phoneNumber = new PhoneNumber(phoneNumberInput); // Initialize PhoneNumber
+        this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
         this.notes = notes;
     }
+
     // Getters and setters
 
     public String getName() {
@@ -78,18 +75,14 @@ public class Vendor extends AbstractEntity{
         this.services = services;
     }
 
-    public String getPhoneNumberInput() {
-        return phoneNumberInput;
-    }
-
-    public void setPhoneNumberInput(String phoneNumberInput) {
-        this.phoneNumberInput = phoneNumberInput;
-        this.phoneNumber = new PhoneNumber(phoneNumberInput); // Reinitialize when set
-    }
-
     public PhoneNumber getPhoneNumber() {
         return phoneNumber;
     }
+
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public String getEmailAddress() {
         return emailAddress;
     }

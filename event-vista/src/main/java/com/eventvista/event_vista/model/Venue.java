@@ -26,7 +26,7 @@ public class Venue extends AbstractEntity {
     private Integer capacity;
 
     @NotBlank(message ="Field must have valid venue phone number entered")
-    private String phoneNumberInput;
+    @Embedded
     private PhoneNumber phoneNumber;
 
 
@@ -49,12 +49,11 @@ public class Venue extends AbstractEntity {
     public Venue() {
     }
 
-    public Venue(String name, String location, int capacity, String phoneNumberInput, String emailAddress, String notes) {
+    public Venue(String name, String location, int capacity, PhoneNumber phoneNumber, String emailAddress, String notes) {
         this.name = name;
         this.location = location;
         this.capacity = capacity;
-        this.phoneNumberInput = phoneNumberInput;
-        this.phoneNumber = new PhoneNumber(phoneNumberInput); // Initialize PhoneNumber
+        this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
         this.notes = notes;
     }
@@ -85,18 +84,14 @@ public class Venue extends AbstractEntity {
         this.capacity = capacity;
     }
 
-    public String getPhoneNumberInput() {
-        return phoneNumberInput;
-    }
-
-    public void setPhoneNumberInput(String phoneNumberInput) {
-        this.phoneNumberInput = phoneNumberInput;
-        this.phoneNumber = new PhoneNumber(phoneNumberInput); // Reinitialize when set
-    }
-
     public PhoneNumber getPhoneNumber() {
         return phoneNumber;
     }
+
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public String getEmailAddress() {
         return emailAddress;
     }
