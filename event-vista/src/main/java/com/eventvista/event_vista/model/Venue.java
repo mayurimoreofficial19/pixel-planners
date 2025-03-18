@@ -133,6 +133,6 @@ public class Venue extends AbstractEntity {
     public String toString() {
         return name;
     }
-    
+
 }
 

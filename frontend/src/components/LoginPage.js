@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { login } from '../service/AuthService'; // Import the login function
 import axios from 'axios';
 import Header from './Header';
 //import 'index.css';
@@ -6,16 +7,29 @@ import Header from './Header';
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [email, setEmail] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('/login', { username, password });
-      // Handle successful login
-    } catch (error) {
-      // Handle login error
-    }
-  };
+  const [showPassword, setShowPassword] = useState(false);
+
+      useEffect(() => {
+          setError('');
+      }, [])
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            await login(username, email, password);
+            window.location.reload(); // Reload to update context
+            setError('');
+            alert(`${username} has logged in!`);
+            window.location.href = "/";
+        } catch (error) {
+            setError('Failed to login. Please try again!');
+        }
+
+    };
 
   return (
     <div>
@@ -32,6 +46,7 @@ const LoginPage = () => {
         </div>
         <button type="submit">Login</button>
       </form>
+
       <p class="mt-5">Don't have an account? <a href="/register">Register here.</a></p>
     </div>
   );

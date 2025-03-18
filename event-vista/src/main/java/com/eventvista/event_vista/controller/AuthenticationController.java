@@ -8,157 +8,186 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
-@Controller
+@RestController
+@RequestMapping("/api/user")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AuthenticationController {
 
     @Autowired
     private UserRepository userRepository;
 
-    // The key to store user IDs
     private static final String userSessionKey = "user";
 
-    // Stores key/value pair with session key and user ID
-    private static void setUserInSession(HttpSession session, User user) {
-        session.setAttribute(userSessionKey, user.getId());
-        System.out.println("session: " + session.getAttribute("user"));
-    }
-
-    // Look up user with key
     public User getUserFromSession(HttpSession session) {
-
-        // Get user ID from database using key
         Integer userId = (Integer) session.getAttribute(userSessionKey);
+
         if (userId == null) {
             return null;
         }
 
-        // Get optional back from database
-        Optional<User> userOpt = userRepository.findById(userId);
+        Optional<User> user = userRepository.findById(userId);
 
-        // Early return with null if user not found
-        if (userOpt.isEmpty()) {
+        if (user.isEmpty()) {
             return null;
         }
 
-        // Return user object (unboxed from optional)
-        return userOpt.get();
+        return user.get();
     }
 
-    // Handlers for registration form
-    @GetMapping("/register")
-    public String displayRegistrationForm(Model model, HttpSession session) {
-        model.addAttribute(new RegisterFormDTO());
-        model.addAttribute("loggedIn", session.getAttribute("user") != null);
-        return "register";
+    private static void setUserInSession(HttpSession session, User user) {
+        session.setAttribute(userSessionKey, user.getId());
     }
 
+    //    View all Users
+    @GetMapping("/all")
+    public List<User> getAllUsers(){
+
+        return (List<User>) userRepository.findAll();
+    }
+
+    //    Registration From authentication chapter unit 2, with JSON RequestBody
     @PostMapping("/register")
-    public String processRegistrationForm(@ModelAttribute @Valid RegisterFormDTO registrationFormDTO,
-                                          Errors errors,
-                                          HttpServletRequest request) {
+    public ResponseEntity<?> processRegistrationForm(@RequestBody @Valid RegisterFormDTO registerFormDTO,
+                                                     Errors errors, HttpServletRequest request) {
 
-        // Send user back to form if errors are found
         if (errors.hasErrors()) {
-            return "register";
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
         }
 
-        // Look up user in database using username they provided in the form
-        User existingUser = userRepository.findByUsername(registrationFormDTO.getUsername());
-        //User existingEmail = userRepository.findByEmail(email);
+        String username = registerFormDTO.getUsername();
+        String email = registerFormDTO.getEmail();
+        String verifyEmail = registerFormDTO.getVerifyEmail();
+        String password = registerFormDTO.getPassword();
+        String verifyPassword = registerFormDTO.getVerifyPassword();
 
-        // Send user back to form if username already exists
-        if (existingUser != null) {
-            errors.rejectValue("username", "username.alreadyExists", "A user with that username already exists");
-            return "register";
-        }
-
-        // Send user back to form if passwords didn't match
-        String password = registrationFormDTO.getPassword();
-        String verifyPassword = registrationFormDTO.getVerifyPassword();
-        if (!password.equals(verifyPassword)) {
-            errors.rejectValue("password", "passwords.mismatch", "Passwords do not match");
-            return "register";
-        }
-
-        // Send user back to form if email didn't match
-        String email = registrationFormDTO.getEmail();
-        String verifyEmail = registrationFormDTO.getVerifyEmail();
-        if (!email.equals(verifyEmail)) {
-            errors.rejectValue("email", "email.mismatch", "Email do not match");
-            return "register";
-        }
-
+        User existingUsername = userRepository.findByUsername(username);
         User existingEmail = userRepository.findByEmail(email);
-        //String email = registrationFormDTO.getEmail();
-        if (email.isEmpty()) {
+
+        if (registerFormDTO.getUsername().isEmpty()) {
+            errors.rejectValue("username", "username.isEmpty", "Username is required.");
+        } else if (existingUsername != null) {
+            errors.rejectValue("username", "username.alreadyexists", "A user with that username already exists.");
+        }
+
+        if (registerFormDTO.getEmail().isEmpty()) {
             errors.rejectValue("email", "email.isEmpty", "Email is required.");
         } else if (existingEmail != null) {
             errors.rejectValue("email", "email.alreadyexists", "A user with that email already exists.");
         }
 
-        // OTHERWISE, save new username and hashed password in database, start a new session, and redirect to home page
-        User newUser = new User(registrationFormDTO.getUsername(), registrationFormDTO.getPassword());
-        userRepository.save(newUser);
-        setUserInSession(request.getSession(), newUser);
-        return "redirect:"; //NEED TO ADD REDIRECT PAGE AKA HOME PAGE
-    }
+        if (registerFormDTO.getVerifyEmail().isEmpty()) {
+            errors.rejectValue("verifyEmail", "verifyEmail.isEmpty", "Verify Email is required.");
+        } else if (!email.equals(verifyEmail)) {
+            errors.rejectValue("email", "emails.mismatch", "Emails do not match.");
+        }
 
-    // Handlers for login form
-    @GetMapping("/login")
-    public String displayLoginForm(Model model, HttpSession session) {
-        model.addAttribute(new LoginFormDTO()); // "loginFormDTO" variable implicit
-        model.addAttribute("loggedIn", session.getAttribute("user") != null);
-        return "login";
-    }
+        if (registerFormDTO.getPassword().isEmpty()) {
+            errors.rejectValue("password", "password.isEmpty", "Password is required.");
+        } else if (registerFormDTO.getVerifyPassword().isEmpty()) {
+            errors.rejectValue("verifyPassword", "verifyPassword.isEmpty", "Verify Password is required.");
+        } else if (!password.equals(verifyPassword)) {
+            errors.rejectValue("password", "passwords.mismatch", "Passwords do not match.");
+        }
 
-    @PostMapping("/login")
-    public String processLoginForm(@ModelAttribute @Valid LoginFormDTO loginFormDTO,
-                                   Errors errors,
-                                   HttpServletRequest request) {
-
-        // Send user back to form if errors are found
         if (errors.hasErrors()) {
-            return "login";
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
+        } else {
+            User newUser = new User(username, email, password);
+            setUserInSession(request.getSession(), newUser);
+            userRepository.save(newUser);
+
+            return ResponseEntity.ok("User was successfully created!");
+        }
+    }
+
+    //    Registration
+    @PostMapping("/login")
+    public ResponseEntity<?> processLoginForm(@RequestBody @Valid LoginFormDTO loginFormDTO,
+                                              Errors errors, HttpServletRequest request) {
+
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
         }
 
-        // Look up user in database using username they provided in the form
-        User theUser = userRepository.findByUsername(loginFormDTO.getUsername());
-
-        // Get the password the user supplied in the form
+        String username = loginFormDTO.getUsername();
         String password = loginFormDTO.getPassword();
+        String email = loginFormDTO.getEmail();
 
-        // Send user back to form if username does not exist OR if password hash doesn't match
-        // "Security through obscurity" — don't reveal which one was the problem
-        if (theUser == null || !theUser.isMatchingPassword(password)) {
-            errors.rejectValue(
-                    "password",
-                    "login.invalid",
-                    "Credentials invalid. Please try again with correct username/password combination."
-            );
-            return "login";
+        User currentUsername = userRepository.findByUsername(username);
+        User currentEmail = userRepository.findByEmail(email);
+
+        if (username.contains("@") && username.contains(".com")) {
+            errors.rejectValue("username", "username.invalid", "The username is not your email.");
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
+        } else if (currentUsername == null) {
+            errors.rejectValue("username", "username.invalid", "The given username does not exist.");
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
         }
 
-        // OTHERWISE, create a new session for the user and take them to the home page
-        setUserInSession(request.getSession(), theUser);
-        return "redirect:"; //NEED TO ADD REDIRECT PAGE AKA HOME PAGE!!!!!
+        if (currentEmail == null) {
+            errors.rejectValue("email", "email.invalid", "The given email does not exist.");
+        }
+
+        if (!currentUsername.isMatchingPassword(password)) {
+            errors.rejectValue("password", "password.invalid", "Invalid password");
+        }
+
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
+        } else {
+            setUserInSession(request.getSession(), currentUsername);
+
+            return ResponseEntity.ok("User logged in successfully!");
+        }
     }
 
-    // Handler for logout
-    @GetMapping("/logout")
-    public String logout(HttpServletRequest request){
-        request.getSession().invalidate();
-        return "redirect:/login";
+    //    Get current user from the session to use for page authorization, returns HTTP response with Ok status and the user from session
+//    ResponseEntity which encapsulates the entire HTTP response, encompassing the status code, headers, and body.
+    @GetMapping("/currentUser")
+    public ResponseEntity<?> getCurrentUser(HttpSession session) {
+        User user = getUserFromSession(session);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in!");
+        }
+//        System.out.println("User not found");
+        return ResponseEntity.ok(user);
     }
+
+    //    Find user by username
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username) {
+        User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found!");
+        }
+
+        return ResponseEntity.ok(user);
+    }
+
+
+    //    Logout
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request){
+        request.getSession().invalidate();
+        return ResponseEntity.ok("User is logged out!");
+    }
+
 
     //    Delete User
     @PostMapping("/delete")
@@ -166,5 +195,75 @@ public class AuthenticationController {
         userRepository.deleteById(userId);
     }
 
+    //    Edit User method
+    @PatchMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody @Valid RegisterFormDTO registerFormDTO,
+                                        Errors errors, HttpSession session) {
 
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
+        }
+
+        // Get User from session
+        User userToUpdate = getUserFromSession(session);
+
+        // Updates User data only for those that were changed
+        String username = registerFormDTO.getUsername();
+        String email = registerFormDTO.getEmail();
+        String verifyEmail = registerFormDTO.getVerifyEmail();
+        String password = registerFormDTO.getPassword();
+        String verifyPassword = registerFormDTO.getVerifyPassword();
+        //Integer profileImage = registerFormDTO.getProfileImage();
+
+        User existingUsername = userRepository.findByUsername(username);
+        User existingEmail = userRepository.findByEmail(email);
+
+        String currentUsername = userToUpdate.getUsername();
+        String currentEmail = userToUpdate.getEmail();
+
+        // Collect errors
+        if (!currentUsername.equalsIgnoreCase(username)) {
+            if (registerFormDTO.getUsername().isEmpty()) {
+                errors.rejectValue("username", "username.isEmpty", "Username is required.");
+            } else if (existingUsername != null) {
+                errors.rejectValue("username", "username.alreadyexists", "A user with that username already exists.");
+            }
+        }
+
+        if (!currentEmail.equalsIgnoreCase(email)) {
+            if (registerFormDTO.getEmail().isEmpty()) {
+                errors.rejectValue("email", "email.isEmpty", "Email is required.");
+            } else if (existingEmail != null) {
+                errors.rejectValue("email", "email.alreadyexists", "A user with that email already exists.");
+            }
+        }
+
+        if (registerFormDTO.getVerifyEmail().isEmpty()) {
+            errors.rejectValue("verifyEmail", "verifyEmail.isEmpty", "Verify Email is required.");
+        } else if (!email.equals(verifyEmail)) {
+            errors.rejectValue("email", "emails.mismatch", "Emails do not match.");
+        }
+
+        if (registerFormDTO.getPassword().isEmpty()) {
+            errors.rejectValue("password", "password.isEmpty", "Password is required.");
+        } else if (registerFormDTO.getVerifyPassword().isEmpty()) {
+            errors.rejectValue("verifyPassword", "verifyPassword.isEmpty", "Verify Password is required.");
+        } else if (!password.equals(verifyPassword)) {
+            errors.rejectValue("password", "passwords.mismatch", "Passwords do not match.");
+        }
+
+        // If no errors, save updated User to database
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
+        } else {
+            userToUpdate.setUsername(username);
+            userToUpdate.setEmail(email);
+            final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            userToUpdate.setPwHash(encoder.encode(password));
+            //userToUpdate.setProfileImage(profileImage);
+
+            userRepository.save(userToUpdate);
+            return ResponseEntity.ok("User successfully updated!");
+        }
+    }
 }

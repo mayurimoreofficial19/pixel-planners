@@ -7,7 +7,7 @@ public class RegisterFormDTO extends LoginFormDTO {
 
     private String verifyEmail;
 
-    private Integer profileImage;
+    //private Integer profileImage;
 
     public String getVerifyPassword() {
         return verifyPassword;
@@ -25,11 +25,11 @@ public class RegisterFormDTO extends LoginFormDTO {
         this.verifyEmail = verifyEmail;
     }
 
-    public Integer getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(Integer profileImage) {
-        this.profileImage = profileImage;
-    }
+//    public Integer getProfileImage() {
+//        return profileImage;
+//    }
+//
+//    public void setProfileImage(Integer profileImage) {
+//        this.profileImage = profileImage;
+//    }
 }
