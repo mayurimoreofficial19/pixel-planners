@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080/api/user";
 
+//retrieve all users from the database
 export const fetchUsers = async () => {
   try {
     const response = await axios.get(`${API_URL}/all`);
@@ -46,7 +47,7 @@ export const registerUser = async (username, email, verifyEmail, password, verif
   };
 
   try {
-    const response = await axios.post(`${API_URL}/registration`, userData, {
+    const response = await axios.post(`${API_URL}/register`, userData, {
       headers: { 'Content-Type': 'application/json' },
       withCredentials: true
     });

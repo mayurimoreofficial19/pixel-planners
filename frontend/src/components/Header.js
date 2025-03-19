@@ -9,7 +9,7 @@ const Header = () => {
               <Link to="/">Event Vista</Link>
             </div>
       <nav className="nav-links">
-        <span class="bold">ADMIN PORTAL</span> | &nbsp;
+        <span className="bold">ADMIN PORTAL</span> | &nbsp;
         <Link to="/login">Login</Link>
         <Link to="/register">Register</Link>
       </nav>
