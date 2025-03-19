@@ -21,7 +21,7 @@ public class RegisterFormDTO extends LoginFormDTO {
         return verifyEmailAddress;
     }
 
-    public void setVerifyEmail(String verifyEmail) {
+    public void setVerifyEmailAddress(String verifyEmailAddress) {
         this.verifyEmailAddress = verifyEmailAddress;
     }
 

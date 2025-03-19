@@ -42,7 +42,7 @@ public class LoginFormDTO {
         return emailAddress;
     }
 
-    public void setEmail(String email) {
+    public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
 }

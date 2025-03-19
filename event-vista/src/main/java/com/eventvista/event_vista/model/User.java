@@ -57,7 +57,7 @@ public class User extends AbstractEntity {
         this.username = username;
     }
 
-    public String getEmail() {
+    public String getEmailAddress() {
         return emailAddress;
     }
 
