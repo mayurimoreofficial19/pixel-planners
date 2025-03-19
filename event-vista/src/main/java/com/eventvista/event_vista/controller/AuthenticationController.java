@@ -60,6 +60,7 @@ public class AuthenticationController {
         return (List<User>) userRepository.findAll();
     }
 
+    //emailAddress
     //    Registration From authentication chapter unit 2, with JSON RequestBody
     @PostMapping("/register")
     public ResponseEntity<?> processRegistrationForm(@RequestBody @Valid RegisterFormDTO registerFormDTO,
