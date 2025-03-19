@@ -18,7 +18,7 @@ public class Client extends AbstractEntity {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Please provide a valid email address")
-    private String email;
+    private String emailAddress;
 
     @NotBlank(message ="Field must have valid client phone number entered")
     @Embedded
@@ -32,9 +32,9 @@ public class Client extends AbstractEntity {
     public Client() {
     }
 
-    public Client(String name, String email, PhoneNumber phoneNumber, String notes) {
+    public Client(String name, String emailAddress, PhoneNumber phoneNumber, String notes) {
         this.name = name;
-        this.email = email;
+        this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
         this.notes = notes;
     }
@@ -48,11 +48,11 @@ public class Client extends AbstractEntity {
     }
 
     public String getEmail() {
-        return email;
+        return emailAddress;
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.emailAddress = emailAddress;
     }
 
     public PhoneNumber getPhoneNumber() {

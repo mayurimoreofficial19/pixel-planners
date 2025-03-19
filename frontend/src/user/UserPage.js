@@ -9,7 +9,7 @@ const UserPage = () => {
   const { currentUser, isAuthenticated } = useAuth();
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
+  const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const UserPage = () => {
     if (isAuthenticated) {
       setUser(currentUser);
       setUsername(currentUser.username);
-      setEmail(currentUser.email);
+      setEmailAddress(currentUser.emailAddress);
     }
   }, [isAuthenticated, currentUser]);
 
@@ -73,8 +73,8 @@ const UserPage = () => {
             <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
           </div>
           <div>
-            <label>Email:</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <label>Email Address:</label>
+            <input type="email" value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)} />
           </div>
           <div>
           <label>Password:</label>

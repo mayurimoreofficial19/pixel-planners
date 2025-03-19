@@ -70,13 +70,13 @@ public class AuthenticationController {
         }
 
         String username = registerFormDTO.getUsername();
-        String email = registerFormDTO.getEmail();
-        String verifyEmail = registerFormDTO.getVerifyEmail();
+        String emailAddress = registerFormDTO.getEmailAddress();
+        String verifyEmailAddress = registerFormDTO.getVerifyEmailAddress();
         String password = registerFormDTO.getPassword();
         String verifyPassword = registerFormDTO.getVerifyPassword();
 
         User existingUsername = userRepository.findByUsername(username);
-        User existingEmail = userRepository.findByEmail(email);
+        User existingEmailAddress = userRepository.findByEmail(emailAddress);
 
         if (registerFormDTO.getUsername().isEmpty()) {
             errors.rejectValue("username", "username.isEmpty", "Username is required.");
@@ -84,15 +84,15 @@ public class AuthenticationController {
             errors.rejectValue("username", "username.alreadyexists", "A user with that username already exists.");
         }
 
-        if (registerFormDTO.getEmail().isEmpty()) {
+        if (registerFormDTO.getEmailAddress().isEmpty()) {
             errors.rejectValue("email", "email.isEmpty", "Email is required.");
-        } else if (existingEmail != null) {
+        } else if (existingEmailAddress != null) {
             errors.rejectValue("email", "email.alreadyexists", "A user with that email already exists.");
         }
 
-        if (registerFormDTO.getVerifyEmail().isEmpty()) {
+        if (registerFormDTO.getVerifyEmailAddress().isEmpty()) {
             errors.rejectValue("verifyEmail", "verifyEmail.isEmpty", "Verify Email is required.");
-        } else if (!email.equals(verifyEmail)) {
+        } else if (!emailAddress.equals(verifyEmailAddress)) {
             errors.rejectValue("email", "emails.mismatch", "Emails do not match.");
         }
 
@@ -107,7 +107,7 @@ public class AuthenticationController {
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().body(errors.getAllErrors());
         } else {
-            User newUser = new User(username, email, password);
+            User newUser = new User(username, emailAddress, password);
             setUserInSession(request.getSession(), newUser);
             userRepository.save(newUser);
 
@@ -126,10 +126,10 @@ public class AuthenticationController {
 
         String username = loginFormDTO.getUsername();
         String password = loginFormDTO.getPassword();
-        String email = loginFormDTO.getEmail();
+        String emailAddress = loginFormDTO.getEmailAddress();
 
         User currentUsername = userRepository.findByUsername(username);
-        User currentEmail = userRepository.findByEmail(email);
+        User currentEmailAddress = userRepository.findByEmail(emailAddress);
 
         if (username.contains("@") && username.contains(".com")) {
             errors.rejectValue("username", "username.invalid", "The username is not your email.");
@@ -139,7 +139,7 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body(errors.getAllErrors());
         }
 
-        if (currentEmail == null) {
+        if (currentEmailAddress == null) {
             errors.rejectValue("email", "email.invalid", "The given email does not exist.");
         }
 
@@ -210,17 +210,17 @@ public class AuthenticationController {
 
         // Updates User data only for those that were changed
         String username = registerFormDTO.getUsername();
-        String email = registerFormDTO.getEmail();
-        String verifyEmail = registerFormDTO.getVerifyEmail();
+        String emailAddress = registerFormDTO.getEmailAddress();
+        String verifyEmailAddress = registerFormDTO.getVerifyEmailAddress();
         String password = registerFormDTO.getPassword();
         String verifyPassword = registerFormDTO.getVerifyPassword();
         //Integer profileImage = registerFormDTO.getProfileImage();
 
         User existingUsername = userRepository.findByUsername(username);
-        User existingEmail = userRepository.findByEmail(email);
+        User existingEmailAddress = userRepository.findByEmail(emailAddress);
 
         String currentUsername = userToUpdate.getUsername();
-        String currentEmail = userToUpdate.getEmail();
+        String currentEmailAddress = userToUpdate.getEmail();
 
         // Collect errors
         if (!currentUsername.equalsIgnoreCase(username)) {
@@ -231,17 +231,17 @@ public class AuthenticationController {
             }
         }
 
-        if (!currentEmail.equalsIgnoreCase(email)) {
-            if (registerFormDTO.getEmail().isEmpty()) {
+        if (!currentEmailAddress.equalsIgnoreCase(emailAddress)) {
+            if (registerFormDTO.getEmailAddress().isEmpty()) {
                 errors.rejectValue("email", "email.isEmpty", "Email is required.");
-            } else if (existingEmail != null) {
+            } else if (existingEmailAddress != null) {
                 errors.rejectValue("email", "email.alreadyexists", "A user with that email already exists.");
             }
         }
 
-        if (registerFormDTO.getVerifyEmail().isEmpty()) {
+        if (registerFormDTO.getVerifyEmailAddress().isEmpty()) {
             errors.rejectValue("verifyEmail", "verifyEmail.isEmpty", "Verify Email is required.");
-        } else if (!email.equals(verifyEmail)) {
+        } else if (!emailAddress.equals(verifyEmailAddress)) {
             errors.rejectValue("email", "emails.mismatch", "Emails do not match.");
         }
 
@@ -258,7 +258,7 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body(errors.getAllErrors());
         } else {
             userToUpdate.setUsername(username);
-            userToUpdate.setEmail(email);
+            userToUpdate.setEmail(emailAddress);
             final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             userToUpdate.setPwHash(encoder.encode(password));
             //userToUpdate.setProfileImage(profileImage);

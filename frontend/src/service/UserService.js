@@ -37,11 +37,11 @@ export const getUserByUsername = async (username) => {
 };
 
 
-export const registerUser = async (username, email, verifyEmail, password, verifyPassword) => {
+export const registerUser = async (username, emailAddress, verifyEmailAddress, password, verifyPassword) => {
   const userData = {
     username,
-    email,
-    verifyEmail,
+    emailAddress,
+    verifyEmailAddress,
     password,
     verifyPassword
   };
@@ -67,11 +67,11 @@ export const registerUser = async (username, email, verifyEmail, password, verif
   }
 };
 
-export const updateUser = async (username, email, verifyEmail, password, verifyPassword) => {
+export const updateUser = async (username, emailAddress, verifyEmailAddress, password, verifyPassword) => {
   const userData = {
     username,
-    email,
-    verifyEmail,
+    emailAddress,
+    verifyEmailAddress,
     password,
     verifyPassword,
   };

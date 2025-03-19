@@ -10,8 +10,8 @@ const RegisterPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [verifyPassword, setVerifyPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [verifyEmail, setVerifyEmail] = useState('');
+  const [emailAddress, setEmailAddress] = useState('');
+  const [verifyEmailAddress, setVerifyEmailAddress] = useState('');
   const [error, setError] = useState('');
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const goodValues = username && password && verifyPassword && email && verifyEmail;
+    const goodValues = username && password && verifyPassword && emailAddress && verifyEmailAddress;
     if (!goodValues) {
         setError('Please fill out all fields');
         alert('Please fill out all fields');
@@ -48,7 +48,7 @@ const RegisterPage = () => {
       alert('Passwords do not match');
       return;
     }
-    if (email !== verifyEmail) {
+    if (emailAddress !== verifyEmailAddress) {
       setError('Emails do not match');
       alert('Emails do not match');
       return;
@@ -71,8 +71,8 @@ const RegisterPage = () => {
           return;
         }
 
-        const isEmailTaken = users.some(user => user.email === email);
-        if (isEmailTaken) {
+        const isEmailAddressTaken = users.some(user => user.emailAddress === email);
+        if (isEmailAddressTaken) {
             setError('Email is already taken');
             alert('Email is already taken');
             return;
@@ -88,8 +88,8 @@ const RegisterPage = () => {
 
 
     try {
-    await register(username, email, password);
-        await registerUser(username, email, verifyEmail, password, verifyPassword);
+    await register(username, emailAddress, password);
+        await registerUser(username, emailAddress, verifyEmailAddress, password, verifyPassword);
         alert('Registration successful');
         navigate('/user'); // Redirect to login page after successful registration
     } catch (error) {
@@ -117,12 +117,12 @@ const RegisterPage = () => {
           <input type="password" value={verifyPassword} onChange={(e) => setVerifyPassword(e.target.value)} />
         </div>
         <div>
-          <label>Email:</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <label>Email Address:</label>
+          <input type="email" value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)} />
         </div>
         <div>
-          <label>Verify Email:</label>
-          <input type="email" value={verifyEmail} onChange={(e) => setVerifyEmail(e.target.value)} />
+          <label>Verify Email Address:</label>
+          <input type="email" value={verifyEmailAddress} onChange={(e) => setVerifyEmailAddress(e.target.value)} />
         </div>
         <button type="submit">Register</button>
         <div>{error}</div>

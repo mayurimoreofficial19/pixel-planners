@@ -31,9 +31,9 @@ export const AuthenticationProvider = ({ children }) => {
   }, []);
 
 
-  const handleLogin = async (username, email, password) => {
+  const handleLogin = async (username, emailAddress, password) => {
     try {
-      const user = await login(username, email, password);
+      const user = await login(username, emailAddress, password);
       setCurrentUser(user);
       setIsAuthenticated(true);
       console.error("Failed to login user!");

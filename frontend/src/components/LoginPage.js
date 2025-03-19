@@ -8,7 +8,7 @@ const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [email, setEmail] = useState('');
+  const [emailAddress, setEmailAddress] = useState('');
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -20,7 +20,7 @@ const LoginPage = () => {
         e.preventDefault();
 
         try {
-            await login(username, email, password);
+            await login(username, emailAddress, password);
             window.location.reload(); // Reload to update context
             setError('');
             alert(`${username} has logged in!`);
@@ -42,7 +42,7 @@ const LoginPage = () => {
         </div>
                 <div>
                   <label>Email:</label>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <input type="email" value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)} />
                 </div>
         <div>
           <label>Password:</label>
