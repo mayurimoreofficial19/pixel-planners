@@ -1,6 +1,5 @@
 package com.eventvista.event_vista.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
@@ -17,7 +16,7 @@ public class User extends AbstractEntity {
 
     @NotNull
     @Email
-    private String email;
+    private String emailAddress;
 
     @NotNull
     private String pwHash;
@@ -35,10 +34,10 @@ public class User extends AbstractEntity {
 //        this.pwHash = encoder.encode(password);
 //    }
 
-    public User(String username, String pwHash, String email) {
+    public User(String username, String pwHash, String emailAddress) {
         this.username = username;
         this.pwHash = encoder.encode(pwHash);
-        this.email = email;
+        this.emailAddress = emailAddress;
     }
 
     public String getPwHash() {
@@ -57,12 +56,12 @@ public class User extends AbstractEntity {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     // Instance method to use the bcrypt multi-step matcher (.equals is not enough)

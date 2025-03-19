@@ -20,7 +20,7 @@ public class LoginFormDTO {
     @NotNull(message = "Email is required")
     @NotBlank(message = "Email is required")
     @Email
-    private String email;
+    private String emailAddress;
 
     public String getUsername() {
         return username;
@@ -38,11 +38,11 @@ public class LoginFormDTO {
         this.password = password;
     }
 
-    public String getEmail() {
-        return email;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 }
