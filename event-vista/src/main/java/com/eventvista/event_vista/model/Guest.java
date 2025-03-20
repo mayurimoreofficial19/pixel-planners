@@ -39,11 +39,11 @@ public class Guest extends AbstractEntity{
         this.name = name;
     }
 
-    public @Email String getEmail() {
+    public @Email String getEmailAddress() {
         return emailAddress;
     }
 
-    public void setEmail(@Email String email) {
+    public void setEmailAddress(@Email String emailAddress) {
         this.emailAddress = emailAddress;
     }
 

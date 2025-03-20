@@ -260,7 +260,7 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body(errors.getAllErrors());
         } else {
             userToUpdate.setUsername(username);
-            userToUpdate.setEmail(emailAddress);
+            userToUpdate.setEmailAddress(emailAddress);
             final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             userToUpdate.setPwHash(encoder.encode(password));
             //userToUpdate.setProfileImage(profileImage);

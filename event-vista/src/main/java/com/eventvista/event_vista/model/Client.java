@@ -47,11 +47,11 @@ public class Client extends AbstractEntity {
         this.name = name;
     }
 
-    public String getEmail() {
+    public String getEmailAddress() {
         return emailAddress;
     }
 
-    public void setEmail(String email) {
+    public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
 

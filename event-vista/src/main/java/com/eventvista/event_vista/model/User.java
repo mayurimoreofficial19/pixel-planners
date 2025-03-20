@@ -61,7 +61,7 @@ public class User extends AbstractEntity {
         return emailAddress;
     }
 
-    public void setEmail(String email) {
+    public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
 
