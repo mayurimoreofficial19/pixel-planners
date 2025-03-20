@@ -5,11 +5,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class Vendor extends AbstractEntity{
+public class Vendor extends AbstractEntity implements Serializable {
 
     @NotBlank(message = "Field must have valid vendor name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
@@ -20,7 +21,7 @@ public class Vendor extends AbstractEntity{
     private String location;
 
     @ManyToMany
-    private Set<Service> services = new HashSet<>();
+    private Set<Skill> skills = new HashSet<>();
 
     @NotBlank(message ="Field must have valid vendor phone number entered")
     @Embedded
@@ -40,10 +41,10 @@ public class Vendor extends AbstractEntity{
     public Vendor() {
     }
 
-    public Vendor(String name, String location, Set<Service> services, PhoneNumber phoneNumber, String emailAddress, String notes) {
+    public Vendor(String name, String location, Set<Skill> skills, PhoneNumber phoneNumber, String emailAddress, String notes) {
         this.name = name;
         this.location = location;
-        this.services = services;
+        this.skills = skills;
         this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
         this.notes = notes;
@@ -67,12 +68,12 @@ public class Vendor extends AbstractEntity{
         this.location = location;
     }
 
-    public Set<Service> getServices() {
-        return services;
+    public Set<Skill> getSkills() {
+        return skills;
     }
 
-    public void setServices(Set<Service> services) {
-        this.services = services;
+    public void setSkills(Set<Skill> skills) {
+        this.skills = skills;
     }
 
     public PhoneNumber getPhoneNumber() {

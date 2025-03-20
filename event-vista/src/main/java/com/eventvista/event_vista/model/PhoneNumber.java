@@ -2,8 +2,10 @@ package com.eventvista.event_vista.model;
 
 import jakarta.persistence.Embeddable;
 
+import java.io.Serializable;
+
 @Embeddable
-public class PhoneNumber {
+public class PhoneNumber implements Serializable {
 
     private String phoneNumber;
     private boolean isValid;

@@ -1,28 +1,30 @@
 package com.eventvista.event_vista.model;
 
 import jakarta.persistence.Entity;
+
 import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class Service extends AbstractEntity {
+public class Skill extends AbstractEntity implements Serializable {
 
     @NotBlank(message = "Field must have valid service or skill name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String name;
 
-    @ManyToMany(mappedBy = "services")
+    @ManyToMany(mappedBy = "skills")
     private Set<Vendor> vendors = new HashSet<>();
 
     // Constructor
-    public Service() {
+    public Skill() {
     }
 
-    public Service(String name) {
+    public Skill(String name) {
         this.name = name;
     }
 
