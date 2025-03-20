@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class SkillService {
@@ -22,6 +21,10 @@ public class SkillService {
     }
 
     // Query methods
+    public Skill addSkill(Skill skill) {
+        return skillRepository.save(skill);
+    }
+
     public Skill findSkillById(Integer id) {
         return skillRepository.findSkillById(id).orElseThrow(() -> new SkillNotFoundException("Skill by id " + id + " was not found."));
     }
@@ -33,7 +36,6 @@ public class SkillService {
     public Skill updateSkill(Skill skill) {
         return skillRepository.save(skill);
     }
-
 
     public void deleteSkill(Integer id) {
         skillRepository.deleteSkillById(id);

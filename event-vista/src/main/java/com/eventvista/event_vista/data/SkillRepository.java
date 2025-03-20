@@ -8,6 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface SkillRepository extends JpaRepository<Skill, Integer> {
-    Optional<Skill> findSkillById(Integer id);
+    void deleteSkillById(Integer id);
 
+    Optional<Skill> findSkillById(Integer id);
 }
