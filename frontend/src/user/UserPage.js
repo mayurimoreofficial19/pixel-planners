@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthenticationContext';
 import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
-import { deleteUser, updateUser } from '../service/UserService';
+import { deleteUser } from '../service/UserService';
 import UpdateUserPage from './UpdateUserPage';
 
 const UserPage = () => {
@@ -11,7 +11,7 @@ const UserPage = () => {
   const [username, setUsername] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+    const [error, setError] = useState('');
   const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
 
@@ -48,6 +48,7 @@ const UserPage = () => {
     try {
       await deleteUser(user.id);
       alert(`${user.username} has been deleted!`);
+      navigate ('/register');
       window.location.href = "/";
     } catch (error) {
       console.error('Failed to delete user!', error);

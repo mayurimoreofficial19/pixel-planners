@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { login } from '../service/AuthService'; // Import the login function
-import axios from 'axios';
 import Header from './Header';
 //import 'index.css';
 
@@ -10,7 +9,8 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
 
-  const [showPassword, setShowPassword] = useState(false);
+//I might use later
+ //const [showPassword, setShowPassword] = useState(false);
 
       useEffect(() => {
           setError('');

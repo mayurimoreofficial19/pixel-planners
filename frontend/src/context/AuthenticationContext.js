@@ -18,7 +18,7 @@ export const AuthenticationProvider = ({ children }) => {
         const user = await getCurrentUser();
         setCurrentUser(user);
         setIsAuthenticated(true);
-        console.log('Current User: ' + currentUser.username);
+        //console.log('Current User: ' + currentUser.username);
       } catch (error) {
         setCurrentUser(null);
         setIsAuthenticated(false);

@@ -71,7 +71,7 @@ const RegisterPage = () => {
           return;
         }
 
-        const isEmailAddressTaken = users.some(user => user.emailAddress === email);
+        const isEmailAddressTaken = users.some(user => user.emailAddress === emailAddress);
         if (isEmailAddressTaken) {
             setError('Email is already taken');
             alert('Email is already taken');
