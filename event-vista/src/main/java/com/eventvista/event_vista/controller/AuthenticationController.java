@@ -87,15 +87,15 @@ public class AuthenticationController {
         }
 
         if (registerFormDTO.getEmailAddress().isEmpty()) {
-            errors.rejectValue("emailAddress", "emailAddress.isEmpty", "Email is required.");
+            errors.rejectValue("emailAddress", "emailAddress.isEmpty", "Email Address is required.");
         } else if (existingEmailAddress != null) {
-            errors.rejectValue("existingEmailAddress", "emailAddress.alreadyexists", "A user with that email already exists.");
+            errors.rejectValue("EmailAddress", "emailAddress.alreadyexists", "A user with that email already exists.");
         }
 
         if (registerFormDTO.getVerifyEmailAddress().isEmpty()) {
             errors.rejectValue("verifyEmailAddress", "verifyEmailAddress.isEmpty", "Verify Email is required.");
         } else if (!emailAddress.equals(verifyEmailAddress)) {
-            errors.rejectValue("verifyEmailAddress", "emails.mismatch", "Emails do not match.");
+            errors.rejectValue("emailAddress", "emailAddresses.mismatch", "Email Addresses do not match.");
         }
 
         if (registerFormDTO.getPassword().isEmpty()) {
@@ -142,7 +142,7 @@ public class AuthenticationController {
         }
 
         if (currentEmailAddress == null) {
-            errors.rejectValue("emailAddress", "emailAddress.invalid", "The given email does not exist.");
+            errors.rejectValue("emailAddress", "emailAddress.invalid", "The given email address does not exist.");
         }
 
         if (!currentUsername.isMatchingPassword(password)) {
@@ -235,16 +235,16 @@ public class AuthenticationController {
 
         if (!currentEmailAddress.equalsIgnoreCase(emailAddress)) {
             if (registerFormDTO.getEmailAddress().isEmpty()) {
-                errors.rejectValue("emailAddress", "emailAddress.isEmpty", "Email is required.");
+                errors.rejectValue("emailAddress", "emailAddress.isEmpty", "Email Address is required.");
             } else if (existingEmailAddress != null) {
-                errors.rejectValue("emailAddress", "emailAddress.alreadyexists", "A user with that email already exists.");
+                errors.rejectValue("emailAddress", "emailAddress.alreadyexists", "A user with that email address already exists.");
             }
         }
 
         if (registerFormDTO.getVerifyEmailAddress().isEmpty()) {
-            errors.rejectValue("verifyEmailAddress", "verifyEmailAddress.isEmpty", "Verify Email is required.");
+            errors.rejectValue("verifyEmailAddress", "verifyEmailAddress.isEmpty", "Verify Email Address is required.");
         } else if (!emailAddress.equals(verifyEmailAddress)) {
-            errors.rejectValue("emailAddress", "emailsAddress.mismatch", "Emails do not match.");
+            errors.rejectValue("emailAddress", "emailsAddress.mismatch", "Email Addresses do not match.");
         }
 
         if (registerFormDTO.getPassword().isEmpty()) {
