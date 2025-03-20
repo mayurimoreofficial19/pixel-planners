@@ -2,9 +2,8 @@ package com.eventvista.event_vista.controller;
 
 import com.eventvista.event_vista.model.Guest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import service.GuestService;
+import com.eventvista.event_vista.service.GuestService;
 
 import java.util.List;
 
