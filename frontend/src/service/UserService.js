@@ -110,3 +110,23 @@ export const deleteUser = async (userId) => {
     throw error;
   }
 };
+
+export const resetPassword = async (username, newPassword, verifyPassword) => {
+  const resetData = {
+    username,
+    newPassword,
+    verifyPassword
+  };
+
+  try {
+    const response = await axios.post(`${API_URL}/reset-password`, resetData, {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
+    });
+    console.log("Password Reset Response: ", response.data, response.status);
+    return response.data;
+  } catch (error) {
+    console.error("Error resetting password!", error);
+    throw error;
+  }
+};

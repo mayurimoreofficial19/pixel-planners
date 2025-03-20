@@ -4,6 +4,7 @@ import com.eventvista.event_vista.data.UserRepository;
 import com.eventvista.event_vista.model.User;
 import com.eventvista.event_vista.model.dto.LoginFormDTO;
 import com.eventvista.event_vista.model.dto.RegisterFormDTO;
+import com.eventvista.event_vista.model.dto.ResetPasswordDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -266,6 +267,35 @@ public class AuthenticationController {
 
             userRepository.save(userToUpdate);
             return ResponseEntity.ok("User successfully updated!");
+        }
+    }
+
+    // AuthenticationController.java
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid ResetPasswordDTO resetPasswordDTO, Errors errors) {
+        String username = resetPasswordDTO.getUsername();
+        String newPassword = resetPasswordDTO.getNewPassword();
+        String verifyPassword = resetPasswordDTO.getVerifyPassword();
+
+        User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            errors.rejectValue("username", "username.notfound", "User not found.");
+        }
+
+        if (newPassword.isEmpty()) {
+            errors.rejectValue("newPassword", "newPassword.isEmpty", "New password is required.");
+        } else if (!newPassword.equals(verifyPassword)) {
+            errors.rejectValue("newPassword", "passwords.mismatch", "Passwords do not match.");
+        }
+
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
+        } else {
+            final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            user.setPwHash(encoder.encode(newPassword));
+            userRepository.save(user);
+            return ResponseEntity.ok("Password reset successfully!");
         }
     }
 }
