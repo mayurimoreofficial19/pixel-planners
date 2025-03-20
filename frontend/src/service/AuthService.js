@@ -36,10 +36,10 @@ export const register = async (username, email, verifyEmail, password, verifyPas
         throw error;
     };
 }
-export const login = async (username, email, password) => {
+export const login = async (username, emailAddress, password) => {
     const userData = {
         username,
-        email,
+        emailAddress,
         password
     };
 

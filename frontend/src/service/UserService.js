@@ -37,11 +37,11 @@ export const getUserByUsername = async (username) => {
 };
 
 
-export const registerUser = async (username, email, verifyEmail, password, verifyPassword) => {
+export const registerUser = async (username, emailAddress, verifyEmailAddress, password, verifyPassword) => {
   const userData = {
     username,
-    email,
-    verifyEmail,
+    emailAddress,
+    verifyEmailAddress,
     password,
     verifyPassword
   };
@@ -67,11 +67,11 @@ export const registerUser = async (username, email, verifyEmail, password, verif
   }
 };
 
-export const updateUser = async (username, email, verifyEmail, password, verifyPassword) => {
+export const updateUser = async (username, emailAddress, verifyEmailAddress, password, verifyPassword) => {
   const userData = {
     username,
-    email,
-    verifyEmail,
+    emailAddress,
+    verifyEmailAddress,
     password,
     verifyPassword,
   };
@@ -107,6 +107,26 @@ export const deleteUser = async (userId) => {
     });
   } catch (error) {
     console.error("There was an error deleting the User!", error);
+    throw error;
+  }
+};
+
+export const resetPassword = async (username, newPassword, verifyPassword) => {
+  const resetData = {
+    username,
+    newPassword,
+    verifyPassword
+  };
+
+  try {
+    const response = await axios.post(`${API_URL}/reset-password`, resetData, {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
+    });
+    console.log("Password Reset Response: ", response.data, response.status);
+    return response.data;
+  } catch (error) {
+    console.error("Error resetting password!", error);
     throw error;
   }
 };

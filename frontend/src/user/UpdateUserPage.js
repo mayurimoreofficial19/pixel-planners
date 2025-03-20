@@ -8,8 +8,8 @@ import { Link } from 'react-router-dom';
 const UpdateUserPage = () => {
     const { currentUser, isAuthenticated } = useAuth();
     const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [verifyEmail, setVerifyEmail] = useState('');
+    const [emailAddress, setEmailAddress] = useState('');
+    const [verifyEmailAddress, setVerifyEmailAddress] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [verifyPassword, setVerifyPassword] = useState('');
@@ -19,7 +19,7 @@ const UpdateUserPage = () => {
             e.preventDefault();
 
             try {
-                await updateUser(username, email, verifyEmail, password, verifyPassword);
+                await updateUser(username, emailAddress, verifyEmailAddress, password, verifyPassword);
                 window.location.reload(); // Reload to update context
                 //setError('');
                 alert(`${username} was successfully updated!`)
@@ -67,12 +67,12 @@ const UpdateUserPage = () => {
                        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
                    </div>
                    <div>
-                       <label>Email:</label>
-                       <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                       <label>Email Address:</label>
+                       <input type="email" value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)} />
                    </div>
                    <div>
-                       <label>Verify Email:</label>
-                       <input type="email" value={verifyEmail} onChange={(e) => setVerifyEmail(e.target.value)} />
+                       <label>Verify Email Address:</label>
+                       <input type="email" value={verifyEmailAddress} onChange={(e) => setVerifyEmailAddress(e.target.value)} />
                    </div>
                    <div>
                        <label>Password:</label>

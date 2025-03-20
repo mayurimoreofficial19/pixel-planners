@@ -2,16 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthenticationContext';
 import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
-import { deleteUser, updateUser } from '../service/UserService';
+import { deleteUser } from '../service/UserService';
 import UpdateUserPage from './UpdateUserPage';
 
 const UserPage = () => {
   const { currentUser, isAuthenticated } = useAuth();
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
+  const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+    const [error, setError] = useState('');
   const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
 
@@ -19,7 +19,7 @@ const UserPage = () => {
     if (isAuthenticated) {
       setUser(currentUser);
       setUsername(currentUser.username);
-      setEmail(currentUser.email);
+      setEmailAddress(currentUser.emailAddress);
     }
   }, [isAuthenticated, currentUser]);
 
@@ -48,6 +48,7 @@ const UserPage = () => {
     try {
       await deleteUser(user.id);
       alert(`${user.username} has been deleted!`);
+      navigate ('/register');
       window.location.href = "/";
     } catch (error) {
       console.error('Failed to delete user!', error);
@@ -73,8 +74,8 @@ const UserPage = () => {
             <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
           </div>
           <div>
-            <label>Email:</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <label>Email Address:</label>
+            <input type="email" value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)} />
           </div>
           <div>
           <label>Password:</label>
