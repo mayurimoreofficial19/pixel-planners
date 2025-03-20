@@ -2,7 +2,6 @@ package com.eventvista.event_vista.controller;
 
 import com.eventvista.event_vista.model.Guest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import service.GuestService;
 
@@ -25,10 +24,10 @@ public class GuestController {
         return guestService.getAllGuests();
     }
 
-    @PutMapping("/update-rsvp")
-    public String updateRsvp(@RequestParam String email, @RequestParam boolean rsvp) {
-        return guestService.updateRsvp(email, rsvp) ? "RSVP updated successfully" : "Guest not found";
-    }
+//    @PutMapping("/update-rsvp")
+//    public String updateRsvp(@RequestParam String email, @RequestParam boolean rsvp) {
+//        return guestService.updateRsvp(email, rsvp) ? "RSVP updated successfully" : "Guest not found";
+//    }
 
     @DeleteMapping("/remove")
     public String removeGuest(@RequestParam String email) {
