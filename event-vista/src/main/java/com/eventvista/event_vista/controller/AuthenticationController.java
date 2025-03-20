@@ -89,13 +89,13 @@ public class AuthenticationController {
         if (registerFormDTO.getEmailAddress().isEmpty()) {
             errors.rejectValue("emailAddress", "emailAddress.isEmpty", "Email is required.");
         } else if (existingEmailAddress != null) {
-            errors.rejectValue("emailAddress", "emailAddress.alreadyexists", "A user with that email already exists.");
+            errors.rejectValue("existingEmailAddress", "emailAddress.alreadyexists", "A user with that email already exists.");
         }
 
         if (registerFormDTO.getVerifyEmailAddress().isEmpty()) {
             errors.rejectValue("verifyEmailAddress", "verifyEmailAddress.isEmpty", "Verify Email is required.");
         } else if (!emailAddress.equals(verifyEmailAddress)) {
-            errors.rejectValue("emailAddress", "emails.mismatch", "Emails do not match.");
+            errors.rejectValue("verifyEmailAddress", "emails.mismatch", "Emails do not match.");
         }
 
         if (registerFormDTO.getPassword().isEmpty()) {
