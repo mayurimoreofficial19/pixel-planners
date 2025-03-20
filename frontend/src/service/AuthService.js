@@ -2,12 +2,14 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:8080/api/user';
 
-export const register = async (username, email, password) => {
+export const register = async (username, email, verifyEmail, password, verifyPassword ) => {
 
     const userData = {
         username,
         email,
-        password
+        password,
+        verifyEmail,
+        verifyPassword
     };
 
     try {

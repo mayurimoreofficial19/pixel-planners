@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { register } from '../service/AuthService'; // Import the register function from AuthService
 import { registerUser, fetchUsers } from '../service/UserService'; // Import the createUser and fetchUsers functions from UserService
-import axios from 'axios';
+//import axios from 'axios';
 import Header from './Header';
+import { Link, useNavigate } from 'react-router-dom';
+//import { useAuth } from '../context/AuthenticationContext';
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
@@ -12,6 +14,9 @@ const RegisterPage = () => {
   const [verifyEmail, setVerifyEmail] = useState('');
   const [error, setError] = useState('');
   const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
+
+  //const {user, isAuthenticated} = useAuth();
 
   useEffect(() => {
     const fetchAllUsers = async () => {
@@ -26,8 +31,17 @@ const RegisterPage = () => {
     fetchAllUsers();
   }, []);
 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const goodValues = username && password && verifyPassword && email && verifyEmail;
+    if (!goodValues) {
+        setError('Please fill out all fields');
+        alert('Please fill out all fields');
+        return;
+    }
 
     if (password !== verifyPassword) {
       setError('Passwords do not match');
@@ -40,41 +54,50 @@ const RegisterPage = () => {
       return;
     }
 
-    const isUsernameTaken = users.some(user => user.username === username);
-    const isEmailTaken = users.some(user => user.email === email);
+    //Password must be between 3 and 30 characters
 
-    if (isUsernameTaken) {
-      setError('Username is already taken');
-      alert('Username is already taken');
+      if (password.length < 3 || password.length > 30) {
+      alert('Passwords must be between 3 and 30 characters!');
+
       return;
-    }
-
-    if (isEmailTaken) {
-      setError('Email is already taken');
-      alert('Email is already taken');
-      return;
-    }
-
-              //Password must be between 5 and 30 characters
-    if (password) {
-      if (password.length < 5 || password.length > 30) {
-      alert('Passwords must be between 5 and 30 characters!');
-      e.preventDefault();
-      return false;
       }
-    }
+
+
+        //checking if username or email is already taken
+        const isUsernameTaken = users.some(user => user.username === username);
+        if (isUsernameTaken) {
+          setError('Username is already taken');
+          alert('Username is already taken');
+          return;
+        }
+
+        const isEmailTaken = users.some(user => user.email === email);
+        if (isEmailTaken) {
+            setError('Email is already taken');
+            alert('Email is already taken');
+            return;
+        }
+
+//    if (username !== '' && email !== '' && password !== '' && verifyPassword !== '' && verifyEmail !== '' && goodValues) {
+//    setError('');
+//    registerUser(username, email, verifyEmail, password, verifyPassword);
+//      alert('Registration successful');
+//      navigate('/login'); // Redirect to login page after successful registration
+//    } else {
+//    setError ("User is not registered. Please try again.")}
+
 
     try {
-      await register(username, email, password); // Use the register function from AuthService
-      await registerUser(username, email); // Use the createUser function from UserService
-      alert('Registration successful');
-      // Handle successful registration
+    await register(username, email, password);
+        await registerUser(username, email, verifyEmail, password, verifyPassword);
+        alert('Registration successful');
+        navigate('/user'); // Redirect to login page after successful registration
     } catch (error) {
       setError('Registration failed');
       alert('Registration failed');
-      // Handle registration error
     }
   };
+
 
   return (
     <div>
@@ -102,8 +125,14 @@ const RegisterPage = () => {
           <input type="email" value={verifyEmail} onChange={(e) => setVerifyEmail(e.target.value)} />
         </div>
         <button type="submit">Register</button>
+        <div>{error}</div>
+        <p>
+          Already have an account? <Link to="/login">Login</Link>
+        </
+        p>
       </form>
     </div>
+
   );
 };
 
