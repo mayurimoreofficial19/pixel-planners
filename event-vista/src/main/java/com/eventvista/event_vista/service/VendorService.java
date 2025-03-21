@@ -29,6 +29,10 @@ public class VendorService {
         return vendorRepository.findVendorById(id).orElseThrow(() -> new VendorNotFoundException("Vendor by id " + id + " was not found."));
     }
 
+    public Vendor findVendorByEmailAddress(String emailAddress) {
+        return vendorRepository.findVendorByEmailAddress(emailAddress).orElseThrow(() -> new VendorNotFoundException("Vendor by email address " + emailAddress + " was not found."));
+    }
+
     public List<Vendor> findAllVendors() {
         return vendorRepository.findAll();
     }
@@ -40,5 +44,6 @@ public class VendorService {
     public void deleteVendor(Integer id) {
         vendorRepository.deleteVendorById(id);
     }
+
 
 }

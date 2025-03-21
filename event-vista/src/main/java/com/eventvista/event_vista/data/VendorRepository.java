@@ -11,4 +11,6 @@ public interface VendorRepository extends JpaRepository<Vendor, Integer> {
     void deleteVendorById(Integer id);
 
     Optional<Vendor> findVendorById(Integer id);
+
+    Optional<Vendor> findVendorByEmailAddress(String emailAddress);
 }
