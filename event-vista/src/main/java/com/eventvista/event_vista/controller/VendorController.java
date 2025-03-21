@@ -30,6 +30,11 @@ public class VendorController {
         return new ResponseEntity<>(vendor, HttpStatus.OK);
     }
 
+    @GetMapping("/find/{emailAddress}")
+    public ResponseEntity<Vendor> getVendorByEmailAddress (@PathVariable("emailAddress") String emailAddress) {
+        Vendor vendor = vendorService.findVendorByEmailAddress(emailAddress);
+        return new ResponseEntity<>(vendor, HttpStatus.OK);
+    }
 
     @PostMapping("/add")
     public ResponseEntity<Vendor> addVendor (@RequestBody Vendor vendor) {

@@ -1,4 +1,4 @@
-package com.eventvista.event_vista.data;
-
-public interface ClientRepository {
-}
+//package com.eventvista.event_vista.data;
+//
+//public interface ClientRepository {
+//}
