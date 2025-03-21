@@ -62,6 +62,9 @@ public class Guest extends AbstractEntity{
     public void setGuestList(GuestList guestList) {
         this.guestList = guestList;
     }
+
+    public void setRsvp(boolean rsvpStatus) {
+    }
 }
 
 

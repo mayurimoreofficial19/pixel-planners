@@ -22,16 +22,16 @@ public class GuestService {
         return (List<Guest>) guestRepository.findAll();
     }
 
-//    public boolean updateRsvp(String email, boolean rsvpStatus) {
-//        Optional<Guest> guestOpt = guestRepository.findByEmail(email);
-//        if (guestOpt.isPresent()) {
-//            Guest guest = guestOpt.get();
-//            guest.setRsvpStatus(rsvpStatus);
-//            guestRepository.save(guest);
-//            return true;
-//        }
-//        return false;
-//    }
+    public boolean updateRsvp(String email, boolean rsvpStatus) {
+        Optional<Guest> guestOpt = guestRepository.findByEmail(email);
+        if (guestOpt.isPresent()) {
+            Guest guest = guestOpt.get();
+            guest.setRsvp(rsvpStatus);
+            guestRepository.save(guest);
+            return true;
+        }
+        return false;
+    }
 
     public boolean removeGuest(String email) {
         Optional<Guest> guestOpt = guestRepository.findByEmail(email);

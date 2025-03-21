@@ -24,10 +24,10 @@ public class GuestController {
         return guestService.getAllGuests();
     }
 
-//    @PutMapping("/update-rsvp")
-//    public String updateRsvp(@RequestParam String email, @RequestParam boolean rsvp) {
-//        return guestService.updateRsvp(email, rsvp) ? "RSVP updated successfully" : "Guest not found";
-//    }
+    @PutMapping("/update-rsvp")
+    public String updateRsvp(@RequestParam String email, @RequestParam boolean rsvp) {
+        return guestService.updateRsvp(email, rsvp) ? "RSVP updated successfully" : "Guest not found";
+    }
 
     @DeleteMapping("/remove")
     public String removeGuest(@RequestParam String email) {
