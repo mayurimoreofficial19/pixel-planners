@@ -2,13 +2,13 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:8080/api/user';
 
-export const register = async (username, email, verifyEmail, password, verifyPassword ) => {
+export const register = async (username, emailAddress, verifyEmailAddress, password, verifyPassword ) => {
 
     const userData = {
         username,
-        email,
+        emailAddress,
         password,
-        verifyEmail,
+        verifyEmailAddress,
         verifyPassword
     };
 
@@ -36,6 +36,7 @@ export const register = async (username, email, verifyEmail, password, verifyPas
         throw error;
     };
 }
+
 export const login = async (username, emailAddress, password) => {
     const userData = {
         username,
@@ -69,6 +70,7 @@ export const login = async (username, emailAddress, password) => {
 
 };
 
+//getting the current user's information from the server
 export const getCurrentUser = async () => {
     try {
         const response = await axios.get (`${API_URL}/currentUser`, {

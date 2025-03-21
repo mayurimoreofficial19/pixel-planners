@@ -41,7 +41,7 @@ const LoginPage = () => {
           <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
         </div>
                 <div>
-                  <label>Email:</label>
+                  <label>Email Address:</label>
                   <input type="email" value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)} />
                 </div>
         <div>
