@@ -22,8 +22,8 @@ public class GuestService {
         return (List<Guest>) guestRepository.findAll();
     }
 
-    public boolean updateRsvp(String email, boolean rsvpStatus) {
-        Optional<Guest> guestOpt = guestRepository.findByEmail(email);
+    public boolean updateRsvp(String emailAddress, boolean rsvpStatus) {
+        Optional<Guest> guestOpt = guestRepository.findByEmailAddress(emailAddress);
         if (guestOpt.isPresent()) {
             Guest guest = guestOpt.get();
             guest.setRsvp(rsvpStatus);
@@ -33,8 +33,8 @@ public class GuestService {
         return false;
     }
 
-    public boolean removeGuest(String email) {
-        Optional<Guest> guestOpt = guestRepository.findByEmail(email);
+    public boolean removeGuest(String emailAddress) {
+        Optional<Guest> guestOpt = guestRepository.findByEmailAddress(emailAddress);
         if (guestOpt.isPresent()) {
             guestRepository.delete(guestOpt.get());
             return true;
