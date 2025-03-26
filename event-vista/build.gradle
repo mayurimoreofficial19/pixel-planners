@@ -32,8 +32,21 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.mockito:mockito-core'
+	testImplementation 'org.mockito:mockito-junit-jupiter'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+	//jvmArgs "-javaagent:${classpath.find { it.name.contains("jmockit") }.absolutePath}"
+	doFirst {
+		def jmockitJar = classpath.find { it.name.contains("jmockit") }
+		if (jmockitJar != null) {
+			jvmArgs "-javaagent:${jmockitJar.absolutePath}"
+		} else {
+			logger.warn("JMockit JAR not found in classpath")
+		}
+	}
 }
