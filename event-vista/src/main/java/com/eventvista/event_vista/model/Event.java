@@ -9,8 +9,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Event extends AbstractEntity{
@@ -37,7 +37,7 @@ public class Event extends AbstractEntity{
     private Venue venue;
 
     @ManyToMany
-    private Set<Vendor> vendors = new HashSet<>();
+    private List<Vendor> vendors = new ArrayList<>();
 
     @ManyToOne
     private Client client;
@@ -47,7 +47,7 @@ public class Event extends AbstractEntity{
     public Event() {
     }
 
-    public Event(String name, LocalDate date, LocalTime time, String notes, Venue venue, Set<Vendor> vendors, Client client) {
+    public Event(String name, LocalDate date, LocalTime time, String notes, Venue venue, List<Vendor> vendors, Client client) {
         this.name = name;
         this.date = date;
         this.time = time;
@@ -109,11 +109,11 @@ public class Event extends AbstractEntity{
         this.venue = venue;
     }
 
-    public Set<Vendor> getVendors() {
+    public List<Vendor> getVendors() {
         return vendors;
     }
 
-    public void setVendors(Set<Vendor> vendors) {
+    public void setVendors(List<Vendor> vendors) {
         this.vendors = vendors;
     }
 

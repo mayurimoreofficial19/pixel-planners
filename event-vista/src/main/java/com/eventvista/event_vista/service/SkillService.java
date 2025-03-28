@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SkillService {
@@ -29,14 +30,22 @@ public class SkillService {
         return skillRepository.findSkillById(id).orElseThrow(() -> new SkillNotFoundException("Skill by id " + id + " was not found."));
     }
 
+    public Skill findSkillByName(String name) {
+        return skillRepository.findSkillByName(name).orElseThrow(() -> new SkillNotFoundException("Skill by name " + name + " was not found."));
+    }
+
     public List<Skill> findAllSkills() {
         return skillRepository.findAll();
     }
 
-    public Skill updateSkill(Skill skill) {
-        return skillRepository.save(skill);
-    }
+    public Optional<Skill> updateSkill(Integer id, String name) {
 
+        // Logic to find the skill and update
+        Skill skill = findSkillById(id); // Retrieve the skill by ID
+        if (name != null) skill.setName(name);
+        // Save the updated skill
+        return Optional.of(skillRepository.save(skill));
+    }
     public void deleteSkill(Integer id) {
         skillRepository.deleteSkillById(id);
     }

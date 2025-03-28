@@ -7,8 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Skill extends AbstractEntity implements Serializable {
@@ -18,7 +18,7 @@ public class Skill extends AbstractEntity implements Serializable {
     private String name;
 
     @ManyToMany(mappedBy = "skills")
-    private Set<Vendor> vendors = new HashSet<>();
+    private List<Vendor> vendors = new ArrayList<>();
 
     // Constructor
     public Skill() {
@@ -38,11 +38,11 @@ public class Skill extends AbstractEntity implements Serializable {
         this.name = name;
     }
 
-    public Set<Vendor> getVendors() {
+    public List<Vendor> getVendors() {
         return vendors;
     }
 
-    public void setVendors(Set<Vendor> vendors) {
+    public void setVendors(List<Vendor> vendors) {
         this.vendors = vendors;
     }
 
