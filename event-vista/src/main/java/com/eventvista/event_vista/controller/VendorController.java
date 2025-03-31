@@ -1,12 +1,17 @@
 package com.eventvista.event_vista.controller;
 
+import com.eventvista.event_vista.model.PhoneNumber;
+import com.eventvista.event_vista.model.Skill;
 import com.eventvista.event_vista.model.Vendor;
+import com.eventvista.event_vista.model.VendorUpdateRequest;
 import com.eventvista.event_vista.service.VendorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/vendor")
@@ -14,10 +19,12 @@ public class VendorController {
 
     private final VendorService vendorService;
 
+    // Constructor
     public VendorController(VendorService vendorService) {
         this.vendorService = vendorService;
     }
 
+    // Mapping
     @GetMapping("/all")
     public ResponseEntity<List<Vendor>> getAllVendors () {
         List<Vendor> vendors = vendorService.findAllVendors();
@@ -27,6 +34,30 @@ public class VendorController {
     @GetMapping("/find/{id}")
     public ResponseEntity<Vendor> getVendorById (@PathVariable("id") Integer id) {
         Vendor vendor = vendorService.findVendorById(id);
+        return new ResponseEntity<>(vendor, HttpStatus.OK);
+    }
+
+    @GetMapping("/find/{name}")
+    public ResponseEntity<Vendor> getVendorByName (@PathVariable("name") String name) {
+        Vendor vendor = vendorService.findVendorByName(name);
+        return new ResponseEntity<>(vendor, HttpStatus.OK);
+    }
+
+    @GetMapping("/find/{location}")
+    public ResponseEntity<Vendor> getVendorByLocation (@PathVariable("location") String location) {
+        Vendor vendor = vendorService.findVendorByLocation(location);
+        return new ResponseEntity<>(vendor, HttpStatus.OK);
+    }
+
+    @GetMapping("/find/{skills}")
+    public ResponseEntity<Vendor> getVendorBySkill (@PathVariable("skills") Set<Skill> skills) {
+        Vendor vendor = vendorService.findVendorBySkills(skills);
+        return new ResponseEntity<>(vendor, HttpStatus.OK);
+    }
+
+    @GetMapping("/find/{phoneNumber}")
+    public ResponseEntity<Vendor> getVendorByPhoneNumber (@PathVariable("phoneNumber") PhoneNumber phoneNumber) {
+        Vendor vendor = vendorService.findVendorByPhoneNumber(phoneNumber);
         return new ResponseEntity<>(vendor, HttpStatus.OK);
     }
 
@@ -43,9 +74,16 @@ public class VendorController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Vendor> updateVendor (@RequestBody Vendor vendor) {
-        Vendor updateVendor = vendorService.addVendor(vendor);
-        return new ResponseEntity<>(updateVendor, HttpStatus.CREATED);
+    public ResponseEntity<Optional<Vendor>> updateVendor(@RequestBody VendorUpdateRequest request) {
+        Optional<Vendor> updatedVendor = vendorService.updateVendor(
+                request.getId(),
+                request.getName(),
+                request.getLocation(),
+                request.getSkills(),
+                request.getPhoneNumber(),
+                request.getEmailAddress()
+        );
+        return new ResponseEntity<>(updatedVendor, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete/{id}")
