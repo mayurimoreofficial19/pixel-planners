@@ -7,10 +7,11 @@ import jakarta.validation.constraints.Size;
 
 public class LoginFormDTO {
 
-    @NotNull(message = "Username is required")
-    @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 20, message = "Invalid username. Must be between 3 and 20 characters.")
-    private String username;
+    //removed user for testing , will bring back later
+//    @NotNull(message = "Username is required")
+//    @NotBlank(message = "Username is required")
+//    @Size(min = 3, max = 20, message = "Invalid username. Must be between 3 and 20 characters.")
+//    private String username;
 
     @NotNull(message = "Password is required")
     @NotBlank(message = "Password is required")
@@ -19,16 +20,16 @@ public class LoginFormDTO {
 
     @NotNull(message = "Email is required")
     @NotBlank(message = "Email is required")
-    @Email
+    @Email(message = "Invalid email format")
     private String emailAddress;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
+//    public String getUsername() {
+//        return username;
+//    }
+//
+//    public void setUsername(String username) {
+//        this.username = username;
+//    }
 
     public String getPassword() {
         return password;
@@ -46,3 +47,4 @@ public class LoginFormDTO {
         this.emailAddress = emailAddress;
     }
 }
+

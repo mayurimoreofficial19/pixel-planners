@@ -1,28 +1,44 @@
 package com.eventvista.event_vista.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class User extends AbstractEntity {
-    @NotNull
-    private String username;
+    @NotBlank
+    private String name;
 
-    @NotNull
+    @NotBlank
     @Email
     private String emailAddress;
 
-    @NotNull
-    private String pwHash;
+    private String passwordHash;
+
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
+
+    private String providerId;
+
+    private boolean emailVerified = false;
+
+    private String verificationToken;
+
+    private LocalDateTime verificationTokenExpiryDate;
 
     @OneToMany(mappedBy = "user")
     private List<Event> events = new ArrayList<>();
+
+    private String pictureUrl;
 
     // Static method to use the bcrypt dependency for encoding
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -34,26 +50,18 @@ public class User extends AbstractEntity {
 //        this.pwHash = encoder.encode(password);
 //    }
 
-    public User(String username, String pwHash, String emailAddress) {
-        this.username = username;
-        this.pwHash = encoder.encode(pwHash);
+    public User(String username, String passwordHash, String emailAddress) {
+        this.name = username;
+        this.passwordHash = passwordHash;
         this.emailAddress = emailAddress;
     }
 
-    public String getPwHash() {
-        return pwHash;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPwHash(String pwHash) {
-        this.pwHash = encoder.encode(pwHash);
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public String getEmailAddress() {
@@ -64,9 +72,26 @@ public class User extends AbstractEntity {
         this.emailAddress = emailAddress;
     }
 
+    public AuthProvider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(AuthProvider provider) {
+        this.provider = provider;
+    }
+
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
+    }
+
+
     // Instance method to use the bcrypt multi-step matcher (.equals is not enough)
     public boolean isMatchingPassword(String password) {
-        return encoder.matches(password, pwHash);
+        return encoder.matches(password, this.passwordHash);
     }
 
 
@@ -77,5 +102,46 @@ public class User extends AbstractEntity {
     public void setEvents(List<Event> events) {
         this.events = events;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public LocalDateTime getVerificationTokenExpiryDate() {
+        return verificationTokenExpiryDate;
+    }
+
+    public void setVerificationTokenExpiryDate(LocalDateTime verificationTokenExpiryDate) {
+        this.verificationTokenExpiryDate = verificationTokenExpiryDate;
+    }
+
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
+    }
+
 }
 
