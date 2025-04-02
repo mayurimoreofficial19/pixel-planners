@@ -1,6 +1,5 @@
 package com.eventvista.event_vista.model;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,10 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Event extends AbstractEntity{
+public class Event extends AbstractEntity {
 
     @ManyToOne
     private User user;
+
+    @ManyToOne
+    private Calendar calendar;
 
     @NotBlank(message = "Field must have valid event name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
@@ -57,9 +59,15 @@ public class Event extends AbstractEntity{
         this.client = client;
     }
 
-
     // Getters and setters
 
+    public Calendar getCalendar() {
+        return calendar;
+    }
+
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
 
     public String getName() {
         return name;

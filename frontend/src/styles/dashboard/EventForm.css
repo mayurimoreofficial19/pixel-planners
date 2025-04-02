@@ -1,0 +1,168 @@
+.formContainer {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.formContainer h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: 500;
+  color: #555;
+}
+
+.input,
+.select,
+.textarea {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.select {
+  background-color: white;
+}
+
+.select[multiple] {
+  height: 120px;
+}
+
+.textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.selectContainer {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.selectContainer .select {
+  flex: 1;
+}
+
+.reactSelect {
+  flex: 1;
+}
+
+.reactSelect :global(.select__control) {
+  border-color: #ddd;
+  border-radius: 4px;
+  min-height: 38px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.reactSelect :global(.select__control:hover) {
+  border-color: #4a90e2;
+}
+
+.reactSelect :global(.select__control--is-focused) {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.reactSelect :global(.select__menu) {
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.reactSelect :global(.select__option) {
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reactSelect :global(.select__option--is-focused) {
+  background-color: #f0f7ff;
+}
+
+.reactSelect :global(.select__option--is-selected) {
+  background-color: #e6f0ff;
+  color: #4a90e2;
+  font-weight: 500;
+}
+
+.reactSelect :global(.select__option--is-selected::before) {
+  content: "✓";
+  color: #4a90e2;
+  margin-right: 0.5rem;
+}
+
+.reactSelect :global(.select__multi-value) {
+  background-color: #e6f0ff;
+  border-radius: 4px;
+  margin: 2px;
+  padding: 2px 6px;
+}
+
+.reactSelect :global(.select__multi-value__label) {
+  color: #4a90e2;
+}
+
+.reactSelect :global(.select__multi-value__remove) {
+  color: #4a90e2;
+  cursor: pointer;
+}
+
+.reactSelect :global(.select__multi-value__remove:hover) {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.reactSelect :global(.select__input) {
+  display: none;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .formContainer {
+    padding: 1.5rem;
+  }
+
+  .selectContainer {
+    flex-direction: column;
+  }
+
+  .buttonGroup {
+    flex-direction: column;
+  }
+}

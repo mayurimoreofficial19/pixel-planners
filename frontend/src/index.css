@@ -1,49 +1,48 @@
+@import "./App.css";
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: "Assistant", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-body {
-  color: #1E323C;
-  font-family: 'Assistant', sans-serif;
-  margin: 0;
+  color: #1e323c;
   padding: 0;
   box-sizing: border-box;
 }
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+
 
 header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
-  background-color: #1E323C;
+  background-color: #1e323c;
   color: white;
   height: 60px;
   padding: 10px 30px;
 }
 
-h1, h2, h3 {
-  font-family: 'Kodchasan', sans-serif;
+h1,
+h2,
+h3 {
+  font-family: "Kodchasan", sans-serif;
   text-transform: uppercase;
 }
 
 h1 {
-  color: #DA8034;
+  color: #da8034;
   font-weight: 700;
 }
 
 h2 {
   color: white;
-  background-color: #DA8034;
+  background-color: #da8034;
   font-size: 20px;
   font-weight: 200;
   letter-spacing: 6px;
@@ -54,7 +53,7 @@ h2 {
 }
 
 h3 {
-  color: #1E323C;
+  color: #1e323c;
   font-size: 24px;
   font-weight: 700;
 }
@@ -64,7 +63,7 @@ h5 {
 }
 
 #mag {
-  font-family: 'Kodchasan', sans-serif;
+  font-family: "Kodchasan", sans-serif;
   font-size: 30px;
   font-weight: 200;
   text-transform: uppercase;
@@ -84,20 +83,23 @@ main {
 }
 
 a {
-  color: #DA8034;
+  color: #da8034;
   font-weight: bold;
   text-decoration: none;
 }
 
-a:hover, a:active {
-  color: #B95A0A;
+a:hover,
+a:active {
+  color: #b95a0a;
 }
 
-a.navlink:link, a.navlink:visited {
+a.navlink:link,
+a.navlink:visited {
   color: white;
   font-weight: 400;
 }
-a.navlink:hover, a.navlink:active {
+a.navlink:hover,
+a.navlink:active {
   text-decoration: underline;
 }
 
@@ -110,8 +112,8 @@ a.navlink:hover, a.navlink:active {
 }
 
 .artwork-container {
-	columns: 4;
-	column-gap: 15px;
+  columns: 4;
+  column-gap: 15px;
 }
 
 .artwork-card {
@@ -134,8 +136,6 @@ a.navlink:hover, a.navlink:active {
   filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.5));
 }
 
-
-
 .full-page-image {
   width: 100%;
   height: 100vh;
@@ -151,13 +151,14 @@ a.navlink:hover, a.navlink:active {
 }
 
 .top-right-links a {
-  color: #DA8034;
+  color: #da8034;
   font-weight: bold;
   text-decoration: none;
 }
 
-.top-right-links a:hover, .top-right-links a:active {
-  color: #B95A0A;
+.top-right-links a:hover,
+.top-right-links a:active {
+  color: #b95a0a;
 }
 
 /*header css*/
@@ -165,7 +166,7 @@ a.navlink:hover, a.navlink:active {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #1E323C;
+  background-color: #1e323c;
   color: white;
   padding: 10px 30px;
 }
@@ -181,11 +182,12 @@ a.navlink:hover, a.navlink:active {
 }
 
 .nav-links a {
-  color: #DA8034;
+  color: #da8034;
   font-weight: bold;
   text-decoration: none;
 }
 
-.nav-links a:hover, .nav-links a:active {
-  color: #B95A0A;
+.nav-links a:hover,
+.nav-links a:active {
+  color: #b95a0a;
 }

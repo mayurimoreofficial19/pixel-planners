@@ -5,7 +5,9 @@ const API_URL = "http://localhost:8080/api/user";
 //retrieve all users from the database
 export const fetchUsers = async () => {
   try {
-    const response = await axios.get(`${API_URL}/all`);
+    const response = await axios.get(`${API_URL}/all`, {
+        withCredentials: true
+    });
     return response.data;
   } catch (error) {
     console.error("There was an error fetching all Users!", error);
