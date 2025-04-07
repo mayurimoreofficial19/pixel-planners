@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../../styles/components.css";
+import styles from "./Calendar.module.css";
 
 const Calendar = ({ events: propEvents = [], onEventClick }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -122,9 +122,9 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
     // Add weekday headers
     const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const weekdayHeaders = (
-      <div className="calendar-weekdays">
+      <div className={styles.calendarWeekdays}>
         {weekdays.map((day, index) => (
-          <div key={index} className="calendar-weekday">
+          <div key={index} className={styles.calendarWeekday}>
             {day}
           </div>
         ))}
@@ -133,7 +133,12 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
 
     // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDay; i++) {
-      days.push(<div key={`empty-${i}`} className="calendar-day empty" />);
+      days.push(
+        <div
+          key={`empty-${i}`}
+          className={`${styles.calendarDay} ${styles.calendarDayEmpty}`}
+        />
+      );
     }
 
     // Add days of the month
@@ -146,17 +151,17 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
       const dayEvents = getEventsForDate(date);
 
       days.push(
-        <div key={day} className="calendar-day">
-          <div className="calendar-day-number">{day}</div>
-          <div className="calendar-day-events">
+        <div key={day} className={styles.calendarDay}>
+          <div className={styles.calendarDayNumber}>{day}</div>
+          <div className={styles.calendarDayEvents}>
             {dayEvents.map((event) => (
               <div
                 key={event.id}
-                className="calendar-event"
+                className={styles.calendarEvent}
                 onClick={() => onEventClick(event)}
                 title={`${event.time} - ${event.name}`}
               >
-                <div className="event-name">{event.name}</div>
+                <div className={styles.eventName}>{event.name}</div>
               </div>
             ))}
           </div>
@@ -168,13 +173,18 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
     const totalDays = firstDay + daysInMonth;
     const remainingDays = Math.ceil(totalDays / 7) * 7 - totalDays;
     for (let i = 0; i < remainingDays; i++) {
-      days.push(<div key={`empty-end-${i}`} className="calendar-day empty" />);
+      days.push(
+        <div
+          key={`empty-end-${i}`}
+          className={`${styles.calendarDay} ${styles.calendarDayEmpty}`}
+        />
+      );
     }
 
     return (
       <>
         {weekdayHeaders}
-        <div className="calendar-grid">{days}</div>
+        <div className={styles.calendarGrid}>{days}</div>
       </>
     );
   };
@@ -183,35 +193,41 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
     const weekDates = getWeekDates();
 
     return (
-      <div className="calendar-week-view">
-        <div className="calendar-week-header">
+      <div className={styles.calendarWeekView}>
+        <div className={styles.calendarWeekHeader}>
           {weekDates.map((date, index) => (
-            <div key={index} className="calendar-week-day">
-              <div className="calendar-week-day-name">
+            <div key={index} className={styles.calendarWeekDay}>
+              <div className={styles.calendarWeekDayName}>
                 {date.toLocaleDateString("en-US", { weekday: "short" })}
               </div>
-              <div className="calendar-week-day-number">{date.getDate()}</div>
+              <div className={styles.calendarWeekDayNumber}>
+                {date.getDate()}
+              </div>
             </div>
           ))}
         </div>
-        <div className="calendar-week-grid">
+        <div className={styles.calendarWeekGrid}>
           {weekDates.map((date, dateIndex) => {
             const dayEvents = getEventsForDate(date);
             return (
-              <div key={dateIndex} className="calendar-week-day-column">
+              <div key={dateIndex} className={styles.calendarWeekDayColumn}>
                 {dayEvents.map((event) => (
                   <div
                     key={event.id}
-                    className="calendar-event week-event"
+                    className={styles.calendarEventWeek}
                     onClick={() => onEventClick(event)}
                   >
-                    <div className="event-time">{event.time}</div>
-                    <div className="event-name">{event.name}</div>
+                    <div className={styles.weekEventTime}>{event.time}</div>
+                    <div className={styles.weekEventName}>{event.name}</div>
                     {event.venue && (
-                      <div className="event-venue">📍 {event.venue.name}</div>
+                      <div className={styles.weekEventVenue}>
+                        📍 {event.venue.name}
+                      </div>
                     )}
                     {event.client && (
-                      <div className="event-venue">👤 {event.client.name}</div>
+                      <div className={styles.weekEventVenue}>
+                        👤 {event.client.name}
+                      </div>
                     )}
                   </div>
                 ))}
@@ -228,9 +244,9 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
     const dayEvents = getEventsForDate(currentDate);
 
     return (
-      <div className="calendar-day-view">
-        <div className="calendar-day-header">
-          <div className="calendar-day-title">
+      <div className={styles.calendarDayView}>
+        <div className={styles.calendarDayHeader}>
+          <div className={styles.calendarDayTitle}>
             {currentDate.toLocaleDateString("en-US", {
               weekday: "long",
               month: "long",
@@ -238,11 +254,11 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
             })}
           </div>
         </div>
-        <div className="calendar-day-timeline">
+        <div className={styles.calendarDayTimeline}>
           {timeSlots.map((time, index) => (
             <React.Fragment key={index}>
-              <div className="calendar-time">{time}</div>
-              <div className="calendar-slot-content">
+              <div className={styles.calendarTime}>{time}</div>
+              <div className={styles.calendarSlotContent}>
                 {dayEvents
                   .filter(
                     (event) => event.time.split(":")[0] === time.split(":")[0]
@@ -250,13 +266,20 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
                   .map((event) => (
                     <div
                       key={event.id}
-                      className="calendar-event day-event"
+                      className={styles.calendarEventWeek}
                       onClick={() => onEventClick(event)}
                     >
-                      <div className="event-time">{event.time}</div>
-                      <div className="event-name">{event.name}</div>
+                      <div className={styles.weekEventTime}>{event.time}</div>
+                      <div className={styles.weekEventName}>{event.name}</div>
                       {event.venue && (
-                        <div className="event-venue">📍 {event.venue.name}</div>
+                        <div className={styles.weekEventVenue}>
+                          📍 {event.venue.name}
+                        </div>
+                      )}
+                      {event.client && (
+                        <div className={styles.weekEventVenue}>
+                          👤 {event.client.name}
+                        </div>
                       )}
                     </div>
                   ))}
@@ -269,26 +292,30 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
   };
 
   const getViewTitle = () => {
-    const options = { month: "long", year: "numeric" };
     switch (viewMode) {
       case "month":
-        return currentDate.toLocaleDateString("default", options);
+        return currentDate.toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
+        });
       case "week":
         const weekDates = getWeekDates();
-        const firstDay = weekDates[0].toLocaleDateString("default", {
-          month: "long",
+        const startDate = weekDates[0];
+        const endDate = weekDates[6];
+        return `${startDate.toLocaleDateString("en-US", {
+          month: "short",
           day: "numeric",
-        });
-        const lastDay = weekDates[6].toLocaleDateString("default", {
+        })} - ${endDate.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })}`;
+      case "day":
+        return currentDate.toLocaleDateString("en-US", {
+          weekday: "long",
           month: "long",
           day: "numeric",
           year: "numeric",
-        });
-        return `${firstDay} - ${lastDay}`;
-      case "day":
-        return currentDate.toLocaleDateString("default", {
-          ...options,
-          day: "numeric",
         });
       default:
         return "";
@@ -296,48 +323,35 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
   };
 
   return (
-    <div className="calendar-container">
-      <div className="calendar-header">
-        <div className="flex">
-          <button className="button button-outline" onClick={handlePrevious}>
-            &lt;
-          </button>
-          <h2 className="calendar-title">{getViewTitle()}</h2>
-          <button className="button button-outline" onClick={handleNext}>
-            &gt;
-          </button>
+    <div className={styles.calendar}>
+      <div className={styles.header}>
+        <div className={styles.navigation}>
+          <button onClick={handlePrevious}>&lt;</button>
+          <h2>{getViewTitle()}</h2>
+          <button onClick={handleNext}>&gt;</button>
         </div>
-        <div className="flex" style={{ gap: "0.5rem" }}>
+        <div className={styles.viewControls}>
           <button
-            className={`button ${
-              viewMode === "month" ? "button-primary" : "button-outline"
-            }`}
+            className={viewMode === "month" ? styles.active : ""}
             onClick={() => setViewMode("month")}
           >
             Month
           </button>
           <button
-            className={`button ${
-              viewMode === "week" ? "button-primary" : "button-outline"
-            }`}
+            className={viewMode === "week" ? styles.active : ""}
             onClick={() => setViewMode("week")}
           >
             Week
           </button>
           <button
-            className={`button ${
-              viewMode === "day" ? "button-primary" : "button-outline"
-            }`}
+            className={viewMode === "day" ? styles.active : ""}
             onClick={() => setViewMode("day")}
           >
             Day
           </button>
         </div>
       </div>
-
-      {viewMode === "month" && (
-        <div className="calendar-month-view">{renderMonthView()}</div>
-      )}
+      {viewMode === "month" && renderMonthView()}
       {viewMode === "week" && renderWeekView()}
       {viewMode === "day" && renderDayView()}
     </div>

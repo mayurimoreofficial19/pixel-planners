@@ -79,7 +79,7 @@ public class VenueService {
     }
 
     public boolean deleteVenue(Integer id, User user) {
-        Optional<Venue> venueOpt = venueRepository.findVenueById(id, user);
+        Optional<Venue> venueOpt = venueRepository.findByIdAndUser(id, user);
 
         if (venueOpt.isPresent()) {
             venueRepository.delete(venueOpt.get());

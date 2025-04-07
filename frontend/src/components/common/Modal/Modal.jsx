@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import "../../styles/components.css";
+import "../../../styles/components.css";
 
 const Modal = ({ children, onClose }) => {
   const modalRef = useRef();
@@ -20,7 +20,7 @@ const Modal = ({ children, onClose }) => {
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleEscapeKey);
 
-    // Prevent body scrolling when modal is open
+    // Prevents the background from scrolling when the modal is open
     document.body.style.overflow = "hidden";
 
     return () => {

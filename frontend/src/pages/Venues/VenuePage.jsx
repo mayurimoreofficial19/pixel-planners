@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { venueApi } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
-import VenueForm from "../venueform/VenueForm";
-import Modal from "../Modal/Modal";
 import "../../styles/components.css";
+import VenueForm from "./VenueForm";
+import VenueSearch from "./VenueSearch";
+import VenueSearchResults from "./VenueSearchResults";
+import Modal from "../../components/common/Modal/Modal";
 
 const VenuePage = () => {
   const [venues, setVenues] = useState([]);
@@ -14,6 +16,11 @@ const VenuePage = () => {
   const [error, setError] = useState(null);
   const { isAuthenticated, token, logout } = useAuth();
   const navigate = useNavigate();
+
+  // Search state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchType, setSearchType] = useState("name");
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     if (!isAuthenticated || !token) {
@@ -33,6 +40,7 @@ const VenuePage = () => {
       setLoading(true);
       const response = await venueApi.getAllVenues();
       setVenues(response.data || []);
+      setSearchResults(response.data || []);
       setError(null);
     } catch (err) {
       console.error("Error fetching venues:", err);
@@ -46,13 +54,54 @@ const VenuePage = () => {
     }
   };
 
-  const handleAddVenue = () => {
-    const currentToken = localStorage.getItem("token");
-    console.log(
-      "Current token when adding venue:",
-      currentToken ? "Token exists" : "No token"
-    );
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) {
+      setSearchResults(venues);
+      return;
+    }
 
+    try {
+      let result;
+      console.log("Searching for:", searchTerm, "by type:", searchType);
+
+      switch (searchType) {
+        case "name":
+          result = await venueApi.getVenueByName(searchTerm);
+          console.log("Name search result:", result);
+          break;
+        case "location":
+          result = await venueApi.getVenueByLocation(searchTerm);
+          console.log("Location search result:", result);
+          break;
+        case "phone":
+          result = await venueApi.getVenueByPhoneNumber(searchTerm);
+          console.log("Phone search result:", result);
+          break;
+        case "email":
+          result = await venueApi.getVenueByEmail(searchTerm);
+          console.log("Email search result:", result);
+          break;
+        default:
+          result = [];
+      }
+
+      // Extract data from response if it exists
+      if (result && result.data) {
+        result = result.data;
+      }
+
+      // Ensure result is an array
+      const searchResults = Array.isArray(result) ? result : [result];
+      console.log("Final search results:", searchResults);
+
+      setSearchResults(searchResults.filter((item) => item !== null));
+    } catch (err) {
+      console.error("Error searching venues:", err);
+      setSearchResults([]);
+    }
+  };
+
+  const handleAddVenue = () => {
     if (!token) {
       handleAuthError();
       return;
@@ -80,6 +129,7 @@ const VenuePage = () => {
       try {
         await venueApi.deleteVenue(venueId);
         setVenues(venues.filter((venue) => venue.id !== venueId));
+        setSearchResults(searchResults.filter((venue) => venue.id !== venueId));
         setError(null);
       } catch (err) {
         console.error("Error deleting venue:", err);
@@ -110,10 +160,16 @@ const VenuePage = () => {
             venue.id === selectedVenue.id ? response.data : venue
           )
         );
+        setSearchResults(
+          searchResults.map((venue) =>
+            venue.id === selectedVenue.id ? response.data : venue
+          )
+        );
       } else {
         // Create new venue
         const response = await venueApi.createVenue(venueData);
         setVenues([...venues, response.data]);
+        setSearchResults([...searchResults, response.data]);
       }
       setShowVenueForm(false);
       setSelectedVenue(null);
@@ -145,6 +201,15 @@ const VenuePage = () => {
       <div className="dashboard-header">
         <h2 className="dashboard-title">Venues</h2>
         <p className="dashboard-subtitle">Manage your event venues</p>
+
+        <VenueSearch
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          searchType={searchType}
+          setSearchType={setSearchType}
+          onSearch={handleSearch}
+        />
+
         <button
           className="button button-primary"
           onClick={handleAddVenue}
@@ -160,50 +225,11 @@ const VenuePage = () => {
         </div>
       )}
 
-      <div className="grid-container">
-        {venues.length === 0 ? (
-          <div className="empty-state">
-            <p>
-              No venues added yet. Click "Add New Venue" to create your first
-              venue!
-            </p>
-          </div>
-        ) : (
-          venues.map((venue) => (
-            <div key={venue.id} className="venue-card">
-              <div className="venue-header">
-                <h3 className="venue-title">{venue.name}</h3>
-                <div className="flex" style={{ gap: "0.5rem" }}>
-                  <button
-                    className="button button-outline"
-                    onClick={() => handleEditVenue(venue)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="button button-secondary"
-                    onClick={() => handleDeleteVenue(venue.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-              <div className="venue-details">
-                <p>📍 {venue.location}</p>
-                <p>👥 Capacity: {venue.capacity}</p>
-                <p>📧 {venue.emailAddress}</p>
-                <p>
-                  📞{" "}
-                  {typeof venue.phoneNumber === "object"
-                    ? venue.phoneNumber.phoneNumber
-                    : venue.phoneNumber}
-                </p>
-                {venue.notes && <p>📝 {venue.notes}</p>}
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+      <VenueSearchResults
+        venues={searchResults}
+        onEdit={handleEditVenue}
+        onDelete={handleDeleteVenue}
+      />
 
       {showVenueForm && (
         <Modal onClose={() => setShowVenueForm(false)}>

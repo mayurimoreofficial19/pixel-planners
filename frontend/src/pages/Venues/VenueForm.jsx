@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { venueApi } from "../../services/api";
 import "../../styles/components.css";
+import styles from "./VenueForm.module.css";
 
 const VenueForm = ({ initialData, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({

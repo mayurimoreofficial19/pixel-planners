@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
 
   useEffect(() => {
-    // Check if user is logged in on mount
+    // Check if user is logged in
     const checkAuth = async () => {
       if (token) {
         try {

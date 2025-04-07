@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
-import Calendar from "../calendar/Calendar";
-import "../../styles/components.css";
+import Calendar from "./Calendar";
 
 const Dashboard = () => {
   const { user, logout, token } = useAuth();
@@ -13,7 +12,7 @@ const Dashboard = () => {
     if (token) {
       fetchEvents();
     }
-  }, [token]); // Re-fetch when token changes
+  }, [token]); //Re-fetch when token changes
 
   const fetchEvents = async () => {
     try {
@@ -47,7 +46,7 @@ const Dashboard = () => {
   };
 
   const handleEventClick = (event) => {
-    // Handle event click - you can show details, edit form, etc.
+    //Handle event click - you can show details, edit form, etc.
     console.log("Event clicked:", event);
   };
 
