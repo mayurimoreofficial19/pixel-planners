@@ -107,7 +107,7 @@ public ResponseEntity<Venue> getVenueById (@PathVariable("id") Integer id) {
             User user = authUtil.getUserFromAuthentication();
             return venueService.updateVenue(id, updatedVenue, user)
                     .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build()); // If venue wasn't found
+                    .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();
             response.put("error", "Error updating venue: " + e.getMessage());
@@ -120,8 +120,8 @@ public ResponseEntity<Venue> getVenueById (@PathVariable("id") Integer id) {
 @DeleteMapping("/delete/{id}")
 public ResponseEntity<?> deleteVenue(@PathVariable("id") Integer id) {
     try {
-        User user = authUtil.getUserFromAuthentication(); // Get the authenticated user
-        boolean isDeleted = venueService.deleteVenue(id, user); // Call the service method
+        User user = authUtil.getUserFromAuthentication();
+        boolean isDeleted = venueService.deleteVenue(id, user);
 
         if (isDeleted) {
             return ResponseEntity.ok().build();

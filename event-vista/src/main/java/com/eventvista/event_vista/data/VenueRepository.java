@@ -15,6 +15,10 @@ public interface VenueRepository extends JpaRepository<Venue, Integer> {
 
     // searching by user everytime so each user can only find their own venues
 
+    // changed the naming style from findVenueByName to findByNameAndUser
+    // SpringBoot requires both parameters in the name
+    // findVenueByName will be in Service layer
+
     List<Venue> findAllByUser(User user);
 
     Optional<Venue> findByIdAndUser(Integer id, User user);
