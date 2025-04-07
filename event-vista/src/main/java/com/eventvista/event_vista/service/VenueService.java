@@ -31,27 +31,27 @@ public class VenueService {
 
 
     public Optional<Venue> findVenueById(Integer id, User user) {
-        return venueRepository.findVenueById(id, user)
+        return venueRepository.findByIdAndUser(id, user)
                 .filter(venue -> venue.getUser().getId().equals(user.getId()));
     }
 
     public Optional<Venue> findVenueByName(String name, User user) {
-        return venueRepository.findVenueByName(name, user)
+        return venueRepository.findByNameAndUser(name, user)
                 .filter(venue -> venue.getUser().getId().equals(user.getId()));
     }
 
     public Optional<Venue> findVenueByLocation(String location, User user) {
-        return venueRepository.findVenueByLocation(location, user)
+        return venueRepository.findByLocationAndUser(location, user)
                 .filter(venue -> venue.getUser().getId().equals(user.getId()));
     }
 
     public Optional<Venue> findVenueByEmailAddress(String emailAddress, User user) {
-        return venueRepository.findVenueByEmailAddress(emailAddress, user)
+        return venueRepository.findByEmailAddressAndUser(emailAddress, user)
                 .filter(venue -> venue.getUser().getId().equals(user.getId()));
     }
 
     public Optional<Venue> findVenueByPhoneNumber(PhoneNumber phoneNumber, User user) {
-        return venueRepository.findVenueByPhoneNumber(phoneNumber, user)
+        return venueRepository.findByPhoneNumberAndUser(phoneNumber, user)
                 .filter(venue -> venue.getUser().getId().equals(user.getId()));
     }
 
@@ -61,14 +61,10 @@ public class VenueService {
     }
 
 
-//
-//    public Venue createVenue(Venue venue, User user) {
-//        venue.setUser(user);
-//        return venueRepository.save(venue);
-//    }
+
 
     public Optional<Venue> updateVenue(Integer id, Venue updatedVenue, User user) {
-        return venueRepository.findVenueById(id, user)
+        return venueRepository.findByIdAndUser(id, user)
                 .map(venue -> {
 
                     venue.setName(updatedVenue.getName());
@@ -86,10 +82,10 @@ public class VenueService {
         Optional<Venue> venueOpt = venueRepository.findVenueById(id, user);
 
         if (venueOpt.isPresent()) {
-            venueRepository.delete(venueOpt.get()); // Delete the venue if it exists and belongs to the user
-            return true; // Shows the venue was successfully deleted
+            venueRepository.delete(venueOpt.get());
+            return true;
         }
-        return false; // Return false if the venue doesn't exist
+        return false;
     }
 }
 

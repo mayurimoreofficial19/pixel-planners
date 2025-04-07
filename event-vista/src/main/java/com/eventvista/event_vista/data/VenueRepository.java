@@ -17,15 +17,15 @@ public interface VenueRepository extends JpaRepository<Venue, Integer> {
 
     List<Venue> findAllByUser(User user);
 
-    Optional<Venue> findVenueById(Integer id, User user);
+    Optional<Venue> findByIdAndUser(Integer id, User user);
 
-    Optional<Venue> findVenueByName(String name, User user);
+    Optional<Venue> findByNameAndUser(String name, User user);
 
-    Optional<Venue> findVenueByLocation(String location, User user);
+    Optional<Venue> findByLocationAndUser(String location, User user);
 
-    Optional<Venue> findVenueByEmailAddress(String emailAddress, User user);
+    Optional<Venue> findByEmailAddressAndUser(String emailAddress, User user);
 
-    Optional<Venue> findVenueByPhoneNumber(PhoneNumber phoneNumber, User user);
+    Optional<Venue> findByPhoneNumberAndUser(PhoneNumber phoneNumber, User user);
 
 
 }
