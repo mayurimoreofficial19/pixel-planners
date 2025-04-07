@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import "../../styles/auth/Register.css";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./ResetPassword.css";
 
-const Register = () => {
+const ResetPassword = () => {
   const [formData, setFormData] = useState({
-    username: "",
     emailAddress: "",
-    password: "",
+    newPassword: "",
     verifyPassword: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,49 +26,33 @@ const Register = () => {
     setError("");
     setSuccess("");
 
-    // Validate passwords match
-    if (formData.password !== formData.verifyPassword) {
+    // Basic validation
+    if (formData.newPassword !== formData.verifyPassword) {
       setError("Passwords do not match");
       return;
     }
 
     try {
-      await register(formData);
-      setSuccess(
-        "Registration successful! Please check your email to verify your account."
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/reset-password",
+        formData
       );
-      // Don't navigate away immediately so the user can see the success message
+      setSuccess("Password reset successful!");
       setTimeout(() => {
         navigate("/login");
-      }, 3000);
+      }, 2000);
     } catch (error) {
-      console.error("Registration error:", error);
-      setError(error.message || "Registration failed. Please try again.");
+      setError(error.response?.data || "Failed to reset password");
     }
   };
 
   return (
-    <div className="register-container">
-      <div className="register-box">
-        <div className="register-header">
-          <h2 className="register-title">Create your account</h2>
+    <div className="auth-container">
+      <div className="auth-box">
+        <div className="auth-header">
+          <h2 className="auth-title">Reset Password</h2>
         </div>
-        <form className="register-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="username" className="sr-only">
-              Username
-            </label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              required
-              className="form-input"
-              placeholder="Username"
-              value={formData.username}
-              onChange={handleChange}
-            />
-          </div>
+        <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="emailAddress" className="sr-only">
               Email address
@@ -87,19 +69,22 @@ const Register = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password" className="sr-only">
-              Password
+            <label htmlFor="newPassword" className="sr-only">
+              New Password
             </label>
             <input
-              id="password"
-              name="password"
+              id="newPassword"
+              name="newPassword"
               type="password"
               required
               className="form-input"
-              placeholder="Password"
-              value={formData.password}
+              placeholder="New password"
+              value={formData.newPassword}
               onChange={handleChange}
             />
+            <p className="password-requirements">
+              Password must be at least 8 characters long
+            </p>
           </div>
           <div className="form-group">
             <label htmlFor="verifyPassword" className="sr-only">
@@ -111,7 +96,7 @@ const Register = () => {
               type="password"
               required
               className="form-input"
-              placeholder="Verify Password"
+              placeholder="Verify password"
               value={formData.verifyPassword}
               onChange={handleChange}
             />
@@ -121,19 +106,18 @@ const Register = () => {
           {success && <div className="success-message">{success}</div>}
 
           <button type="submit" className="submit-button">
-            Register
+            Reset Password
           </button>
         </form>
 
-        <div className="login-prompt">
-          Already have an account?{" "}
-          <Link to="/login" className="login-link">
-            Sign in
-          </Link>
+        <div className="auth-prompt">
+          <button onClick={() => navigate("/login")} className="back-button">
+            Back to Login
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
-export default Register;
+export default ResetPassword;

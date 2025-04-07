@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import "../../styles/auth/VerifyEmail.css";
+import "./VerifyEmail.css";
 
 const VerifyEmail = () => {
   const [status, setStatus] = useState("verifying");

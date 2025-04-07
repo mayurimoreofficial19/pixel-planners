@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { authApi } from "../../services/api";
-import "../../styles/auth/Login.css";
+import "./Login.css";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
