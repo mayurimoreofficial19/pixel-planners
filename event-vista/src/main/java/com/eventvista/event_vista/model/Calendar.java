@@ -39,14 +39,6 @@ public class Calendar extends AbstractEntity {
         this.events = events;
     }
 
-    public void addEvent(Event event) {
-        events.add(event);
-        event.setCalendar(this);
-    }
-    public void removeEvent(Event event) {
-        events.remove(event);
-        event.setCalendar(null);
-    }
 
 
 }
