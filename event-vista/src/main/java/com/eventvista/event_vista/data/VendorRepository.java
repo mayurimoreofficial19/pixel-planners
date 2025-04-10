@@ -2,26 +2,29 @@ package com.eventvista.event_vista.data;
 
 import com.eventvista.event_vista.model.PhoneNumber;
 import com.eventvista.event_vista.model.Skill;
+import com.eventvista.event_vista.model.User;
 import com.eventvista.event_vista.model.Vendor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @Repository
 public interface VendorRepository extends JpaRepository<Vendor, Integer> {
-    void deleteVendorById(Integer id);
 
-    Optional<Vendor> findVendorById(Integer id);
+    List<Vendor> findAllByUser(User user);
 
-    Optional<Vendor> findVendorByName(String name);
+    Optional<Vendor> findByIdAndUser(Integer id, User user);
 
-    Optional<Vendor> findVendorByLocation(String location);
+    Optional<Vendor> findByNameAndUser(String name, User user);
 
-    Optional<Vendor> findVendorBySkills(Set<Skill> skills);
+    Optional<Vendor> findByLocationAndUser(String location, User user);
 
-    Optional<Vendor> findVendorByPhoneNumber(PhoneNumber phoneNumber);
+    List<Vendor> findBySkillIdAndUser(Integer id, User user);
 
-    Optional<Vendor> findVendorByEmailAddress(String emailAddress);
+    Optional<Vendor> findByPhoneNumberAndUser(PhoneNumber phoneNumber, User user);
+
+    Optional<Vendor> findByEmailAddressAndUser(String emailAddress, User user);
 }

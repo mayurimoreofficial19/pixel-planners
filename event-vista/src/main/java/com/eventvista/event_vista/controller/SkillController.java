@@ -1,64 +1,69 @@
 package com.eventvista.event_vista.controller;
 
 import com.eventvista.event_vista.model.Skill;
-import com.eventvista.event_vista.model.SkillUpdateRequest;
+import com.eventvista.event_vista.model.User;
 import com.eventvista.event_vista.service.SkillService;
-import org.springframework.http.HttpStatus;
+import com.eventvista.event_vista.utilities.AuthUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/skill")
+@RequestMapping("/api/skills")
+@CrossOrigin(origins = "http://localhost:3000")
 public class SkillController {
 
     private final SkillService skillService;
+    private final AuthUtil authUtil;
 
 
     // Constructor
-    public SkillController(SkillService skillService) {
+    public SkillController(SkillService skillService, AuthUtil authUtil) {
         this.skillService = skillService;
+        this.authUtil = authUtil;
     }
 
     // Mapping
     @GetMapping("/all")
     public ResponseEntity<List<Skill>> getAllSkills () {
-        List<Skill> skills = skillService.findAllSkills();
-        return new ResponseEntity<>(skills, HttpStatus.OK);
+        User user = authUtil.getUserFromAuthentication();
+        return ResponseEntity.ok(skillService.findAllSkills(user));
     }
 
     @GetMapping("/find/{id}")
     public ResponseEntity<Skill> getSkillById (@PathVariable("id") Integer id) {
-        Skill skill = skillService.findSkillById(id);
-        return new ResponseEntity<>(skill, HttpStatus.OK);
+        User user = authUtil.getUserFromAuthentication();
+        return ResponseEntity.of(skillService.findSkillById(id, user));
     }
 
-    @GetMapping("/find/{name}")
+    @GetMapping("/find/name/{name}")
     public ResponseEntity<Skill> getSkillByName (@PathVariable("name") String name) {
-        Skill skill = skillService.findSkillByName(name);
-        return new ResponseEntity<>(skill, HttpStatus.OK);
+        User user = authUtil.getUserFromAuthentication();
+        return ResponseEntity.of(skillService.findSkillByName(name, user));
     }
 
     @PostMapping("/add")
     public ResponseEntity<Skill> addSkill (@RequestBody Skill skill) {
-        Skill newSkill = skillService.addSkill(skill);
-        return new ResponseEntity<>(newSkill, HttpStatus.CREATED);
+        User user = authUtil.getUserFromAuthentication();
+        Skill savedSkill = skillService.addSkill(skill, user);
+        return ResponseEntity.ok(savedSkill);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Optional<Skill>> updateSkill(@RequestBody SkillUpdateRequest request) {
-        Optional<Skill> updatedSkill = skillService.updateSkill(
-                request.getId(),
-                request.getName()
-        );
-        return new ResponseEntity<>(updatedSkill, HttpStatus.CREATED);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Skill> updateSkill(@PathVariable("id") Integer id, @RequestBody Skill skill) {
+        User user = authUtil.getUserFromAuthentication();
+        try {
+            return ResponseEntity.ok(skillService.updateSkill(id, skill, user));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteSkill (@PathVariable("id") Integer id) {
-        skillService.deleteSkill(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        User user = authUtil.getUserFromAuthentication();
+        boolean deleted = skillService.deleteSkill(id, user);
+        return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 }

@@ -1,18 +1,23 @@
 package com.eventvista.event_vista.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 public class Vendor extends AbstractEntity implements Serializable {
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @NotBlank(message = "Field must have valid vendor name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
@@ -23,9 +28,9 @@ public class Vendor extends AbstractEntity implements Serializable {
     private String location;
 
     @ManyToMany
-    private Set<Skill> skills = new HashSet<>();
+    private Skill skill;
 
-    @NotBlank(message ="Field must have valid vendor phone number entered")
+    @NotNull(message ="Field must have valid venue phone number entered")
     @Embedded
     private PhoneNumber phoneNumber;
 
@@ -43,16 +48,24 @@ public class Vendor extends AbstractEntity implements Serializable {
     public Vendor() {
     }
 
-    public Vendor(String name, String location, Set<Skill> skills, PhoneNumber phoneNumber, String emailAddress, String notes) {
+    public Vendor(String name, String location, Skill skill, PhoneNumber phoneNumber, String emailAddress, String notes) {
         this.name = name;
         this.location = location;
-        this.skills = skills;
+        this.skill = skill;
         this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
         this.notes = notes;
     }
 
     // Getters and setters
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getName() {
         return name;
@@ -70,12 +83,12 @@ public class Vendor extends AbstractEntity implements Serializable {
         this.location = location;
     }
 
-    public Set<Skill> getSkills() {
-        return skills;
+    public Skill getSkill() {
+        return skill;
     }
 
-    public void setSkills(Set<Skill> skills) {
-        this.skills = skills;
+    public void setSkill(Skill skill) {
+        this.skill = skill;
     }
 
     public PhoneNumber getPhoneNumber() {

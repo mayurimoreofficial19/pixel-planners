@@ -1,8 +1,9 @@
 package com.eventvista.event_vista.service;
 
 import com.eventvista.event_vista.data.SkillRepository;
-import com.eventvista.event_vista.exception.SkillNotFoundException;
+
 import com.eventvista.event_vista.model.Skill;
+import com.eventvista.event_vista.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,32 +23,46 @@ public class SkillService {
     }
 
     // Query methods
-    public Skill addSkill(Skill skill) {
+    public Skill addSkill(Skill skill, User user) {
+        // Set user
+        skill.setUser(user);
         return skillRepository.save(skill);
     }
 
-    public Skill findSkillById(Integer id) {
-        return skillRepository.findSkillById(id).orElseThrow(() -> new SkillNotFoundException("Skill by id " + id + " was not found."));
+    public Optional<Skill> findSkillById(Integer id, User user) {
+        return skillRepository.findByIdAndUser(id, user)
+                .filter(skill -> skill.getUser().getId().equals(user.getId()));
     }
 
-    public Skill findSkillByName(String name) {
-        return skillRepository.findSkillByName(name).orElseThrow(() -> new SkillNotFoundException("Skill by name " + name + " was not found."));
+    public Optional<Skill> findSkillByName(String name, User user) {
+        return skillRepository.findByNameAndUser(name, user)
+                .filter(skill -> skill.getUser().getId().equals(user.getId()));
     }
 
-    public List<Skill> findAllSkills() {
-        return skillRepository.findAll();
+    public List<Skill> findAllSkills(User user) {
+        return skillRepository.findAllByUser(user);
     }
 
-    public Optional<Skill> updateSkill(Integer id, String name) {
+    public Skill updateSkill(Integer id, Skill updatedSkill, User user) {
+        return skillRepository.findById(id)
+                .map(existingSkill -> {
+                    // Update name
+                    existingSkill.setName(updatedSkill.getName());
+                    return skillRepository.save(existingSkill);
+                })
+                .orElseThrow(() -> new RuntimeException("Skill not found"));
 
-        // Logic to find the skill and update
-        Skill skill = findSkillById(id); // Retrieve the skill by ID
-        if (name != null) skill.setName(name);
-        // Save the updated skill
-        return Optional.of(skillRepository.save(skill));
+
+
     }
-    public void deleteSkill(Integer id) {
-        skillRepository.deleteSkillById(id);
+
+    public boolean deleteSkill(Integer id, User user) {
+        Optional<Skill> skill = skillRepository.findByIdAndUser(id, user);
+        if (skill.isPresent()) {
+            skillRepository.delete(skill.get());
+            return true;
+        }
+        return false;
     }
 
 
