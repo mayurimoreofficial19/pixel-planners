@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ClientRepository extends JpaRepository<Client,Integer> {
+    List<Client> findByUser(User user);
+
     List<Client> findAllByUser(User user);
 
     Optional<Client> findByIdAndUser(Integer id, User user);
