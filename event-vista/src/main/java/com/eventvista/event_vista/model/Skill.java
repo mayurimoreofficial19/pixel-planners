@@ -26,6 +26,7 @@ public class Skill extends AbstractEntity implements Serializable {
     private String name;
 
     @ManyToMany(mappedBy = "skills")
+    @JsonIgnore
     private List<Vendor> vendors = new ArrayList<>();
 
     // Constructor

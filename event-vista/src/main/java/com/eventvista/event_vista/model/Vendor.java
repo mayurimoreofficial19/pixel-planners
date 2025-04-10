@@ -42,6 +42,7 @@ public class Vendor extends AbstractEntity implements Serializable {
     private String notes;
 
     @ManyToMany(mappedBy = "vendors")
+    @JsonIgnore
     private List<Event> events = new ArrayList<>();
 
     // Constructor
