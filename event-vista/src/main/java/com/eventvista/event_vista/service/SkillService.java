@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class SkillService {
@@ -39,6 +41,10 @@ public class SkillService {
                 .filter(skill -> skill.getUser().getId().equals(user.getId()));
     }
 
+    public Set<Skill> findByIdAndUser(Set<Integer> skillIds, User user) {
+        return new HashSet<>(skillRepository.findAllByIdInAndUser(skillIds, user));
+    }
+
     public List<Skill> findAllSkills(User user) {
         return skillRepository.findAllByUser(user);
     }
@@ -64,6 +70,4 @@ public class SkillService {
         }
         return false;
     }
-
-
 }

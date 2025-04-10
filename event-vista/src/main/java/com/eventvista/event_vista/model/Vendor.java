@@ -8,8 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 public class Vendor extends AbstractEntity implements Serializable {
@@ -28,7 +27,7 @@ public class Vendor extends AbstractEntity implements Serializable {
     private String location;
 
     @ManyToMany
-    private List<Skill> skills;
+    private Set<Skill> skills;
 
     @NotNull(message ="Field must have valid venue phone number entered")
     @Embedded
@@ -49,7 +48,7 @@ public class Vendor extends AbstractEntity implements Serializable {
     public Vendor() {
     }
 
-    public Vendor(String name, String location, List<Skill> skills, PhoneNumber phoneNumber, String emailAddress, String notes) {
+    public Vendor(String name, String location, Set<Skill> skills, PhoneNumber phoneNumber, String emailAddress, String notes) {
         this.name = name;
         this.location = location;
         this.skills = skills;
@@ -84,11 +83,11 @@ public class Vendor extends AbstractEntity implements Serializable {
         this.location = location;
     }
 
-    public List<Skill> getSkills() {
+    public Set<Skill> getSkills() {
         return skills;
     }
 
-    public void setSkills(List<Skill> skills) {
+    public void setSkills(Set<Skill> skills) {
         this.skills = skills;
     }
 

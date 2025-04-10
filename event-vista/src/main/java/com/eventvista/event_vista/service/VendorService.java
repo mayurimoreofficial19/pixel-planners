@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class VendorService {
@@ -29,11 +31,15 @@ public class VendorService {
         vendor.setUser(user);
 
         // Handle Skill relationship
-        if (vendor.getSkill() != null && vendor.getSkill().getId() != null) {
-            skillService.findSkillById(vendor.getSkill().getId(), user)
-                    .ifPresent(vendor::setSkill);
+        if (vendor.getSkills() != null && !vendor.getSkills().isEmpty()) {
+            Set<Integer> skillIds = vendor.getSkills().stream()
+                    .map(Skill::getId)
+                    .collect(Collectors.toSet()); // Use Set for uniqueness
+
+            Set<Skill> resolvedSkills = skillService.findByIdAndUser(skillIds, user);
+            vendor.setSkills(resolvedSkills);
         } else {
-            vendor.setSkill(null);
+            vendor.setSkills(null);
         }
 
         return vendorRepository.save(vendor);
@@ -52,7 +58,7 @@ public class VendorService {
     }
 
     public List<Vendor> findVendorBySkill(Integer skillId, User user) {
-        return vendorRepository.findBySkillIdAndUser(skillId, user);
+        return vendorRepository.findBySkillsIdAndUser(skillId, user);
     }
 
     public Optional<Vendor> findVendorByPhoneNumber(PhoneNumber phoneNumber, User user) {
@@ -77,10 +83,15 @@ public class VendorService {
                     existingVendor.setEmailAddress(updatedVendor.getEmailAddress());
 
                     // Handle Skill relationship
-                    if (updatedVendor.getSkill() != null && updatedVendor.getSkill().getId() != null) {
-                        skillService.findSkillById(updatedVendor.getSkill().getId(), user)
-                                .isPresent();
+                    if (updatedVendor.getSkills() != null && !updatedVendor.getSkills().isEmpty()) {
+                        List<Integer> skillIds = updatedVendor.getSkills().stream()
+                                .map(Skill::getId)
+                                .collect(Collectors.toList());
+
+                        Set<Skill> resolvedSkills = skillService.findByIdAndUser((Set<Integer>) skillIds, user);
+                        existingVendor.setSkills(resolvedSkills);
                     }
+
                     return vendorRepository.save(existingVendor);
                 })
                 .orElseThrow(() -> new RuntimeException("Vendor not found"));
