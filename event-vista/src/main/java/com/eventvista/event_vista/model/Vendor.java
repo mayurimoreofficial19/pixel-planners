@@ -28,7 +28,7 @@ public class Vendor extends AbstractEntity implements Serializable {
     private String location;
 
     @ManyToMany
-    private Skill skill;
+    private List<Skill> skills;
 
     @NotNull(message ="Field must have valid venue phone number entered")
     @Embedded
@@ -49,10 +49,10 @@ public class Vendor extends AbstractEntity implements Serializable {
     public Vendor() {
     }
 
-    public Vendor(String name, String location, Skill skill, PhoneNumber phoneNumber, String emailAddress, String notes) {
+    public Vendor(String name, String location, List<Skill> skills, PhoneNumber phoneNumber, String emailAddress, String notes) {
         this.name = name;
         this.location = location;
-        this.skill = skill;
+        this.skills = skills;
         this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
         this.notes = notes;
@@ -84,12 +84,12 @@ public class Vendor extends AbstractEntity implements Serializable {
         this.location = location;
     }
 
-    public Skill getSkill() {
-        return skill;
+    public List<Skill> getSkills() {
+        return skills;
     }
 
-    public void setSkill(Skill skill) {
-        this.skill = skill;
+    public void setSkills(List<Skill> skills) {
+        this.skills = skills;
     }
 
     public PhoneNumber getPhoneNumber() {

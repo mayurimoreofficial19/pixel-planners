@@ -44,7 +44,7 @@ public class SkillService {
     }
 
     public Skill updateSkill(Integer id, Skill updatedSkill, User user) {
-        return skillRepository.findById(id)
+        return skillRepository.findByIdAndUser(id, user)
                 .map(existingSkill -> {
                     // Update name
                     existingSkill.setName(updatedSkill.getName());
