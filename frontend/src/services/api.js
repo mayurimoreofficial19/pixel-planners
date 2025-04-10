@@ -106,6 +106,15 @@ export const eventApi = {
 //    deleteVendor:
 //};
 
+export const skillApi = {
+  getAllSkills: () => axiosInstance.get("/api/skills/all"),
+  getSkillById: (id) => axiosInstance.get(`/api/skills/find/${id}`),
+  getSkillByName: (name) => axiosInstance.get(`/api/skills/find/name/${name}`),
+  createSkill: (data) => axiosInstance.post("/api/skills/add", data),
+  updateSkill: (id, data) => axiosInstance.put(`/api/skills/update/${id}`, data),
+  deleteSkill: (id) => axiosInstance.delete(`/api/skills/delete/${id}`),
+};
+
 //export const guestApi = {
 //    getAllGuests:
 //    createGuest:
