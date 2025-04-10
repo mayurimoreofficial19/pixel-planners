@@ -63,7 +63,8 @@ public class EventController {
     @PostMapping("/add")
     public ResponseEntity<Event> addEvent(@RequestBody Event event) {
         User user = authUtil.getUserFromAuthentication();
-        return ResponseEntity.ok(eventService.addEvent(event, user));
+        Event savedEvent = eventService.addEvent(event, user);
+        return ResponseEntity.ok(savedEvent);
     }
 
     @PutMapping("/update/{id}")

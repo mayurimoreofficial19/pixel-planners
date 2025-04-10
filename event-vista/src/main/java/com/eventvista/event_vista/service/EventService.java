@@ -53,6 +53,8 @@ public class EventService {
         if (event.getVenue() != null && event.getVenue().getId() != null) {
             venueService.findVenueById(event.getVenue().getId(), user)
                     .ifPresent(event::setVenue);
+        } else {
+            event.setVenue(null);
         }
 
         // Set the user's calendar automatically

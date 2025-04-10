@@ -188,16 +188,34 @@
 .calendarDay .calendarEvent {
   background-color: #3498db;
   color: white;
-  padding: 1px 2px;
-  border-radius: 1px;
+  padding: 2px 4px;
+  border-radius: 2px;
   font-size: 0.55rem;
   cursor: pointer;
   transition: all 0.2s;
-  border-left: 1px solid #2980b9;
+  border-left: 2px solid #2980b9;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.calendarDay .eventTime {
+  font-weight: bold;
+  font-size: 0.5rem;
+  opacity: 0.9;
+}
+
+.calendarDay .eventName {
+  font-weight: bold;
+}
+
+.calendarDay .eventVenue {
+  font-size: 0.5rem;
+  opacity: 0.9;
 }
 
 .calendarDay .calendarEvent:hover {
@@ -278,39 +296,38 @@
 }
 
 .calendarEventWeek {
-  position: relative;
   background-color: #3498db;
-  border-radius: 2px;
-  padding: 0.125rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-height: auto;
-  border-left: 2px solid #2980b9;
+  color: white;
+  padding: 4px 6px;
+  border-radius: 3px;
+  margin-bottom: 2px;
   cursor: pointer;
-  font-size: 0.55rem;
+  transition: all 0.2s;
+  border-left: 3px solid #2980b9;
 }
 
 .weekEventTime {
-  font-size: 0.55rem;
-  font-weight: 600;
-  color: white;
-  opacity: 0.9;
+  font-weight: bold;
+  font-size: 0.7rem;
+  margin-bottom: 2px;
 }
 
 .weekEventName {
-  font-weight: 600;
-  color: white;
-  font-size: 0.6rem;
+  font-weight: bold;
+  font-size: 0.8rem;
+  margin-bottom: 2px;
 }
 
 .weekEventVenue {
-  font-size: 0.5rem;
-  color: white;
-  opacity: 0.8;
-  display: flex;
-  align-items: center;
-  gap: 1px;
+  font-size: 0.7rem;
+  opacity: 0.9;
+  margin-bottom: 2px;
+}
+
+.weekEventNotes {
+  font-size: 0.7rem;
+  opacity: 0.9;
+  font-style: italic;
 }
 
 .calendarEventWeek:hover {
@@ -390,4 +407,40 @@
 .calendarHeader .button:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Day View Event Styles */
+.calendarDayView .calendarEventWeek {
+  background-color: #3498db;
+  color: white;
+  padding: 6px 8px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 4px solid #2980b9;
+}
+
+.calendarDayView .weekEventTime {
+  font-weight: bold;
+  font-size: 0.8rem;
+  margin-bottom: 3px;
+}
+
+.calendarDayView .weekEventName {
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-bottom: 3px;
+}
+
+.calendarDayView .weekEventVenue {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  margin-bottom: 3px;
+}
+
+.calendarDayView .weekEventNotes {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  font-style: italic;
 }
