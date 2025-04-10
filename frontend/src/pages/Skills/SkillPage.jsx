@@ -31,9 +31,9 @@ const SkillPage = () => {
   }, [isAuthenticated, token, navigate]);
 
   const handleAuthError = async () => {
-    await logout();
-    navigate("/login");
-  };
+      await logout();
+      navigate("/login");
+    };
 
   const fetchSkills = async () => {
     try {
