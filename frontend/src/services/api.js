@@ -75,6 +75,24 @@ export const venueApi = {
 //    getEventsByVendor:
 //};
 
+export const eventApi = {
+  getAllEvents: () => axiosInstance.get("/api/events/all"),
+  getEventById: (id) => axiosInstance.get(`/api/events/find/${id}`),
+  getEventByName: (name) => axiosInstance.get(`/api/events/find/name/${name}`),
+  getEventsByVenue: (venueId) =>
+    axiosInstance.get(`/api/events/find/venue/${venueId}`),
+  getEventsByClient: (clientId) =>
+    axiosInstance.get(`/api/events/find/client/${clientId}`),
+  getEventsByVendor: (vendorId) =>
+    axiosInstance.get(`/api/events/find/vendor/${vendorId}`),
+  createEvent: (eventData) => axiosInstance.post("/api/events/add", eventData),
+  updateEvent: (id, eventData) =>
+    axiosInstance.put(`/api/events/update/${id}`, eventData),
+  deleteEvent: (id) => axiosInstance.delete(`/api/events/delete/${id}`),
+  rebookEvent: (id, rebookData) =>
+    axiosInstance.post(`/api/events/rebook/${id}`, rebookData),
+};
+
 //export const vendorApi = {
 //    getAllVendors:
 //    getVendorById:
@@ -107,11 +125,19 @@ export const venueApi = {
 //    deleteClient:
 //};
 
+//export const calendarApi = {
+//    getCalendarByUser: (userId) =>
+//       axiosInstance.get(`/api/calendars/user/${userId}`),
+//    updateCalendar: (id, data) => axiosInstance.put(`/api/calendars/${id}`, data),
+//    deleteCalendar: (id) => axiosInstance.delete(`/api/calendars/${id}`),
+//};
+
 export const calendarApi = {
-    getCalendarByUser: (userId) =>
-       axiosInstance.get(`/api/calendars/user/${userId}`),
-    updateCalendar: (id, data) => axiosInstance.put(`/api/calendars/${id}`, data),
-    deleteCalendar: (id) => axiosInstance.delete(`/api/calendars/${id}`),
+  getMyCalendar: () => axiosInstance.get("/api/calendars/my"),
+  getCalendarById: (id) => axiosInstance.get(`/api/calendars/${id}`),
+  addCalendar: (calendarData) =>
+    axiosInstance.post("/api/calendars", calendarData),
+  deleteCalendar: (id) => axiosInstance.delete(`/api/calendars/${id}`),
 };
 
 export const authApi = {

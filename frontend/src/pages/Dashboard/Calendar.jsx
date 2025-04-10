@@ -1,50 +1,22 @@
 import React, { useState } from "react";
 import styles from "./Calendar.module.css";
 
-const Calendar = ({ events: propEvents = [], onEventClick }) => {
+const Calendar = ({ events = [] }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState("month");
 
-  // Sample events
-  const sampleEvents = [
-    {
-      id: 1,
-      name: "Wedding Reception - Smith Family",
-      date: new Date().toISOString().split("T")[0], // Today
-      time: "14:00",
-      venue: { name: "Grand Ballroom" },
-      notes:
-        "Black tie event, 200 guests expected, full catering service required",
-      client: { name: "Sarah Smith" },
-    },
-    {
-      id: 2,
-      name: "Corporate Conference - Tech Summit",
-      date: new Date(new Date().setDate(new Date().getDate() + 2))
-        .toISOString()
-        .split("T")[0], // 2 days from now
-      time: "09:00",
-      venue: { name: "Convention Center" },
-      notes:
-        "Annual tech conference, 500 attendees, multiple breakout sessions",
-      client: { name: "TechCorp Inc." },
-    },
-    {
-      id: 3,
-      name: "Birthday Celebration - Johnson",
-      date: new Date(new Date().setDate(new Date().getDate() + 1))
-        .toISOString()
-        .split("T")[0], // Tomorrow
-      time: "18:30",
-      venue: { name: "Garden Terrace" },
-      notes:
-        "Surprise 50th birthday party, live band booked, special dietary requirements",
-      client: { name: "Mike Johnson" },
-    },
-  ];
+  const formatTime = (timeStr) => {
+    if (!timeStr) return "";
 
-  // Use sample events if no events are provided
-  const events = propEvents.length > 0 ? propEvents : sampleEvents;
+    const timeWithoutSeconds = timeStr.split(":").slice(0, 2).join(":");
+
+    const [hours, minutes] = timeWithoutSeconds.split(":");
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const hour12 = hour % 12 || 12;
+
+    return `${hour12}:${minutes} ${ampm}`;
+  };
 
   const getDaysInMonth = (date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -56,8 +28,22 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
 
   const getEventsForDate = (date) => {
     return events.filter((event) => {
-      const eventDate = new Date(event.date);
-      return eventDate.toDateString() === date.toDateString();
+      try {
+        const eventDate = new Date(event.date);
+
+        // Check if the date is valid
+        if (isNaN(eventDate.getTime())) {
+          return false;
+        }
+
+        // Format both dates to YYYY-MM-DD for comparison
+        const eventDateStr = event.date; // Already in YYYY-MM-DD format
+        const compareDateStr = date.toISOString().split("T")[0];
+
+        return eventDateStr === compareDateStr;
+      } catch (error) {
+        return false;
+      }
     });
   };
 
@@ -158,10 +144,15 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
               <div
                 key={event.id}
                 className={styles.calendarEvent}
-                onClick={() => onEventClick(event)}
-                title={`${event.time} - ${event.name}`}
+                title={`${formatTime(event.time)} - ${event.name}${
+                  event.venue ? " at " + event.venue.name : ""
+                }${event.notes ? "\nNotes: " + event.notes : ""}`}
               >
+                <div className={styles.eventTime}>{formatTime(event.time)}</div>
                 <div className={styles.eventName}>{event.name}</div>
+                {event.venue && (
+                  <div className={styles.eventVenue}>📍 {event.venue.name}</div>
+                )}
               </div>
             ))}
           </div>
@@ -169,64 +160,37 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
       );
     }
 
-    // Add empty cells for remaining days to complete the grid
-    const totalDays = firstDay + daysInMonth;
-    const remainingDays = Math.ceil(totalDays / 7) * 7 - totalDays;
-    for (let i = 0; i < remainingDays; i++) {
-      days.push(
-        <div
-          key={`empty-end-${i}`}
-          className={`${styles.calendarDay} ${styles.calendarDayEmpty}`}
-        />
-      );
-    }
-
     return (
-      <>
+      <div className={styles.calendarMonthView}>
         {weekdayHeaders}
-        <div className={styles.calendarGrid}>{days}</div>
-      </>
+        <div className={styles.calendarDays}>{days}</div>
+      </div>
     );
   };
 
   const renderWeekView = () => {
     const weekDates = getWeekDates();
-
     return (
       <div className={styles.calendarWeekView}>
-        <div className={styles.calendarWeekHeader}>
-          {weekDates.map((date, index) => (
-            <div key={index} className={styles.calendarWeekDay}>
-              <div className={styles.calendarWeekDayName}>
-                {date.toLocaleDateString("en-US", { weekday: "short" })}
-              </div>
-              <div className={styles.calendarWeekDayNumber}>
-                {date.getDate()}
-              </div>
-            </div>
-          ))}
-        </div>
         <div className={styles.calendarWeekGrid}>
           {weekDates.map((date, dateIndex) => {
             const dayEvents = getEventsForDate(date);
             return (
               <div key={dateIndex} className={styles.calendarWeekDayColumn}>
                 {dayEvents.map((event) => (
-                  <div
-                    key={event.id}
-                    className={styles.calendarEventWeek}
-                    onClick={() => onEventClick(event)}
-                  >
-                    <div className={styles.weekEventTime}>{event.time}</div>
+                  <div key={event.id} className={styles.calendarEventWeek}>
+                    <div className={styles.weekEventTime}>
+                      {formatTime(event.time)}
+                    </div>
                     <div className={styles.weekEventName}>{event.name}</div>
                     {event.venue && (
                       <div className={styles.weekEventVenue}>
                         📍 {event.venue.name}
                       </div>
                     )}
-                    {event.client && (
-                      <div className={styles.weekEventVenue}>
-                        👤 {event.client.name}
+                    {event.notes && (
+                      <div className={styles.weekEventNotes}>
+                        📝 {event.notes}
                       </div>
                     )}
                   </div>
@@ -264,21 +228,19 @@ const Calendar = ({ events: propEvents = [], onEventClick }) => {
                     (event) => event.time.split(":")[0] === time.split(":")[0]
                   )
                   .map((event) => (
-                    <div
-                      key={event.id}
-                      className={styles.calendarEventWeek}
-                      onClick={() => onEventClick(event)}
-                    >
-                      <div className={styles.weekEventTime}>{event.time}</div>
+                    <div key={event.id} className={styles.calendarEventWeek}>
+                      <div className={styles.weekEventTime}>
+                        {formatTime(event.time)}
+                      </div>
                       <div className={styles.weekEventName}>{event.name}</div>
                       {event.venue && (
                         <div className={styles.weekEventVenue}>
                           📍 {event.venue.name}
                         </div>
                       )}
-                      {event.client && (
-                        <div className={styles.weekEventVenue}>
-                          👤 {event.client.name}
+                      {event.notes && (
+                        <div className={styles.weekEventNotes}>
+                          📝 {event.notes}
                         </div>
                       )}
                     </div>

@@ -1,9 +1,6 @@
 package com.eventvista.event_vista.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,8 +32,11 @@ public class User extends AbstractEntity {
 
     private LocalDateTime verificationTokenExpiryDate;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Event> events = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Calendar calendar;
 
     private String pictureUrl;
 
@@ -101,6 +101,17 @@ public class User extends AbstractEntity {
 
     public void setEvents(List<Event> events) {
         this.events = events;
+    }
+
+    public Calendar getCalendar() {
+        return calendar;
+    }
+
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+        if (calendar != null) {
+            calendar.setUser(this);
+        }
     }
 
     public String getName() {

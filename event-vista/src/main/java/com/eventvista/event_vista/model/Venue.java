@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,13 +39,12 @@ public class Venue extends AbstractEntity {
     private String notes;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ElementCollection
-    private List<String> photoUrls = new ArrayList<>();
-
     @OneToMany(mappedBy = "venue")
+    @JsonIgnore
     private List<Event> events = new ArrayList<>();
 
 
@@ -109,14 +109,6 @@ public class Venue extends AbstractEntity {
 
     public void setNotes(String notes) {
         this.notes = notes;
-    }
-
-    public List<String> getPhotoUrls() {
-        return photoUrls;
-    }
-
-    public void setPhotoUrls(List<String> photoUrls) {
-        this.photoUrls = photoUrls;
     }
 
     public List<Event> getEvents() {
