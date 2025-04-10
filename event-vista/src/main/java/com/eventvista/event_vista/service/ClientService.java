@@ -1,8 +1,11 @@
 package com.eventvista.event_vista.service;
 
 import com.eventvista.event_vista.data.ClientRepository;
+import com.eventvista.event_vista.data.VenueRepository;
 import com.eventvista.event_vista.model.Client;
+import com.eventvista.event_vista.model.PhoneNumber;
 import com.eventvista.event_vista.model.User;
+import com.eventvista.event_vista.model.Venue;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,35 +17,58 @@ public class ClientService {
 
     public ClientService(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
+
     }
 
-    // Add new client
-    public Client addClient(Client client) {
+    public List<Client> findAllClients(User user) {
+        return clientRepository.findAllByUser(user);
+    }
+
+    public Optional<Client> findClientById(Integer id, User user) {
+        return clientRepository.findByIdAndUser(id, user)
+                .filter(client -> client.getUser().getId().equals(user.getId()));
+    }
+
+    public Optional<Client> findClientByName(String name, User user) {
+        return clientRepository.findByNameAndUser(name, user)
+                .filter(client -> client.getUser().getId().equals(user.getId()));
+    }
+
+    public Optional<Client> findClientByEmailAddress(String emailAddress, User user) {
+        return clientRepository.findByEmailAddressAndUser(emailAddress, user)
+                .filter(client -> client.getUser().getId().equals(user.getId()));
+    }
+
+    public Optional<Client> findClientByPhoneNumber(PhoneNumber phoneNumber, User user) {
+        return clientRepository.findByPhoneNumberAndUser(phoneNumber, user)
+                .filter(client -> client.getUser().getId().equals(user.getId()));
+    }
+
+    public Client addClient(Client client, User user) {
+        client.setUser(user);
         return clientRepository.save(client);
     }
 
-    // Get all clients
-    public List<Client> getAllClients() {
-        return clientRepository.findAll();
+    public Optional<Client> updateClient(Integer id, Client updatedClient, User user) {
+        return clientRepository.findByIdAndUser(id, user)
+                .map(client -> {
+
+                    client.setName(updatedClient.getName());
+                    client.setEmailAddress(updatedClient.getEmailAddress());
+                    client.setNotes(updatedClient.getNotes());
+                    client.setPhoneNumber(updatedClient.getPhoneNumber());
+
+                    return clientRepository.save(client);
+                });
     }
 
-    // Find by ID
-    public Optional<Client> findById(Long id) {
-        return clientRepository.findById(id);
-    }
+    public boolean deleteClient(Integer id, User user) {
+        Optional<Client> clientOpt = clientRepository.findByIdAndUser(id, user);
 
-    // Search by Name (partial match)
-    public List<Client> findByName(String name) {
-        return clientRepository.findByNameContainingIgnoreCase(name);
-    }
-
-    // Find by exact Email
-    public Optional<Client> findByEmail(String email) {
-        return clientRepository.findByEmailIgnoreCase(email);
-    }
-
-    // Find by exact Phone Number
-    public Optional<Client> findByPhoneNumber(String phoneNumber) {
-        return clientRepository.findByPhoneNumber(phoneNumber);
+        if (clientOpt.isPresent()) {
+            clientRepository.delete(clientOpt.get());
+            return true;
+        }
+        return false;
     }
 }
