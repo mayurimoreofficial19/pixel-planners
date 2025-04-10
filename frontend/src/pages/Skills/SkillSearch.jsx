@@ -8,28 +8,32 @@ const SkillSearch = ({
   setSearchType,
   onSearch,
 }) => {
-  return (
-    <div className="search-container" style={{ marginBottom: "1rem" }}>
-      <<select
-        value={searchType}
-        onChange={(e) => setSearchType(e.target.value)}
-        className="search-select"
-      >
+  // Trigger search when the user presses Enter
+    const handleKeyPress = (e) => {
+      if (e.key === "Enter") {
+        onSearch();
+      }
+    };
 
-        <option value="name">Name</option>
-      </select>>
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder={`Search by ${searchType}...`}
-        className="search-input"
-      />
-      <button onClick={onSearch} className="button button-primary">
-        Search
-      </button>
-    </div>
-  );
+    return (
+      <div className="search-container" style={{ marginBottom: "1rem" }}>
+        <label htmlFor="searchTerm" className="form-label">
+          Name
+        </label>
+        <input
+          id="searchTerm"
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={handleKeyPress} // Trigger search on Enter key press
+          placeholder={`Search by name...`}
+          className="search-input"
+        />
+        <button onClick={onSearch} className="button button-primary">
+          Search
+        </button>
+      </div>
+   );
 };
 
-export default VenueSearch;
+  export default SkillSearch;
