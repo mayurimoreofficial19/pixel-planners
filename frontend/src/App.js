@@ -9,7 +9,6 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import VenuePage from "./pages/Venues/VenuePage";
 import "./App.css";
 import Welcome from "./pages/Welcome/Welcome";
-import Header from "./pages/Welcome/Header";
 import OAuth2RedirectHandler from "./pages/User/OAuth2RedirectHandler";
 import UserProfile from "./pages/User/UserProfile";
 
