@@ -2,13 +2,13 @@ import React from "react";
 import "../../styles/components.css";
 
 const SkillSearch = ({
-  searchTerm,
-  setSearchTerm,
-  searchType,
-  setSearchType,
-  onSearch,
-}) => {
-  // Trigger search when the user presses Enter
+    searchTerm,
+    setSearchTerm,
+    searchType,
+    setSearchType,
+    onSearch,
+    }) => {
+    // Trigger search when the user presses Enter
     const handleKeyPress = (e) => {
       if (e.key === "Enter") {
         onSearch();
@@ -33,7 +33,7 @@ const SkillSearch = ({
           Search
         </button>
       </div>
-   );
+    );
 };
 
   export default SkillSearch;

@@ -41,10 +41,6 @@ public class SkillService {
                 .filter(skill -> skill.getUser().getId().equals(user.getId()));
     }
 
-    public Set<Skill> findByIdAndUser(Set<Integer> skillIds, User user) {
-        return new HashSet<>(skillRepository.findAllByIdInAndUser(skillIds, user));
-    }
-
     public List<Skill> findAllSkills(User user) {
         return skillRepository.findAllByUser(user);
     }

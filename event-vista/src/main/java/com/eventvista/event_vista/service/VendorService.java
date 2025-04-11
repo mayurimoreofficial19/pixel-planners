@@ -1,27 +1,28 @@
 package com.eventvista.event_vista.service;
 
 
+import com.eventvista.event_vista.data.SkillRepository;
 import com.eventvista.event_vista.data.VendorRepository;
 import com.eventvista.event_vista.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class VendorService {
 
     private final VendorRepository vendorRepository;
-    private final SkillService skillService;
+    private final SkillRepository skillRepository;
 
     // Constructor
     @Autowired
-    public VendorService(VendorRepository vendorRepository, SkillService skillService) {
+    public VendorService(VendorRepository vendorRepository, SkillRepository skillRepository) {
         this.vendorRepository = vendorRepository;
-        this.skillService = skillService;
+        this.skillRepository= skillRepository;
     }
 
 
@@ -31,13 +32,17 @@ public class VendorService {
         vendor.setUser(user);
 
         // Handle Skill relationship
-        if (vendor.getSkills() != null && !vendor.getSkills().isEmpty()) {
-            Set<Integer> skillIds = vendor.getSkills().stream()
+        List<Skill> incomingSkills = vendor.getSkills();
+        if (incomingSkills != null && !incomingSkills.isEmpty()) {
+            List<Skill> validSkills = incomingSkills.stream()
                     .map(Skill::getId)
-                    .collect(Collectors.toSet()); // Use Set for uniqueness
+                    .filter(Objects::nonNull)
+                    .map(id -> skillRepository.findByIdAndUser(id, user))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
 
-            Set<Skill> resolvedSkills = skillService.findByIdAndUser(skillIds, user);
-            vendor.setSkills(resolvedSkills);
+            vendor.setSkills(validSkills);
         } else {
             vendor.setSkills(null);
         }
@@ -74,22 +79,29 @@ public class VendorService {
     }
 
     public Vendor updateVendor(Integer id, Vendor updatedVendor, User user) {
-        return vendorRepository.findById(id)
+        return vendorRepository.findByIdAndUser(id, user)
                 .map(existingVendor -> {
                     // Update basic fields
                     existingVendor.setName(updatedVendor.getName());
                     existingVendor.setLocation(updatedVendor.getLocation());
                     existingVendor.setPhoneNumber(updatedVendor.getPhoneNumber());
                     existingVendor.setEmailAddress(updatedVendor.getEmailAddress());
+                    existingVendor.setNotes(updatedVendor.getNotes());
 
                     // Handle Skill relationship
-                    if (updatedVendor.getSkills() != null && !updatedVendor.getSkills().isEmpty()) {
-                        List<Integer> skillIds = updatedVendor.getSkills().stream()
+                    List<Skill> incomingSkills = updatedVendor.getSkills();
+                    if (incomingSkills != null && !incomingSkills.isEmpty()) {
+                        List<Skill> validSkills = incomingSkills.stream()
                                 .map(Skill::getId)
+                                .filter(Objects::nonNull)
+                                .map(skillId -> skillRepository.findByIdAndUser(skillId, user))
+                                .filter(Optional::isPresent)
+                                .map(Optional::get)
                                 .collect(Collectors.toList());
 
-                        Set<Skill> resolvedSkills = skillService.findByIdAndUser((Set<Integer>) skillIds, user);
-                        existingVendor.setSkills(resolvedSkills);
+                        existingVendor.setSkills(validSkills);
+                    } else {
+                        existingVendor.setSkills(null);
                     }
 
                     return vendorRepository.save(existingVendor);
