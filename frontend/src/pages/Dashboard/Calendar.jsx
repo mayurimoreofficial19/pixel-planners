@@ -27,12 +27,21 @@ const Calendar = ({ events = [] }) => {
   };
 
   const getEventsForDate = (date) => {
+    console.log("Processing events for date:", date);
+    console.log("All events:", events);
+
     return events.filter((event) => {
       try {
+        console.log("Processing event:", event);
+        console.log("Event date:", event.date);
+        console.log("Event time:", event.time);
+
+        // The date is already in YYYY-MM-DD format from the backend
         const eventDate = new Date(event.date);
 
         // Check if the date is valid
         if (isNaN(eventDate.getTime())) {
+          console.warn(`Invalid date for event ${event.id}: ${event.date}`);
           return false;
         }
 
@@ -40,8 +49,15 @@ const Calendar = ({ events = [] }) => {
         const eventDateStr = event.date; // Already in YYYY-MM-DD format
         const compareDateStr = date.toISOString().split("T")[0];
 
+        console.log("Comparing dates:", {
+          eventDateStr,
+          compareDateStr,
+          matches: eventDateStr === compareDateStr,
+        });
+
         return eventDateStr === compareDateStr;
       } catch (error) {
+        console.error(`Error processing event ${event.id}:`, error);
         return false;
       }
     });
@@ -160,18 +176,43 @@ const Calendar = ({ events = [] }) => {
       );
     }
 
+    // Add empty cells for remaining days to complete the grid
+    const totalDays = firstDay + daysInMonth;
+    const remainingDays = Math.ceil(totalDays / 7) * 7 - totalDays;
+    for (let i = 0; i < remainingDays; i++) {
+      days.push(
+        <div
+          key={`empty-end-${i}`}
+          className={`${styles.calendarDay} ${styles.calendarDayEmpty}`}
+        />
+      );
+    }
+
     return (
-      <div className={styles.calendarMonthView}>
+      <>
         {weekdayHeaders}
-        <div className={styles.calendarDays}>{days}</div>
-      </div>
+        <div className={styles.calendarGrid}>{days}</div>
+      </>
     );
   };
 
   const renderWeekView = () => {
     const weekDates = getWeekDates();
+
     return (
       <div className={styles.calendarWeekView}>
+        <div className={styles.calendarWeekHeader}>
+          {weekDates.map((date, index) => (
+            <div key={index} className={styles.calendarWeekDay}>
+              <div className={styles.calendarWeekDayName}>
+                {date.toLocaleDateString("en-US", { weekday: "short" })}
+              </div>
+              <div className={styles.calendarWeekDayNumber}>
+                {date.getDate()}
+              </div>
+            </div>
+          ))}
+        </div>
         <div className={styles.calendarWeekGrid}>
           {weekDates.map((date, dateIndex) => {
             const dayEvents = getEventsForDate(date);
@@ -282,6 +323,37 @@ const Calendar = ({ events = [] }) => {
       default:
         return "";
     }
+  };
+
+  const renderEvents = () => {
+    if (!events || events.length === 0) return null;
+
+    return events.map((event) => {
+      console.log("Event data:", event);
+      console.log("Date:", event.date);
+      console.log("Time:", event.time);
+
+      // The time is already in HH:mm format from the backend
+      const timeStr = event.time;
+
+      return (
+        <div
+          key={event.id}
+          className={`calendar-event ${
+            viewMode === "week" ? "week-event" : ""
+          }`}
+        >
+          <span className="event-time">{timeStr}</span>
+          <span className="event-name">{event.name}</span>
+          {event.venue && (
+            <span className="event-venue">
+              <i className="fas fa-map-marker-alt"></i>
+              {event.venue.name}
+            </span>
+          )}
+        </div>
+      );
+    });
   };
 
   return (
