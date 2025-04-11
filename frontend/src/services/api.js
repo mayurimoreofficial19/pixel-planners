@@ -145,7 +145,9 @@ export const authApi = {
   register: (userData) => axiosInstance.post("/api/auth/register", userData),
   getCurrentUser: () => axiosInstance.get("/api/auth/user"),
   logout: () => axiosInstance.post("/api/auth/logout"),
-  getOAuthUrl: () => "http://localhost:8080/oauth2/authorization/google"
+  getOAuthUrl: () => "http://localhost:8080/oauth2/authorization/google",
+      resetPassword: (data) =>
+          axiosInstance.post("/api/auth/reset-password", data),
 };
 
 export const userApi = {

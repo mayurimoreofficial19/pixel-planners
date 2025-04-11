@@ -1,133 +1,179 @@
 
 
+
+/*
+/* Overall page container*/
 .user-profile-container {
-  min-height: 100vh;
+  max-width: 600px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: #fdfaf4; /* A light cream color to mimic the screenshot background */
+  border-radius: 8px;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative; /* For absolute positioning of child elements */
+    overflow: hidden; /* To contain the profile picture edit icon */
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: #333; /* Darker text for better readability */
+    }
+}
+
+/* Profile picture section */
+.profile-picture-wrapper {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin: 0 auto 1.5rem auto;
+}
+
+/* Large circle placeholder for the profile picture */
+.profile-picture {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background-color: #ccc; /* Fallback color if no picture is loaded */
+  display: block;
+  object-fit: cover;
+}
+
+/* Pencil/edit icon in the top-right of the circle */
+.profile-picture-edit {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 36px;
+  height: 36px;
+  background-color: #fdfaf4;
+  border-radius: 50%;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--background);
-  padding: var(--spacing-xl) var(--spacing-md);
 }
 
-.user-profile-box {
-  max-width: 32rem;
-  width: 100%;
-  background-color: var(--paper);
-  padding: var(--spacing-xl);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
-}
-
-.user-profile-header {
-  margin-bottom: var(--spacing-xl);
-}
-
-.user-profile-title {
-  margin-top: var(--spacing-lg);
-  text-align: center;
-  font-size: 1.875rem;
-  font-weight: 800;
-  color: var(--text-primary);
-}
-
-.user-profile-subtitle {
-  margin-top: var(--spacing-sm);
-  text-align: center;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
+/* Basic styling for the form */
 .user-profile-form {
-  margin-top: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Spacing between fields */
+  margin: 0 auto;
+  max-width: 300px; /* Narrower form area */
 }
 
-.form-group {
-  margin-bottom: var(--spacing-md);
-}
-
-.form-input {
-  width: 100%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--text-secondary);
-  border-radius: var(--border-radius-md);
-  font-size: 0.875rem;
-  color: var(--text-primary);
-  transition: all 0.2s ease;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px var(--primary-light);
-}
-
-.error-message {
-  color: var(--error);
-  font-size: 0.875rem;
-  text-align: center;
-  background-color: rgba(239, 68, 68, 0.1);
-  padding: var(--spacing-sm);
-  border-radius: var(--border-radius-md);
-  margin: var(--spacing-md) 0;
-}
-
-.success-message {
-  color: var(--success);
-  font-size: 0.875rem;
-  text-align: center;
-  background-color: rgba(34, 197, 94, 0.1);
-  padding: var(--spacing-sm);
-  border-radius: var(--border-radius-md);
-  margin: var(--spacing-md) 0;
-}
-
-.submit-button {
-  width: 100%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  background-color: var(--primary);
-  color: white;
-  font-size: 0.875rem;
+/* Labels for Username, Email, New Password, etc. */
+.user-profile-form label {
   font-weight: 500;
+  margin-bottom: 0.25rem;
+  color: #333;
+}
+
+/* Input fields */
+.user-profile-form input[type="text"],
+.user-profile-form input[type="email"],
+.user-profile-form input[type="password"] {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Action buttons (Save, Delete) container */
+.user-profile-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Save button */
+.save-button {
+  padding: 0.6rem 1.5rem;
+  background-color: #367bbc; /* A blue tone for the “Save” button */
   border: none;
-  border-radius: var(--border-radius-md);
+  border-radius: 4px;
+  color: #fff;
+  font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-.submit-button:hover {
-  background-color: var(--primary-dark);
+.save-button:hover {
+  background-color: #2c6aa6;
 }
 
+/* Delete Account button */
 .delete-button {
-  width: 100%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  background-color: var(--error);
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 500;
+  padding: 0.6rem 1.5rem;
+  background-color: #f44336; /* A red tone for the “Delete Account” button */
   border: none;
-  border-radius: var(--border-radius-md);
+  border-radius: 4px;
+  color: #fff;
+  font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  margin-top: var(--spacing-md);
 }
 
 .delete-button:hover {
-  background-color: var(--error-dark);
+  background-color: #d32f2f;
 }
 
-.profile-picture {
-  display: block;
-  margin: 0 auto var(--spacing-md);
-  width: 6rem;
-  height: 6rem;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--primary);
-}
-
-.loading-message {
+/* Success and error messages */
+.success-message,
+.error-message {
+  margin-bottom: 1rem;
   text-align: center;
-  font-size: 1rem;
-  color: var(--text-secondary);
+  font-weight: 500;
 }
+
+.success-message {
+  color: #388e3c; /* greenish tone */
+}
+
+.error-message {
+  color: #d32f2f; /* red tone */
+}
+
+/* Pencil icon button in the top-right corner */
+.edit-icon-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(30%, -30%);
+  background-color: #fff;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  padding: 0.5rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.edit-icon-button img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.display-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.edit-button, .cancel-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.edit-button:hover, .cancel-button:hover {
+  text-decoration: underline;
+}
+
