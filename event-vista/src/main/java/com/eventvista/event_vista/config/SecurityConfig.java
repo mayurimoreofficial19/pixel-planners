@@ -1,6 +1,7 @@
 package com.eventvista.event_vista.config;
 
 import com.eventvista.event_vista.security.JwtAuthenticationFilter;
+import com.eventvista.event_vista.security.OAuth2SuccessHandler;
 import com.eventvista.event_vista.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +32,9 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired
+    private OAuth2SuccessHandler oAuth2SuccessHandler;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -40,8 +44,17 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/public/**", "/oauth2/**", "/login/oauth2/**").permitAll()
                         .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(authorization ->
+                                authorization.baseUri("/oauth2/authorization")
+                        )
+                        .redirectionEndpoint(redirection ->
+                                redirection.baseUri("/login/oauth2/code/*")
+                        )
+                        .successHandler(oAuth2SuccessHandler)
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

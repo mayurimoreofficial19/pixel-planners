@@ -171,6 +171,7 @@ import Calendar from "./Calendar";
 import EventForm from "./EventForm";
 import { eventApi } from "../../services/api";
 import "../../styles/components.css";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { user, logout, token } = useAuth();
@@ -179,6 +180,11 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [showEventForm, setShowEventForm] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
+  const navigate = useNavigate();
+
+  const redirectToUserProfile = () => {
+      navigate("/profile"); // Redirect to user profile page
+    };
 
   useEffect(() => {
     if (token) {
@@ -261,6 +267,9 @@ const Dashboard = () => {
               <span className="card-content">
                 Welcome, {user?.name || "User"}
               </span>
+                            <button onClick={redirectToUserProfile} className="button button-primary">
+                            Profile
+                              </button>
               <button
                 onClick={handleAddEvent}
                 className="button button-primary"

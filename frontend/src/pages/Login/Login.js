@@ -127,6 +127,11 @@ const Login = () => {
           />
           Sign in with Google
         </button>
+                <div className="back-to-welcome">
+                  <Link to="/" className="login-link">
+                    Back to Welcome Page
+                    </Link>
+                </div>
       </div>
     </div>
   );
