@@ -8,6 +8,10 @@ import ResetPassword from "./pages/Account/ResetPassword/ResetPassword";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import VenuePage from "./pages/Venues/VenuePage";
 import "./App.css";
+import Welcome from "./pages/Welcome/Welcome";
+import Header from "./pages/Welcome/Header";
+import OAuth2RedirectHandler from "./pages/User/OAuth2RedirectHandler";
+import UserProfile from "./pages/User/UserProfile";
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -29,10 +33,12 @@ function App() {
     <AuthProvider>
       <div className="App">
         <Routes>
+            <Route path="/" element={<Welcome />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
           <Route
             path="/dashboard"
             element={
@@ -41,6 +47,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+                    <Route
+                      path="/profile"
+                      element={
+                        <ProtectedRoute>
+                          <UserProfile />
+                        </ProtectedRoute>
+                      }
+                    />
           <Route path="/venues" element={<VenuePage />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>

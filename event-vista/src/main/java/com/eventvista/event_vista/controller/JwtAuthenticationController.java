@@ -6,6 +6,7 @@ import com.eventvista.event_vista.model.AuthProvider;
 import com.eventvista.event_vista.model.dto.LoginFormDTO;
 import com.eventvista.event_vista.model.dto.RegisterFormDTO;
 import com.eventvista.event_vista.model.dto.ResetPasswordDTO;
+import com.eventvista.event_vista.model.dto.UserProfileDTO;
 import com.eventvista.event_vista.security.JwtTokenProvider;
 import com.eventvista.event_vista.service.EmailService;
 import jakarta.mail.MessagingException;
@@ -20,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import com.eventvista.event_vista.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -46,6 +48,9 @@ public class JwtAuthenticationController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private UserService userService;
 
     @Value("${app.email.verification.token.expiration}")
     private long verificationTokenExpiration;
@@ -311,4 +316,47 @@ public class JwtAuthenticationController {
                     .body("Failed to send email: " + e.getMessage());
         }
     }
+
+    // Update user profile
+    @PutMapping("/update-profile")
+    public ResponseEntity<?> updateUserProfileJwt(@RequestBody UserProfileDTO profileDTO,
+                                                  @RequestHeader("Authorization") String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            if (tokenProvider.validateToken(token)) {
+                String email = tokenProvider.getUsernameFromToken(token);
+                try {
+                    User updatedUser = userService.updateUserProfile(email, profileDTO);
+                    return ResponseEntity.ok(new UserProfileDTO(
+                            updatedUser.getId(),
+                            updatedUser.getName(),
+                            updatedUser.getEmailAddress(),
+                            updatedUser.getPictureUrl()
+                    ));
+                } catch (RuntimeException ex) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+                }
+            }
+        }
+        return ResponseEntity.status(401).body("Invalid or expired token");
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteUser(@RequestHeader("Authorization") String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            if (tokenProvider.validateToken(token)) {
+                String email = tokenProvider.getUsernameFromToken(token);
+                Optional<User> userOpt = userRepository.findByEmailAddress(email);
+                if (userOpt.isPresent()) {
+                    User user = userOpt.get();
+                    userRepository.delete(user);
+                    return ResponseEntity.ok("User deleted successfully");
+                }
+            }
+        }
+        return ResponseEntity.status(401).body("Invalid or expired token");
+    }
+
+
 }

@@ -1,0 +1,32 @@
+
+
+
+.welcome-container {
+  position: relative;
+  min-height: 100vh;
+  background-image: url('./event.png'); /* Path to your image */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+   justify-content: center;
+}
+
+.welcome-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.welcome-content h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.welcome-content p {
+  font-size: 1.25rem;
+}
