@@ -26,6 +26,10 @@ public class Client extends AbstractEntity {
 
     private String notes;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @OneToMany(mappedBy = "client")
     private List<Event> events = new ArrayList<>();
 
@@ -77,6 +81,14 @@ public class Client extends AbstractEntity {
 
     public void setEvents(List<Event> events) {
         this.events = events;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
