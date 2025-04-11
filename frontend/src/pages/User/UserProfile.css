@@ -157,3 +157,23 @@
   height: 16px;
   object-fit: contain;
 }
+
+.display-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.edit-button, .cancel-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.edit-button:hover, .cancel-button:hover {
+  text-decoration: underline;
+}
+

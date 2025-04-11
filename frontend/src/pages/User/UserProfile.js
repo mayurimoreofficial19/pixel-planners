@@ -18,6 +18,10 @@ const UserProfile = () => {
     });
 
   const [selectedFile, setSelectedFile] = useState(null);
+    const [editMode, setEditMode] = useState({
+      name: false,
+      email: false,
+    });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -74,6 +78,15 @@ const UserProfile = () => {
     }
   };
 
+  // Toggle edit mode
+  const toggleEditMode = (field) => {
+    setEditMode((prev) => ({ ...prev, [field]: true }));
+  };
+  const cancelEditMode = (field) => {
+    // Optionally, you could reset the value for the field here,
+    // for now we simply set editMode for the field back to false.
+    setEditMode((prev) => ({ ...prev, [field]: false }));
+  };
 
   const handleUpdate = (e) => {
     e.preventDefault();
@@ -89,6 +102,10 @@ const UserProfile = () => {
         setSuccessMessage("Profile updated successfully!");
         setErrorMessage("");
         setLoading(false);
+        // Exit edit mode after update
+        setEditMode({
+        name: false,
+        email: false,})
          // Redirect the user to the dashboard
                 navigate("/dashboard");
       })
@@ -198,9 +215,10 @@ const UserProfile = () => {
               </div>
 
 
-
         <div className="form-group">
           <label htmlFor="name">Name:</label>
+          {editMode.name ? (
+          <>
           <input
             type="text"
             id="name"
@@ -209,9 +227,34 @@ const UserProfile = () => {
             onChange={handleChange}
             required
           />
+
+          <button
+                          type="button"
+                          className="cancel-button"
+                          onClick={() => cancelEditMode("name")}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <div className="display-field">
+                        <span>{formData.name}</span>
+                        <button
+                          type="button"
+                          className="edit-button"
+                          onClick={() => toggleEditMode("name")}
+                        >
+                          Edit
+                        </button>
+                               </div>
+                                  )}
         </div>
+
+
         <div className="form-group">
           <label htmlFor="emailAddress">Email Address:</label>
+            {editMode.email ? (
+            <>
           <input
             type="email"
             id="emailAddress"
@@ -220,13 +263,31 @@ const UserProfile = () => {
             onChange={handleChange}
             required
           />
+          <button
+                          type="button"
+                          className="cancel-button"
+                          onClick={() => cancelEditMode("email")}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <div className="display-field">
+                        <span>{formData.emailAddress}</span>
+                        <button
+                          type="button"
+                          className="edit-button"
+                          onClick={() => toggleEditMode("email")}
+                        >
+                          Edit
+                        </button>
+                      </div>
+                    )}
         </div>
 
     <div className="user-profile-actions">
       <button type="submit" className="save-button">Update User</button>
-      <button type="button" onClick={handleDelete} className="delete-button">
-        Delete Account
-      </button>
+      <button type="button" onClick={handleDelete} className="delete-button">Delete Account</button>
     </div>
         </form>
 
