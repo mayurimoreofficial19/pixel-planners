@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import Select from "react-select";
 import { vendorApi, skillApi } from "../../services/api";
 import "../../styles/components.css";
 import styles from "./VendorForm.module.css";
+
 
 const VendorForm = ({ initialData, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -12,7 +14,7 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
       phoneNumber: "",
       isValid: false,
     },
-     skills: new Set(initialData?.skills || []),
+    skills: new Set(initialData?.skills || []),
     notes: "",
     ...(initialData
       ? {
@@ -35,25 +37,53 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
     return pattern.test(phoneNumber);
   };
 
-    useEffect(() => {
-      const fetchSkills = async () => {
-        try {
-          const response = await skillApi.getAllSkills();
-          if (response.data) {
-            setSkills(response.data);
-          }
-        } catch (error) {
-          console.error("Error fetching skills:", error);
-          setErrors((prev) => ({
-            ...prev,
-            fetch: "Failed to load skills. Please try again.",
-          }));
-        } finally {
-          setLoading(false);
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const response = await skillApi.getAllSkills();
+        if (response.data) {
+          setSkills(response.data);
         }
-      };
-      fetchSkills();
-    }, []);
+      } catch (error) {
+        console.error("Error fetching skills:", error);
+        setErrors((prev) => ({
+          ...prev,
+          fetch: "Failed to load skills. Please try again.",
+        }));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSkills();
+  }, []);
+
+    const skillOptions = skills.map((skill) => ({
+      value: skill.id,
+      label: skill.name,
+    }));
+
+    const selectedSkillOptions = Array.from(formData.skills).map((skill) => ({
+      value: skill.id,
+      label: skill.name,
+    }));
+
+    const handleSkillChange = (selectedOptions) => {
+      const selectedSkills = new Set(
+        selectedOptions.map((option) =>
+          skills.find((skill) => skill.id === option.value)
+        )
+      );
+
+      setFormData((prev) => ({
+        ...prev,
+        skills: selectedSkills,
+      }));
+
+      if (errors.skills) {
+        setErrors((prev) => ({ ...prev, skills: undefined }));
+      }
+    };
+
 
 
   const validateForm = () => {
@@ -65,7 +95,7 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
       newErrors.location = "Location must be at least 3 characters long";
     }
     if (formData.skills.size === 0) {
-        newErrors.skills = "Please select at least one skill"; // Check if the Set is empty
+        newErrors.skills = "Please select at least one skill";
     }
     if (
       !formData.emailAddress ||
@@ -102,26 +132,6 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
-
-
-    const handleSkillChange = (e) => {
-      const selectedOptions = Array.from(e.target.selectedOptions); // Get selected options as an array
-      const selectedSkills = new Set(
-        selectedOptions.map((option) => {
-          const skillId = parseInt(option.value);
-          return skills.find((skill) => skill.id === skillId); // Assuming 'skills' is an array of objects
-        })
-      );
-
-      setFormData((prev) => ({
-        ...prev,
-        skills: selectedSkills, // Update skills as a Set
-      }));
-
-      if (errors.skills) {
-        setErrors((prev) => ({ ...prev, skills: undefined }));
-      }
-    };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -218,24 +228,18 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
           )}
         </div>
 
-    <div className="form-group">
-      <label className="form-label">Skills</label>
-      <select
-        isMulti
-        name="skills"
-        value={[...formData.skills].map((skill) => skill.id)}  // Convert Set to Array for rendering
-        onChange={handleSkillChange}
-        className={`form-input ${errors.skills ? "error" : ""}`}
-        required
-      >
-        {skills.map((skill) => (
-          <option key={skill.id} value={skill.id}>
-            {skill.name}
-          </option>
-        ))}
-      </select>
-      {errors.skills && <div className="error-text">{errors.skills}</div>}
-    </div>
+        <div className="form-group">
+          <label className="form-label">Skills</label>
+          <Select
+            isMulti
+            name="skills"
+            options={skillOptions}
+            value={selectedSkillOptions}
+            onChange={handleSkillChange}
+            classNamePrefix="react-select"
+          />
+          {errors.skills && <div className="error-text">{errors.skills}</div>}
+        </div>
 
         <div className="form-group">
           <label className="form-label">Notes</label>
