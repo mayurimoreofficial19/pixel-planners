@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { vendorApi } from "../../services/api";
+import { vendorApi, skillApi } from "../../services/api";
 import "../../styles/components.css";
 import styles from "./VendorForm.module.css";
 
@@ -12,7 +12,7 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
       phoneNumber: "",
       isValid: false,
     },
-    skills: null,
+     skills: new Set(initialData?.skills || []),
     notes: "",
     ...(initialData
       ? {
@@ -35,7 +35,7 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
     return pattern.test(phoneNumber);
   };
 
-  useEffect(() => {
+    useEffect(() => {
       const fetchSkills = async () => {
         try {
           const response = await skillApi.getAllSkills();
@@ -52,9 +52,9 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
           setLoading(false);
         }
       };
-
       fetchSkills();
     }, []);
+
 
   const validateForm = () => {
     const newErrors = {};
@@ -64,8 +64,8 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
     if (!formData.location || formData.location.length < 3) {
       newErrors.location = "Location must be at least 3 characters long";
     }
-    if (!formData.skill ) {
-      newErrors.skill = "Please select a skill";
+    if (formData.skills.size === 0) {
+        newErrors.skills = "Please select at least one skill"; // Check if the Set is empty
     }
     if (
       !formData.emailAddress ||
@@ -103,6 +103,26 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
     }
   };
 
+
+    const handleSkillChange = (e) => {
+      const selectedOptions = Array.from(e.target.selectedOptions); // Get selected options as an array
+      const selectedSkills = new Set(
+        selectedOptions.map((option) => {
+          const skillId = parseInt(option.value);
+          return skills.find((skill) => skill.id === skillId); // Assuming 'skills' is an array of objects
+        })
+      );
+
+      setFormData((prev) => ({
+        ...prev,
+        skills: selectedSkills, // Update skills as a Set
+      }));
+
+      if (errors.skills) {
+        setErrors((prev) => ({ ...prev, skills: undefined }));
+      }
+    };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
@@ -114,7 +134,7 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
           emailAddress: formData.emailAddress,
           phoneNumber: formData.phoneNumber.phoneNumber,
           notes: formData.notes,
-          skills: formData.skills ? { id: formData.skills.id } : null,
+          skills: Array.from(formData.skills).map((skill) => ({ id: skill.id })),  // Convert Set to Array of objects
         };
         await vendorApi.createVendor(vendorData);
         onSubmit();
@@ -127,6 +147,7 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
       }
     }
   };
+
 
   return (
     <div className="form-container">
@@ -197,7 +218,24 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
           )}
         </div>
 
-
+    <div className="form-group">
+      <label className="form-label">Skills</label>
+      <select
+        isMulti
+        name="skills"
+        value={[...formData.skills].map((skill) => skill.id)}  // Convert Set to Array for rendering
+        onChange={handleSkillChange}
+        className={`form-input ${errors.skills ? "error" : ""}`}
+        required
+      >
+        {skills.map((skill) => (
+          <option key={skill.id} value={skill.id}>
+            {skill.name}
+          </option>
+        ))}
+      </select>
+      {errors.skills && <div className="error-text">{errors.skills}</div>}
+    </div>
 
         <div className="form-group">
           <label className="form-label">Notes</label>

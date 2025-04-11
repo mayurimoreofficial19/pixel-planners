@@ -98,16 +98,15 @@ export const vendorApi = {
   getVendorById: (id) => axiosInstance.get(`/api/vendors/find/${id}`),
   getVendorByName: (name) => axiosInstance.get(`/api/vendors/find/name/${name}`),
   getVendorBySkill: (skillId) =>
-    axiosInstance.get(`/api/events/find/skill/${skillId}`),
+    axiosInstance.get(`/api/events/find/skills/${skillId}`),
   getVendorByLocation: (location) =>
     axiosInstance.get(`/api/vendors/find/location/${location}`),
   getVendorByPhoneNumber: (phoneNumber) =>
     axiosInstance.get(`/api/vendors/find/phone/${phoneNumber}`),
   getVendorByEmail: (emailAddress) =>
-    axiosInstance.get(`/api/vendors/find/email/${emailAddress}`)
+    axiosInstance.get(`/api/vendors/find/email/${emailAddress}`),
   createVendor: (vendorData) => axiosInstance.post("/api/vendors/add", vendorData),
-  updateVendor: (id, vendorData) =>
-    axiosInstance.put(`/api/vendors/update/${id}`, vendorData),
+  updateVendor: (id, vendorData) => axiosInstance.put(`/api/vendors/update/${id}`, vendorData),
   deleteVendor: (id) => axiosInstance.delete(`/api/vendors/delete/${id}`),
 
 };
