@@ -57,10 +57,10 @@ public class UserServiceImpl implements UserService {
         User user = userOpt.get();
         user.setName(dto.getName());
         user.setEmailAddress(dto.getEmailAddress());
-        //user.setPictureUrl(dto.getPictureUrl());
-        // Treat an empty pictureUrl as null.
-        String pictureUrl = dto.getPictureUrl() != null && dto.getPictureUrl().trim().isEmpty() ? null : dto.getPictureUrl();
-        user.setPictureUrl(pictureUrl);
+        user.setPictureUrl(dto.getPictureUrl());
+//        // Treat an empty pictureUrl as null.
+//        String pictureUrl = dto.getPictureUrl() != null && dto.getPictureUrl().trim().isEmpty() ? null : dto.getPictureUrl();
+//        user.setPictureUrl(pictureUrl);
 
         return userRepository.save(user);
     }

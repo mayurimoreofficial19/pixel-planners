@@ -38,6 +38,7 @@ public class User extends AbstractEntity {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Calendar calendar;
 
+    @Lob
     private String pictureUrl;
 
     // Static method to use the bcrypt dependency for encoding
