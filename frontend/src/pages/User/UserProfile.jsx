@@ -186,7 +186,7 @@ const UserProfile = () => {
 
   return (
     <div className="user-profile-container">
-      <h1>User Profile</h1>
+      <h1>{formData.name ? `${formData.name}'s Profile` : 'User Profile'}</h1>
       {errorMessage && <div className="error-message">{errorMessage}</div>}
       {successMessage && <div className="success-message">{successMessage}</div>}
 
