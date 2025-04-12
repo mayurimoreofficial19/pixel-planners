@@ -93,18 +93,32 @@ export const eventApi = {
     axiosInstance.post(`/api/events/rebook/${id}`, rebookData),
 };
 
-//export const vendorApi = {
-//    getAllVendors:
-//    getVendorById:
-//    getVendorByName:
-//    getVendorByLocation:
-//    getVendorBySkills:
-//    getVendorByPhoneNumber:
-//    getVendorByEmail:
-//    createVendor:
-//    updateVendor:
-//    deleteVendor:
-//};
+export const vendorApi = {
+  getAllVendors: () => axiosInstance.get("/api/vendors/all"),
+  getVendorById: (id) => axiosInstance.get(`/api/vendors/find/${id}`),
+  getVendorByName: (name) => axiosInstance.get(`/api/vendors/find/name/${name}`),
+  getVendorBySkill: (skillId) =>
+    axiosInstance.get(`/api/events/find/skills/${skillId}`),
+  getVendorByLocation: (location) =>
+    axiosInstance.get(`/api/vendors/find/location/${location}`),
+  getVendorByPhoneNumber: (phoneNumber) =>
+    axiosInstance.get(`/api/vendors/find/phone/${phoneNumber}`),
+  getVendorByEmail: (emailAddress) =>
+    axiosInstance.get(`/api/vendors/find/email/${emailAddress}`),
+  createVendor: (vendorData) => axiosInstance.post("/api/vendors/add", vendorData),
+  updateVendor: (id, vendorData) => axiosInstance.put(`/api/vendors/update/${id}`, vendorData),
+  deleteVendor: (id) => axiosInstance.delete(`/api/vendors/delete/${id}`),
+
+};
+
+export const skillApi = {
+  getAllSkills: () => axiosInstance.get("/api/skills/all"),
+  getSkillById: (id) => axiosInstance.get(`/api/skills/find/${id}`),
+  getSkillByName: (name) => axiosInstance.get(`/api/skills/find/name/${name}`),
+  createSkill: (data) => axiosInstance.post("/api/skills/add", data),
+  updateSkill: (id, data) => axiosInstance.put(`/api/skills/update/${id}`, data),
+  deleteSkill: (id) => axiosInstance.delete(`/api/skills/delete/${id}`),
+};
 
 //export const guestApi = {
 //    getAllGuests:
