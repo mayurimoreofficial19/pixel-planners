@@ -21,6 +21,7 @@ const UserProfile = () => {
     const [editMode, setEditMode] = useState({
       name: false,
       email: false,
+        password: false,
     });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -135,6 +136,9 @@ const UserProfile = () => {
           setSuccessMessage("Password reset successfully!");
           setErrorMessage("");
           setLoading(false);
+                // Clear the password fields and exit edit mode for password
+                setPasswordData({ newPassword: "", confirmPassword: "" });
+                setEditMode((prev) => ({ ...prev, password: false }));
           // Optionally, redirect to login if needed:
           navigate("/login");
         })
@@ -296,28 +300,44 @@ const UserProfile = () => {
 
                 <div className="form-group">
                   <label htmlFor="newPassword">New Password:</label>
+                  {editMode.password ? (
+                  <>
                   <input
                     type="password"
                     id="newPassword"
                     name="newPassword"
+                    placeholder="New Password"
                     value={passwordData.newPassword}
                     onChange={handlePasswordChange}
                     required
                   />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="confirmPassword">Confirm New Password:</label>
                   <input
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    value={passwordData.confirmPassword}
-                    onChange={handlePasswordChange}
-                    required
-                  />
-                </div>
-                <div className="user-profile-actions">
-                  <button type="submit" className="save-button">Reset Password</button>
+                   type="password"
+                   id="confirmPassword"
+                   name="confirmPassword"
+                   placeholder="Confirm New Password"
+                   value={passwordData.confirmPassword}
+                   onChange={handlePasswordChange}
+                   required
+                   />
+
+                        <div className="inline-actions">
+                          <button type="button" className="save-button" onClick={handleResetPassword}>
+                            Save
+                          </button>
+                          <button type="button" className="cancel-button" onClick={() => cancelEditMode("password")}>
+                            Cancel
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="display-field">
+                        <span>{"********"}</span>
+                        <button type="button" className="edit-button" onClick={() => toggleEditMode("password")}>
+                          Edit
+                        </button>
+                      </div>
+                    )}
                 </div>
               </form>
 
