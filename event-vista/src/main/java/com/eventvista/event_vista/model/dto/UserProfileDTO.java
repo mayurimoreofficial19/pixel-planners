@@ -3,6 +3,7 @@ package com.eventvista.event_vista.model.dto;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 
 public class UserProfileDTO {
 
@@ -11,6 +12,7 @@ public class UserProfileDTO {
     private Integer id;
     private String name;
     private String emailAddress;
+    @Lob
     private String pictureUrl;
 
     public UserProfileDTO() {
@@ -46,6 +48,14 @@ public class UserProfileDTO {
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
+
+//    public String getPictureUrl() {
+//        return pictureUrl;
+//    }
+//
+//    public void setPictureUrl(String pictureUrl) {
+//        this.pictureUrl = pictureUrl;
+//    }
 
     public String getPictureUrl() {
         return pictureUrl;

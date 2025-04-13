@@ -70,6 +70,7 @@ const UserProfile = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         // Set the pictureUrl with the Base64 string
+        console.log("Converted image:", reader.result);
         setFormData((prevData) => ({
           ...prevData,
           pictureUrl: reader.result,
@@ -95,8 +96,9 @@ const UserProfile = () => {
         // If pictureUrl is an empty string, change it to null before sending.
         const updatedData = {
           ...formData,
-          pictureUrl: formData.pictureUrl === "" ? null : formData.pictureUrl,
+          pictureUrl: formData.pictureUrl.trim() === "" ? null : formData.pictureUrl,
         };
+    console.log("Data being updated:", updatedData);
 
     userApi.updateUser(updatedData)
       .then(() => {
@@ -184,167 +186,180 @@ const UserProfile = () => {
 
   return (
     <div className="user-profile-container">
-      <h1>User Profile</h1>
+      <h1>{formData.name ? `${formData.name}'s Profile` : 'User Profile'}</h1>
       {errorMessage && <div className="error-message">{errorMessage}</div>}
       {successMessage && <div className="success-message">{successMessage}</div>}
 
-
-      <form className="user-profile-form" onSubmit={handleUpdate}>
-
-              <div className="profile-picture-wrapper">
-              {formData.pictureUrl ? (
-                <img
-                  src={formData.pictureUrl}
-                  alt="Profile"
-                  className="profile-picture"
-                  //onChange={handleFileChange}
-                />
-                ) : (
-                    <div className="profile-picture-placeholder">
-                        <span>No Image</span>
-                    </div>
-                )}
-          <button className="edit-icon-button" type="button" onClick={() => fileInputRef.current && fileInputRef.current.click()}>
+      {/* Profile Header: Picture and Edit Icon */}
+      <div className="profile-header">
+        <div className="profile-picture-wrapper">
+          {formData.pictureUrl ? (
+            <img
+              src={formData.pictureUrl}
+              alt="Profile"
+              className="profile-picture"
+            />
+          ) : (
+            <div className="profile-picture-placeholder">
+              <span>No Image</span>
+            </div>
+          )}
+          <button
+            className="edit-icon-button"
+            type="button"
+            onClick={() => fileInputRef.current && fileInputRef.current.click()}
+          >
             <img src={pencilIcon} alt="Edit" />
           </button>
-                    {/* Hidden file input */}
-                    <input
-                      type="file"
-                      id="picture"
-                      name="picture"
-                      style={{ display: "none" }}
-                      ref={fileInputRef}
-                      onChange={handleFileChange}
-                    />
-              </div>
+          <input
+            type="file"
+            id="picture"
+            name="picture"
+            style={{ display: "none" }}
+            ref={fileInputRef}
+            onChange={handleFileChange}
+          />
+        </div>
+      </div>
 
-
+      {/* Profile Details Section */}
+      <div className="profile-details">
         <div className="form-group">
           <label htmlFor="name">Name:</label>
           {editMode.name ? (
-          <>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-
-          <button
-                          type="button"
-                          className="cancel-button"
-                          onClick={() => cancelEditMode("name")}
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    ) : (
-                      <div className="display-field">
-                        <span>{formData.name}</span>
-                        <button
-                          type="button"
-                          className="edit-button"
-                          onClick={() => toggleEditMode("name")}
-                        >
-                          Edit
-                        </button>
-                               </div>
-                                  )}
+            <>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="cancel-button"
+                onClick={() => cancelEditMode("name")}
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <div className="display-field">
+              <span>{formData.name}</span>
+              <button
+                type="button"
+                className="edit-button"
+                onClick={() => toggleEditMode("name")}
+              >
+                Edit
+              </button>
+            </div>
+          )}
         </div>
-
 
         <div className="form-group">
           <label htmlFor="emailAddress">Email Address:</label>
-            {editMode.email ? (
+          {editMode.email ? (
             <>
-          <input
-            type="email"
-            id="emailAddress"
-            name="emailAddress"
-            value={formData.emailAddress}
-            onChange={handleChange}
-            required
-          />
-          <button
-                          type="button"
-                          className="cancel-button"
-                          onClick={() => cancelEditMode("email")}
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    ) : (
-                      <div className="display-field">
-                        <span>{formData.emailAddress}</span>
-                        <button
-                          type="button"
-                          className="edit-button"
-                          onClick={() => toggleEditMode("email")}
-                        >
-                          Edit
-                        </button>
-                      </div>
-                    )}
+              <input
+                type="email"
+                id="emailAddress"
+                name="emailAddress"
+                value={formData.emailAddress}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="cancel-button"
+                onClick={() => cancelEditMode("email")}
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <div className="display-field">
+              <span>{formData.emailAddress}</span>
+              <button
+                type="button"
+                className="edit-button"
+                onClick={() => toggleEditMode("email")}
+              >
+                Edit
+              </button>
+            </div>
+          )}
         </div>
+      </div>
 
-    <div className="user-profile-actions">
-      <button type="submit" className="save-button">Update User</button>
-      <button type="button" onClick={handleDelete} className="delete-button">Delete Account</button>
+      {/* Password Reset Section with Inline Edit */}
+      <div className="profile-password-reset">
+        <div className="form-group">
+          <label htmlFor="password">Password:</label>
+          {editMode.password ? (
+            <>
+              <input
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                placeholder="New Password"
+                value={passwordData.newPassword}
+                onChange={handlePasswordChange}
+                required
+              />
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="Confirm New Password"
+                value={passwordData.confirmPassword}
+                onChange={handlePasswordChange}
+                required
+              />
+              <div className="inline-actions">
+                <button type="button" className="save-button" onClick={handleResetPassword}>
+                  Update Password
+                </button>
+                <button type="button" className="cancel-button" onClick={() => cancelEditMode("password")}>
+                  Cancel
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="display-field">
+              <span>{"********"}</span>
+              <button type="button" className="edit-button" onClick={() => toggleEditMode("password")}>
+                Edit
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Account Actions Section: Update Profile, Delete Account, and Back to Dashboard */}
+      <div className="user-profile-actions">
+        <button type="button" onClick={handleUpdate} className="save-button">
+          Update Profile
+        </button>
+        <button type="button" onClick={handleDelete} className="delete-button">
+          Delete Account
+        </button>
+      </div>
+
+          <div className="back-to-dashboard">
+            <button
+              type="button"
+              className="back-to-dashboard-button"
+              onClick={() => navigate("/dashboard")}
+            >
+              ← Back to Dashboard
+            </button>
+          </div>
+
     </div>
-        </form>
-
-{/* Form for resetting password */}
-              <form className="user-profile-form" onSubmit={handleResetPassword}>
-
-                <div className="form-group">
-                  <label htmlFor="newPassword">New Password:</label>
-                  {editMode.password ? (
-                  <>
-                  <input
-                    type="password"
-                    id="newPassword"
-                    name="newPassword"
-                    placeholder="New Password"
-                    value={passwordData.newPassword}
-                    onChange={handlePasswordChange}
-                    required
-                  />
-                  <input
-                   type="password"
-                   id="confirmPassword"
-                   name="confirmPassword"
-                   placeholder="Confirm New Password"
-                   value={passwordData.confirmPassword}
-                   onChange={handlePasswordChange}
-                   required
-                   />
-
-                        <div className="inline-actions">
-                          <button type="button" className="save-button" onClick={handleResetPassword}>
-                            Save
-                          </button>
-                          <button type="button" className="cancel-button" onClick={() => cancelEditMode("password")}>
-                            Cancel
-                          </button>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="display-field">
-                        <span>{"********"}</span>
-                        <button type="button" className="edit-button" onClick={() => toggleEditMode("password")}>
-                          Edit
-                        </button>
-                      </div>
-                    )}
-                </div>
-              </form>
-
-
-
-        </div>
   );
+
 };
 
 export default UserProfile;

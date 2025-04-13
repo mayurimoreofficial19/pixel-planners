@@ -177,3 +177,115 @@
   text-decoration: underline;
 }
 
+.back-to-dashboard {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 1rem;
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.back-to-dashboard-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+}
+
+.back-to-dashboard-button:hover {
+  text-decoration: underline;
+}
+
+.account-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.back-to-dashboard-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.back-to-dashboard-button:hover {
+  text-decoration: underline;
+}
+
+.account-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.inline-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+
+.account-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.back-to-dashboard {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.back-to-dashboard-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.back-to-dashboard-button:hover {
+  text-decoration: underline;
+}
+
+
+/* Profile Header: Typically used to display the profile picture area */
+.profile-header {
+  /* Center the header content */
+  text-align: center;
+  /* Provide some spacing at the bottom */
+  margin-bottom: 2rem;
+}
+
+/* Profile Details: Contains editable fields like username and email */
+.profile-details {
+  /* Use a subtle background (white, with a light shadow) to separate it from the overall page background */
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+/* Profile Password Reset: Section for password changes */
+.profile-password-reset {
+  /* Similar styling to profile-details for consistency */
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  /* Separate it from the details above */
+  margin-top: 2rem;
+}
