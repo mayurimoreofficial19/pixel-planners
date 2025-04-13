@@ -162,12 +162,22 @@ const Calendar = ({ events = [] }) => {
                 className={styles.calendarEvent}
                 title={`${formatTime(event.time)} - ${event.name}${
                   event.venue ? " at " + event.venue.name : ""
+                }${
+                  event.vendors && event.vendors.length > 0
+                    ? "\nVendors: " +
+                      event.vendors.map((v) => v.name).join(", ")
+                    : ""
                 }${event.notes ? "\nNotes: " + event.notes : ""}`}
               >
                 <div className={styles.eventTime}>{formatTime(event.time)}</div>
                 <div className={styles.eventName}>{event.name}</div>
                 {event.venue && (
                   <div className={styles.eventVenue}>📍 {event.venue.name}</div>
+                )}
+                {event.vendors && event.vendors.length > 0 && (
+                  <div className={styles.eventVendors}>
+                    👥 {event.vendors.map((v) => v.name).join(", ")}
+                  </div>
                 )}
               </div>
             ))}
@@ -229,6 +239,11 @@ const Calendar = ({ events = [] }) => {
                         📍 {event.venue.name}
                       </div>
                     )}
+                    {event.vendors && event.vendors.length > 0 && (
+                      <div className={styles.weekEventVendors}>
+                        👥 {event.vendors.map((v) => v.name).join(", ")}
+                      </div>
+                    )}
                     {event.notes && (
                       <div className={styles.weekEventNotes}>
                         📝 {event.notes}
@@ -277,6 +292,11 @@ const Calendar = ({ events = [] }) => {
                       {event.venue && (
                         <div className={styles.weekEventVenue}>
                           📍 {event.venue.name}
+                        </div>
+                      )}
+                      {event.vendors && event.vendors.length > 0 && (
+                        <div className={styles.weekEventVendors}>
+                          👥 {event.vendors.map((v) => v.name).join(", ")}
                         </div>
                       )}
                       {event.notes && (

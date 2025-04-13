@@ -687,3 +687,36 @@
   font-size: 1rem;
   margin: 0;
 }
+
+
+/* Event Form select vendors styling*/
+.selected-vendors {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.selected-vendor {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.remove-vendor {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  line-height: 1;
+}
+
+.remove-vendor:hover {
+  color: #ff4444;
+}

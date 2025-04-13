@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { eventApi, venueApi, skillApi, vendorApi } from "../../services/api";
+import { eventApi, venueApi, vendorApi } from "../../services/api";
 import "../../styles/components.css";
 
 const EventForm = ({ onSubmit, onCancel }) => {
@@ -8,7 +8,7 @@ const EventForm = ({ onSubmit, onCancel }) => {
     date: "",
     time: "",
     venue: null,
-    vendor: null,
+    vendors: [],
     notes: "",
   });
 
@@ -38,30 +38,30 @@ const EventForm = ({ onSubmit, onCancel }) => {
     fetchVenues();
   }, []);
 
-    useEffect(() => {
-      const fetchVendors = async () => {
-        try {
-          const response = await vendorApi.getAllVendors();
-          if (response.data) {
-            setVendors(response.data);
-          }
-        } catch (error) {
-          console.error("Error fetching vendors:", error);
-          setErrors((prev) => ({
-            ...prev,
-            fetch: "Failed to load vendors. Please try again.",
-          }));
-        } finally {
-          setLoading(false);
+  useEffect(() => {
+    const fetchVendors = async () => {
+      try {
+        const response = await vendorApi.getAllVendors();
+        if (response.data) {
+          setVendors(response.data);
         }
-      };
+      } catch (error) {
+        console.error("Error fetching vendors:", error);
+        setErrors((prev) => ({
+          ...prev,
+          fetch: "Failed to load vendors. Please try again.",
+        }));
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      fetchVendors();
-    }, []);
+    fetchVendors();
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name || formData.name.length < 3) {
+    if (!formData.name) {
       newErrors.name = "Event name must be at least 3 characters long";
     }
     if (!formData.date) {
@@ -69,12 +69,6 @@ const EventForm = ({ onSubmit, onCancel }) => {
     }
     if (!formData.time) {
       newErrors.time = "Please select a time";
-    }
-    if (!formData.venue) {
-      newErrors.venue = "Please select a venue";
-    }
-    if (!formData.vendor) {
-      newErrors.vendor = "Please select a vendor";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -97,26 +91,44 @@ const EventForm = ({ onSubmit, onCancel }) => {
     }
   };
 
-    const handleVendorChange = (e) => {
-      const selectedVendor = vendors.find((v) => v.id === parseInt(e.target.value));
-      setFormData((prev) => ({ ...prev, vendor: selectedVendor }));
-      if (errors.vendor) {
-        setErrors((prev) => ({ ...prev, vendor: undefined }));
-      }
-    };
+  const handleVendorChange = (e) => {
+    const selectedVendor = vendors.find(
+      (v) => v.id === parseInt(e.target.value)
+    );
+
+    if (
+      selectedVendor &&
+      !formData.vendors.some((v) => v.id === selectedVendor.id)
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        vendors: [...prev.vendors, selectedVendor],
+      }));
+    }
+
+    if (errors.vendor) {
+      setErrors((prev) => ({ ...prev, vendor: undefined }));
+    }
+  };
+
+  const removeVendor = (vendorId) => {
+    setFormData((prev) => ({
+      ...prev,
+      vendors: prev.vendors.filter((v) => v.id !== vendorId),
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        // Create a new object with just the venue ID
         const eventData = {
           name: formData.name,
           date: formData.date,
           time: formData.time,
           notes: formData.notes,
           venue: formData.venue ? { id: formData.venue.id } : null,
-          vendor: formData.vendor ? { id: formData.vendor.id } : null,
+          vendors: formData.vendors.map((vendor) => ({ id: vendor.id })),
         };
         await eventApi.createEvent(eventData);
         onSubmit();
@@ -191,9 +203,8 @@ const EventForm = ({ onSubmit, onCancel }) => {
             value={formData.venue?.id || ""}
             onChange={handleVenueChange}
             className={`form-input ${errors.venue ? "error" : ""}`}
-            required
           >
-            <option value="">Select a venue</option>
+            <option value="">Select a venue (optional)</option>
             {venues.map((venue) => (
               <option key={venue.id} value={venue.id}>
                 {venue.name}
@@ -203,31 +214,44 @@ const EventForm = ({ onSubmit, onCancel }) => {
           {errors.venue && <div className="error-text">{errors.venue}</div>}
         </div>
 
+        <div className="form-group">
+          <label className="form-label">Vendors</label>
+          <select
+            name="vendors"
+            value=""
+            onChange={handleVendorChange}
+            className={`form-input ${errors.vendor ? "error" : ""}`}
+          >
+            <option value="">Select a vendor (optional)</option>
+            {vendors
+              .filter(
+                (vendor) => !formData.vendors.some((v) => v.id === vendor.id)
+              )
+              .map((vendor) => (
+                <option key={vendor.id} value={vendor.id}>
+                  {vendor.name}
+                </option>
+              ))}
+          </select>
+          {errors.vendor && <div className="error-text">{errors.vendor}</div>}
 
-
-                <div className="form-group">
-                  <label className="form-label">Vendor</label>
-                  <select
-                    name="vendor"
-                    value={formData.vendor?.id || ""}
-                    onChange={handleVendorChange}
-                    className={`form-input ${errors.vendor ? "error" : ""}`}
-                    required
+          {formData.vendors.length > 0 && (
+            <div className="selected-vendors">
+              {formData.vendors.map((vendor) => (
+                <div key={vendor.id} className="selected-vendor">
+                  <span>{vendor.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeVendor(vendor.id)}
+                    className="remove-vendor"
                   >
-                    <option value="">Select a vendor</option>
-                    {vendors.map((vendor) => (
-                      <option key={vendor.id} value={vendor.id}>
-                        {vendor.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.vendor && <div className="error-text">{errors.vendor}</div>}
+                    ×
+                  </button>
                 </div>
-
-
-
-
-
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className="form-group">
           <label className="form-label">Notes</label>
