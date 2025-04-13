@@ -27,7 +27,7 @@ public class Vendor extends AbstractEntity implements Serializable {
     private String location;
 
     @ManyToMany
-    private List<Skill> skills;
+    private List<Skill> skills = new ArrayList<>();
 
     @NotNull(message ="Field must have valid venue phone number entered")
     @Embedded
