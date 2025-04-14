@@ -30,9 +30,17 @@ public class CustomUserDetailsService implements UserDetailsService {
         System.out.println("User password hash: " + user.getPasswordHash());
         System.out.println("User email verified: " + user.isEmailVerified());
 
+        // Use a placeholder password for OAuth2 users
+        String password = user.getPasswordHash();
+        if (password == null || password.trim().isEmpty()) {
+            // then assign a placeholder string to OAuth2 user
+            password = "oauth2-user-placeholder";
+        }
+
         return new org.springframework.security.core.userdetails.User(
                 user.getEmailAddress(),
-                user.getPasswordHash(),
+                //user.getPasswordHash(),
+                password,
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
         );
     }

@@ -19,6 +19,16 @@ public class Calendar extends AbstractEntity {
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Event> events = new ArrayList<>();
 
+    @NotBlank(message = "Calendar name is required")
+    @Size(max = 255)
+    private String name = "My Calendar"; // default value
+
+    @Column(name = "sync_enabled", nullable = false)
+    private boolean syncEnabled = false;
+
+    @Column(nullable = false)
+    private String timezone = "UTC";
+
     public Calendar() {
     }
 
@@ -39,7 +49,27 @@ public class Calendar extends AbstractEntity {
         this.events = events;
     }
 
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public boolean isSyncEnabled() {
+        return syncEnabled;
+    }
+
+    public void setSyncEnabled(boolean syncEnabled) {
+        this.syncEnabled = syncEnabled;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
 
 }
 

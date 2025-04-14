@@ -17,7 +17,7 @@ const UserProfile = () => {
       confirmPassword: ""
     });
 
-  const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
     const [editMode, setEditMode] = useState({
       name: false,
       email: false,
