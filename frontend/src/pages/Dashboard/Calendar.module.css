@@ -1,3 +1,4 @@
+/* Main Calendar Container */
 .calendar {
   background: white;
   border-radius: 8px;
@@ -5,6 +6,7 @@
   padding: 1rem;
 }
 
+/* Calendar Header and Navigation */
 .header {
   display: flex;
   justify-content: space-between;
@@ -50,6 +52,7 @@
   border-color: #007bff;
 }
 
+/* Calendar Grid Layout */
 .calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -58,6 +61,7 @@
   border: 1px solid #dee2e6;
 }
 
+/* Calendar Day Styles */
 .day {
   background: white;
   min-height: 100px;
@@ -74,53 +78,7 @@
   margin-bottom: 0.5rem;
 }
 
-.events {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.event {
-  background: #e3f2fd;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.event:hover {
-  background: #bbdefb;
-}
-
-.calendarContainer {
-  padding: 0.25rem;
-  background-color: var(--paper);
-  border-radius: 4px;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  min-height: 200px;
-  font-size: 0.7rem;
-}
-
-.calendarHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.25rem;
-  padding: 0.125rem;
-}
-
-.calendarTitle {
-  margin: 0 0.25rem;
-  font-size: 0.7rem;
-  font-weight: 600;
-}
-
-/* Month View Styles */
+/* Month View Specific Styles */
 .calendarMonthView {
   border: 1px solid var(--border-color);
   background-color: white;
@@ -144,12 +102,6 @@
 
 .calendarWeekday:last-child {
   border-right: none;
-}
-
-.calendarGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  background-color: white;
 }
 
 .calendarDay {
@@ -216,6 +168,13 @@
 .calendarDay .eventVenue {
   font-size: 0.5rem;
   opacity: 0.9;
+  color: white;
+}
+
+.calendarDay .eventVendors {
+  font-size: 0.5rem;
+  opacity: 0.9;
+  color: white;
 }
 
 .calendarDay .calendarEvent:hover {
@@ -223,18 +182,7 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.calendarDayEvents::-webkit-scrollbar {
-  display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.calendarDayEvents {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
-/* Week View Styles */
+/* Week View Specific Styles */
 .calendarWeekView {
   width: 100%;
   border: 1px solid var(--border-color);
@@ -295,6 +243,7 @@
   border-left: none;
 }
 
+/* Week View Event Styles */
 .calendarEventWeek {
   background-color: #3498db;
   color: white;
@@ -322,6 +271,7 @@
   font-size: 0.7rem;
   opacity: 0.9;
   margin-bottom: 2px;
+  color: white;
 }
 
 .weekEventNotes {
@@ -330,12 +280,19 @@
   font-style: italic;
 }
 
+.weekEventVendors {
+  font-size: 0.7rem;
+  opacity: 0.9;
+  margin-bottom: 2px;
+  color: white;
+}
+
 .calendarEventWeek:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
 }
 
-/* Day View Styles */
+/* Day View Specific Styles */
 .calendarDayView {
   width: 100%;
   border: 1px solid var(--border-color);
@@ -382,33 +339,6 @@
   min-height: 60px;
 }
 
-/* Button Styles in Calendar */
-.calendarHeader .button {
-  padding: 0.125rem 0.25rem;
-  margin: 0 0.125rem;
-  border-radius: 2px;
-  font-weight: 500;
-  font-size: 0.6rem;
-  min-width: 2.5rem;
-}
-
-.calendarHeader .buttonPrimary {
-  background-color: #3498db;
-  color: white;
-  border: none;
-}
-
-.calendarHeader .buttonOutline {
-  background-color: transparent;
-  border: 1px solid #3498db;
-  color: #3498db;
-}
-
-.calendarHeader .button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
-}
-
 /* Day View Event Styles */
 .calendarDayView .calendarEventWeek {
   background-color: #3498db;
@@ -437,10 +367,80 @@
   font-size: 0.8rem;
   opacity: 0.9;
   margin-bottom: 3px;
+  color: white;
 }
 
 .calendarDayView .weekEventNotes {
   font-size: 0.8rem;
   opacity: 0.9;
   font-style: italic;
+}
+
+.calendarDayView .weekEventVendors {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  margin-bottom: 3px;
+  color: white;
+}
+
+/* Button Styles */
+.calendarHeader .button {
+  padding: 0.125rem 0.25rem;
+  margin: 0 0.125rem;
+  border-radius: 2px;
+  font-weight: 500;
+  font-size: 0.6rem;
+  min-width: 2.5rem;
+}
+
+.calendarHeader .buttonPrimary {
+  background-color: #3498db;
+  color: white;
+  border: none;
+}
+
+.calendarHeader .buttonOutline {
+  background-color: transparent;
+  border: 1px solid #3498db;
+  color: #3498db;
+}
+
+.calendarHeader .button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Utility Styles */
+.eventVenue {
+  font-size: 0.7rem;
+  color: #666;
+  margin-top: 2px;
+}
+
+.eventVendors {
+  font-size: 0.7rem;
+  color: #666;
+  margin-top: 2px;
+}
+
+.dayEventVenue {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+.dayEventVendors {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Scrollbar Styles */
+.calendarDayEvents::-webkit-scrollbar {
+  display: none;
+}
+
+.calendarDayEvents {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

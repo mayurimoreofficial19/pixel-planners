@@ -7,6 +7,8 @@ import VerifyEmail from "./pages/Account/VerifyEmail/VerifyEmail";
 import ResetPassword from "./pages/Account/ResetPassword/ResetPassword";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import VenuePage from "./pages/Venues/VenuePage";
+import VendorPage from "./pages/Vendors/VendorPage";
+import SkillPage from "./pages/Skills/SkillPage";
 import "./App.css";
 
 // Protected Route component
@@ -42,6 +44,8 @@ function App() {
             }
           />
           <Route path="/venues" element={<VenuePage />} />
+          <Route path="/vendors" element={<VendorPage />} />
+          <Route path="/skills" element={<SkillPage />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </div>
