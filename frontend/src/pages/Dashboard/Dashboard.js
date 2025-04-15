@@ -98,9 +98,15 @@ const Dashboard = () => {
               <h1 className="card-title">Event Vista</h1>
             </div>
             <div className="flex" style={{ alignItems: "center", gap: "1rem" }}>
+
               <span className="card-content">
                 Welcome, {user?.name || "User"}
               </span>
+              <img
+                src={user.pictureUrl}
+                alt="Profile"
+                className="dashboard-profile-pic"
+              />
                             <button onClick={redirectToUserProfile} className="button button-primary">
                             Profile
                               </button>
