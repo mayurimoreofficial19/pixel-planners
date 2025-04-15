@@ -1,10 +1,12 @@
 package com.eventvista.event_vista.security;
 
+import com.eventvista.event_vista.model.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -25,12 +27,34 @@ public class JwtTokenProvider {
     }
 
     public String generateToken(Authentication authentication) {
-        String username = authentication.getName();
+
+        // Get the authenticated principal (the user who just logged in)
+        // This could be either an OAuth2User (Google login) or a UserDetails (email/password login)
+        Object principal = authentication.getPrincipal();
+        // Declaring a variable to hold the user's email address
+        String email;
+
+        // Checking if the authenticated principal is an actual Google OAuth2 user
+        if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User) {
+            // Cast the principal to OAuth2User so we can access Google-specific attributes
+            org.springframework.security.oauth2.core.user.OAuth2User oauth2User =
+                    (org.springframework.security.oauth2.core.user.OAuth2User) principal;
+            // Extract the user's email from the OAuth2 attributes
+            email = (String) oauth2User.getAttributes().get("email");
+        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
+            // Cast the principal to User (used in standard email/password login)
+            org.springframework.security.core.userdetails.User userDetails =
+                    (org.springframework.security.core.userdetails.User) principal;
+            email = userDetails.getUsername(); // This will return the email (which is stored as the username in UserDetails)
+        } else {
+            throw new IllegalStateException("Unsupported authentication principal type: " + principal.getClass());
+        }
+
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey())
