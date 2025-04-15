@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Calendar from "./Calendar";
 import EventForm from "./EventForm";
+import UpcomingEvents from "../../components/UpcomingEvents/UpcomingEvents";
 import { eventApi } from "../../services/api";
 import "../../styles/components.css";
 import { useNavigate } from "react-router-dom";
@@ -129,6 +130,7 @@ const Dashboard = () => {
           </div>
         )}
         <Calendar events={events} />
+        <UpcomingEvents events={events} />
       </div>
 
       {showEventForm && (

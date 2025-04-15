@@ -2,6 +2,7 @@ package com.eventvista.event_vista.controller;
 
 import com.eventvista.event_vista.model.Event;
 import com.eventvista.event_vista.model.User;
+import com.eventvista.event_vista.model.dto.UpcomingEventDTO;
 import com.eventvista.event_vista.service.EventService;
 import com.eventvista.event_vista.utilities.AuthUtil;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/events")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://127.0.0.1:3000"})
 public class EventController {
 
     private final EventService eventService;
@@ -82,6 +83,17 @@ public class EventController {
         User user = authUtil.getUserFromAuthentication();
         boolean deleted = eventService.deleteEvent(id, user);
         return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/upcoming-events")
+    public ResponseEntity<List<UpcomingEventDTO>> getUpcomingEvents() {
+        try {
+            User user = authUtil.getUserFromAuthentication();
+            List<UpcomingEventDTO> events = eventService.findUpcomingEventsWithWeather(user);
+            return ResponseEntity.ok(events);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PostMapping("/rebook/{id}")

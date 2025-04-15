@@ -3,21 +3,29 @@ package com.eventvista.event_vista.service;
 import com.eventvista.event_vista.data.EventRepository;
 import com.eventvista.event_vista.model.Event;
 import com.eventvista.event_vista.model.User;
+import com.eventvista.event_vista.model.dto.UpcomingEventDTO;
+import com.eventvista.event_vista.model.dto.WeatherData;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
     private final EventRepository eventRepository;
     private final VenueService venueService;
     private final CalendarService calendarService;
+    private final WeatherService weatherService;
 
-    public EventService(EventRepository eventRepository, VenueService venueService, CalendarService calendarService) {
+    public EventService(EventRepository eventRepository, VenueService venueService, CalendarService calendarService, WeatherService weatherService) {
         this.eventRepository = eventRepository;
         this.venueService = venueService;
         this.calendarService = calendarService;
+        this.weatherService = weatherService;
     }
 
     public List<Event> findAllEvents(User user) {
@@ -94,6 +102,14 @@ public class EventService {
         return false;
     }
 
+    public List<Event> findUpcomingEventsByUser(User user) {
+        LocalDate currentDate = LocalDate.now();
+        LocalTime currentTime = LocalTime.now();
+
+        // Call the new repository method with separate date and time
+        return eventRepository.findUpcomingEvents(user, currentDate, currentTime);
+    }
+
     public Optional<Event> rebookEvent(Integer id, Event newEventDetails, User user) {
         return eventRepository.findByIdAndUser(id, user).map(originalEvent -> {
             //Create new event with all original data
@@ -146,5 +162,16 @@ public class EventService {
         });
     }
 
-
+    public List<UpcomingEventDTO> findUpcomingEventsWithWeather(User user) {
+        LocalDate currentDate = LocalDate.now();
+        LocalTime currentTime = LocalTime.now();
+        List<Event> events = eventRepository.findUpcomingEvents(user, currentDate, currentTime);
+        return events.stream()
+                .map(event -> {
+                    String location = event.getVenue() != null ? event.getVenue().getLocation() : "No venue set";
+                    WeatherData weatherData = weatherService.getWeatherData(location, event.getDate());
+                    return new UpcomingEventDTO(event, weatherData);
+                })
+                .collect(Collectors.toList());
+    }
 }

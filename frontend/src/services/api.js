@@ -61,19 +61,6 @@ export const venueApi = {
   deleteVenue: (id) => axiosInstance.delete(`/api/venues/delete/${id}`),
 };
 
-//export const eventApi = {
-//    getAllEvents:
-//    getEventById:
-//    createEvent:
-//    updateEvent:
-//    deleteEvent:
-//    getPastEvents:
-//    getUpcomingEvents:
-//    rebookEvent:
-//    getEventsByVenue:
-//    getEventsByClient:
-//    getEventsByVendor:
-//};
 
 export const eventApi = {
   getAllEvents: () => axiosInstance.get("/api/events/all"),
