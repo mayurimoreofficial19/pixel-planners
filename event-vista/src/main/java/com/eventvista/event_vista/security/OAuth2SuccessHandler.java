@@ -54,6 +54,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 newUser.setName(name);
                 newUser.setProvider(AuthProvider.GOOGLE);
                 newUser.setEmailVerified(true); // Google accounts are pre-verified
+                newUser.setPictureUrl(pictureUrl); // Save profile picture from Google
                 return newUser;
             });
 
