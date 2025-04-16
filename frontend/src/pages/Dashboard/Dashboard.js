@@ -17,8 +17,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const redirectToUserProfile = () => {
-      navigate("/profile"); // Redirect to user profile page
-    };
+    navigate("/profile"); // Redirect to user profile page
+  };
 
   useEffect(() => {
     if (token) {
@@ -58,6 +58,16 @@ const Dashboard = () => {
 
   const handleCancelEvent = () => {
     setShowEventForm(false);
+  };
+
+  const handleEventUpdated = async () => {
+    try {
+      await fetchEvents();
+      setSuccessMessage("Event updated successfully!");
+    } catch (err) {
+      console.error("Error updating events:", err);
+      setError("Failed to update events. Please try again.");
+    }
   };
 
   if (loading) {
@@ -101,9 +111,12 @@ const Dashboard = () => {
               <span className="card-content">
                 Welcome, {user?.name || "User"}
               </span>
-                            <button onClick={redirectToUserProfile} className="button button-primary">
-                            Profile
-                              </button>
+              <button
+                onClick={redirectToUserProfile}
+                className="button button-primary"
+              >
+                Profile
+              </button>
               <button
                 onClick={handleAddEvent}
                 className="button button-primary"
@@ -129,7 +142,7 @@ const Dashboard = () => {
             {error}
           </div>
         )}
-        <Calendar events={events} />
+        <Calendar events={events} onEventUpdated={handleEventUpdated} />
         <UpcomingEvents events={events} />
       </div>
 
@@ -148,4 +161,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
