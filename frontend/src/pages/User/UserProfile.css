@@ -289,3 +289,10 @@
   /* Separate it from the details above */
   margin-top: 2rem;
 }
+
+.dashboard-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
