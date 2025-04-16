@@ -261,7 +261,14 @@ public class JwtAuthenticationController {
                 String emailAddress = tokenProvider.getUsernameFromToken(token);
                 Optional<User> userOptional = userRepository.findByEmailAddress(emailAddress);
                 if (userOptional.isPresent()) {
-                    return ResponseEntity.ok(userOptional.get());
+                    //return ResponseEntity.ok(userOptional.get());
+                    User user = userOptional.get();
+                    UserProfileDTO dto = new UserProfileDTO();
+                    dto.setId(user.getId());
+                    dto.setName(user.getName());
+                    dto.setEmailAddress(user.getEmailAddress());
+                    dto.setPictureUrl(user.getPictureUrl());
+                    return ResponseEntity.ok(dto); // ✅ This sends only the needed data
                 }
             }
         }

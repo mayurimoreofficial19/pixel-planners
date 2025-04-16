@@ -195,7 +195,7 @@ const UserProfile = () => {
         <div className="profile-picture-wrapper">
           {formData.pictureUrl ? (
             <img
-              src={formData.pictureUrl}
+              src={formData.pictureUrl || "/default-avatar.png" }
               alt="Profile"
               className="profile-picture"
             />
