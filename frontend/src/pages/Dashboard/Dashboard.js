@@ -6,6 +6,7 @@ import UpcomingEvents from "../../components/UpcomingEvents/UpcomingEvents";
 import { eventApi } from "../../services/api";
 import "../../styles/components.css";
 import { useNavigate } from "react-router-dom";
+import Sidebar from "./Sidebar";
 
 const Dashboard = () => {
   const { user, logout, token } = useAuth();
@@ -93,7 +94,17 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="dashboard-container">
+
+    <div className="dashboard-layout" style={{ display: "flex", minHeight: "100vh" }}>
+      {/* Left Sidebar */}
+      <Sidebar />
+        {/* Main Content */}
+    <div className="dashboard-container" style={{
+      marginLeft: "200px", // same as sidebar width
+      padding: "1rem",
+      width: "100%",
+      boxSizing: "border-box"
+      }}>
       <nav className="card">
         <div className="container">
           <div
@@ -108,15 +119,20 @@ const Dashboard = () => {
               <h1 className="card-title">Event Vista</h1>
             </div>
             <div className="flex" style={{ alignItems: "center", gap: "1rem" }}>
+
               <span className="card-content">
                 Welcome, {user?.name || "User"}
               </span>
-              <button
-                onClick={redirectToUserProfile}
-                className="button button-primary"
-              >
-                Profile
-              </button>
+// removed this area in merge conflict
+              <img
+                src={user.pictureUrl}
+                alt="Profile"
+                className="dashboard-profile-pic"
+              />
+                            <button onClick={redirectToUserProfile} className="button button-primary">
+                            Profile
+                              </button>
+// end of merge conflict
               <button
                 onClick={handleAddEvent}
                 className="button button-primary"
@@ -156,6 +172,7 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

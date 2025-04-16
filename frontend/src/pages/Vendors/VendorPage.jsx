@@ -7,6 +7,7 @@ import VendorForm from "./VendorForm";
 import VendorSearch from "./VendorSearch";
 import VendorSearchResults from "./VendorSearchResults";
 import Modal from "../../components/common/Modal/Modal";
+import Sidebar from "../Dashboard/Sidebar";
 
 const VendorPage = () => {
     const [vendors, setVendors] = useState([]);
@@ -247,7 +248,9 @@ const VendorPage = () => {
     }
 
     return (
-        <div className="container" style={{ padding: "2rem" }}>
+          <div style={{ display: "flex", minHeight: "100vh" }}>
+            <Sidebar />
+        <div className="container" style={{ padding: "2rem", marginLeft: "200px", flex: 1, boxSizing: "border-box" }}>
           <div className="dashboard-header">
             <h2 className="dashboard-title">Vendors</h2>
             <p className="dashboard-subtitle">Manage your event vendors</p>
@@ -293,6 +296,7 @@ const VendorPage = () => {
               />
             </Modal>
           )}
+        </div>
         </div>
     );
 };
