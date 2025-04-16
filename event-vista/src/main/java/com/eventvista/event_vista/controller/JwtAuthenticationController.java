@@ -60,6 +60,7 @@ public class JwtAuthenticationController {
         return userRepository.findAll();
     }
 
+    // Register a new user
     @PostMapping("/register")
     public ResponseEntity<?> processRegistrationForm(@RequestBody @Valid RegisterFormDTO registerFormDTO) {
         // Check if email exists
@@ -138,6 +139,7 @@ public class JwtAuthenticationController {
             // Try to authenticate
             System.out.println("Attempting authentication with AuthenticationManager...");
             try {
+                // Authenticate user
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
                                 loginFormDTO.getEmailAddress(),
@@ -146,7 +148,9 @@ public class JwtAuthenticationController {
                 );
                 System.out.println("Authentication successful!");
 
+                // Set authentication in the context
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                // Generate JWT token
                 String jwt = tokenProvider.generateToken(authentication);
                 System.out.println("JWT token generated successfully");
 
@@ -177,6 +181,7 @@ public class JwtAuthenticationController {
         }
     }
 
+    //Confirms the user’s token is valid and not expired.
     @GetMapping("/verify")
     public ResponseEntity<?> verifyEmail(@RequestParam String token) {
         System.out.println("Received verification request with token: " + token);
@@ -198,6 +203,7 @@ public class JwtAuthenticationController {
             return ResponseEntity.badRequest().body(Map.of("message", "Invalid verification token"));
         }
 
+        // If user is found, check if token is expired
         User user = userOptional.get();
         System.out.println("Found user: " + user.getEmailAddress() + " with verification token: " + user.getVerificationToken());
 
@@ -222,16 +228,19 @@ public class JwtAuthenticationController {
         return ResponseEntity.ok(Map.of("message", "Email verified successfully! You can now log in."));
     }
 
+    //Generating a new verification token and sending it to the user’s email address.
     @PostMapping("/resend-verification")
     public ResponseEntity<?> resendVerification(@RequestParam String emailAddress) {
         Optional<User> userOptional = userRepository.findByEmailAddress(emailAddress);
 
+        // Check if user exists
         if (userOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("User not found");
         }
 
         User user = userOptional.get();
 
+        // Check if email is already verified
         if (user.isEmailVerified()) {
             return ResponseEntity.badRequest().body("Email is already verified");
         }
@@ -255,13 +264,14 @@ public class JwtAuthenticationController {
 
     @GetMapping("/user")
     public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String token) {
+        // Check if token is present and starts with "Bearer ". Validation
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
             if (tokenProvider.validateToken(token)) {
                 String emailAddress = tokenProvider.getUsernameFromToken(token);
                 Optional<User> userOptional = userRepository.findByEmailAddress(emailAddress);
                 if (userOptional.isPresent()) {
-                    //return ResponseEntity.ok(userOptional.get());
+                    //return ResponseEntity.ok(userOptional.get()); returns user data if token is valid.
                     User user = userOptional.get();
                     UserProfileDTO dto = new UserProfileDTO();
                     dto.setId(user.getId());
@@ -328,11 +338,13 @@ public class JwtAuthenticationController {
     @PutMapping("/update-profile")
     public ResponseEntity<?> updateUserProfileJwt(@RequestBody UserProfileDTO profileDTO,
                                                   @RequestHeader("Authorization") String token) {
+        // Check if token is present and starts with "Bearer ". Validation
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
             if (tokenProvider.validateToken(token)) {
                 String email = tokenProvider.getUsernameFromToken(token);
                 try {
+                    //Updates user profile info using UserService
                     User updatedUser = userService.updateUserProfile(email, profileDTO);
                     return ResponseEntity.ok(new UserProfileDTO(
                             updatedUser.getId(),

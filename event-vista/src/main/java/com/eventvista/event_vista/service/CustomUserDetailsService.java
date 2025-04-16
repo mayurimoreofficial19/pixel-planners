@@ -13,6 +13,7 @@ import java.util.Collections;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
+    //fetch user details from the database
     @Autowired
     private UserService userService;
 
@@ -20,6 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String emailAddress) throws UsernameNotFoundException {
         System.out.println("=== Loading user by email: " + emailAddress + " ===");
 
+        // Check if the email address is valid and present in the database
         User user = userService.findByEmailAddress(emailAddress)
                 .orElseThrow(() -> {
                     System.out.println("User not found with email: " + emailAddress);
@@ -37,6 +39,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             password = "oauth2-user-placeholder";
         }
 
+        // Create a UserDetails object with the user's information
         return new org.springframework.security.core.userdetails.User(
                 user.getEmailAddress(),
                 //user.getPasswordHash(),

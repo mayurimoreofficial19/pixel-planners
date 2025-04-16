@@ -20,6 +20,7 @@ public class JwtTokenProvider {
     @Value("${jwt.expiration}")
     private int jwtExpirationInMs;
 
+    // creating a signing key for JWT token. Ensures that the token cannot be forged without the secret key.
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
@@ -48,9 +49,11 @@ public class JwtTokenProvider {
             throw new IllegalStateException("Unsupported authentication principal type: " + principal.getClass());
         }
 
+        //Setting the issue time and expiration time for the token.
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
+        // Creating the JWT token using the builder pattern
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
@@ -59,7 +62,9 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    // Extracting the username (email) from the JWT token
     public String getUsernameFromToken(String token) {
+        // Parsing the JWT token and extracting the claims
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
@@ -69,6 +74,7 @@ public class JwtTokenProvider {
         return claims.getSubject();
     }
 
+    // Validating the JWT token
     public boolean validateToken(String authToken) {
         try {
             Jwts.parserBuilder()

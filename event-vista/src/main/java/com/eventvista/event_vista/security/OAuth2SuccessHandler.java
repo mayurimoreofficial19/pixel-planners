@@ -21,6 +21,7 @@ import java.util.Optional;
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    //Injects the frontend redirect URI application properties.
     @Value("${app.oauth2.authorizedRedirectUris}")
     private String authorizedRedirectUri;
 
@@ -35,9 +36,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         try {
+            //getting user details like name, email, and picture.
             OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
             Map<String, Object> attributes = oAuth2User.getAttributes();
 
+            //extracting user attributes
             String emailAddress = (String) attributes.get("email");
             String name = (String) attributes.get("name");
             String pictureUrl = (String) attributes.get("picture");
@@ -46,7 +49,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 throw new IllegalArgumentException("Email not found from OAuth2 provider");
             }
 
-            // Create or update user
+            // Checking if user exist and creating or updating user
             Optional<User> existingUser = userService.findByEmailAddress(emailAddress);
             User user = existingUser.orElseGet(() -> {
                 User newUser = new User();
@@ -66,6 +69,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 }
             }
 
+            // Save user to the database
             user = userService.save(user);
 
             // Generate JWT token

@@ -9,12 +9,14 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class CustomUserPrincipal implements UserDetails {
+    // This class implements UserDetails to provide user information to Spring Security
     private final User user;
 
     public CustomUserPrincipal(User user) {
         this.user = user;
     }
 
+    //returns the authorities granted to the user
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
