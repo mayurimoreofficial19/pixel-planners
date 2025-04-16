@@ -15,12 +15,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+// This filter checks for the presence of a JWT token in the request header
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenProvider tokenProvider;
 
+    //Loading the user details from the database using the email (username) found in the token.
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
@@ -29,18 +31,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
+            // Extracting the JWT token from the request header
             String jwt = getJwtFromRequest(request);
+            // If the token is present, validate it and set the authentication in the context
             String requestUri = request.getRequestURI();
 
             System.out.println("Processing request to: " + requestUri);
             System.out.println("Authorization header present: " + (request.getHeader("Authorization") != null));
 
+            //Using JwtTokenProvider to validate the token and extract the username (email).
             if (jwt != null) {
                 System.out.println("JWT token found, validating...");
                 if (tokenProvider.validateToken(jwt)) {
                     String username = tokenProvider.getUsernameFromToken(jwt);
                     System.out.println("Token valid for user: " + username);
 
+                    // Loading the user details from the database using the email (username) found in the token.
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -62,9 +68,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        //If the token is valid, the request is allowed to proceed to the controller.
         filterChain.doFilter(request, response);
     }
 
+    // Extracting the JWT token from the request header
+    //If the header starts with "Bearer ", it extracts the JWT string.
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
