@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -122,7 +123,8 @@ public class EventService {
 
             //Copy all relationships from original event
             newEvent.setVenue(originalEvent.getVenue());
-            newEvent.setVendors(originalEvent.getVendors());
+            newEvent.setVendors(originalEvent.getVendors() != null ?
+                    new ArrayList<>(originalEvent.getVendors()) : new ArrayList<>());
             newEvent.setClient(originalEvent.getClient());
             newEvent.setCalendar(originalEvent.getCalendar());
             newEvent.setUser(user);
@@ -149,8 +151,9 @@ public class EventService {
                         .ifPresent(newEvent::setVenue);
             }
 
-            if (newEventDetails.getVendors() != null && !newEventDetails.getVendors().isEmpty()) {
-                newEvent.setVendors(newEventDetails.getVendors());
+            if (newEventDetails.getVendors() != null) {
+                // Create a new ArrayList for the new vendors
+                newEvent.setVendors(new ArrayList<>(newEventDetails.getVendors()));
             }
 
             if (newEventDetails.getClient() != null) {
