@@ -304,14 +304,27 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
 
   // "Add New Skill" button
   const CustomMenuList = (props) => {
-    const { children } = props;
+    const { children, onCreateOption } = props;
     const [inputValue, setInputValue] = useState("");
 
     useEffect(() => {
-      if (props.selectProps && props.selectProps.inputValue) {
+      if (props.selectProps?.inputValue) {
         setInputValue(props.selectProps.inputValue);
       }
-    }, [props.selectProps.inputValue]);
+    }, [props.selectProps?.inputValue]);
+
+    const handleCreate = () => {
+      if (inputValue && inputValue.trim() !== "") {
+        onCreateOption(inputValue);
+
+        // Clear the internal input value of the select
+        if (props.selectProps?.onInputChange) {
+          props.selectProps.onInputChange("", { action: "input-change" });
+        }
+
+        setInputValue(""); // local cleanup just in case
+      }
+    };
 
     return (
       <components.MenuList {...props}>
@@ -325,11 +338,7 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
         >
           <button
             type="button"
-            onClick={() => {
-              if (inputValue && inputValue.trim() !== "") {
-                props.selectProps.onCreateOption(inputValue);
-              }
-            }}
+            onClick={handleCreate}
             style={{
               background: "#007bff",
               color: "#fff",
@@ -427,7 +436,9 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
                 onCreateOption={handleCreateSkill}
                 components={{
                   Option: CustomSkillOption,
-                  MenuList: CustomMenuList,
+                  MenuList: (menuProps) => (
+                    <CustomMenuList {...menuProps} onCreateOption={handleCreateSkill} />
+                  ),
                 }}
                 classNamePrefix="react-select"
               />
