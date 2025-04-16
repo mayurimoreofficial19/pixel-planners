@@ -76,7 +76,11 @@ public class VendorService {
     }
 
     public List<Vendor> findVendorBySkill(Integer skillId, User user) {
-        return vendorRepository.findBySkillsIdAndUser(skillId, user);
+        return vendorRepository.findBySkillIdAndUser(skillId, user);
+    }
+
+    public List<Vendor> findVendorBySkillName(String skillName, User user) {
+        return vendorRepository.findBySkillNameAndUser(skillName, user);
     }
 
     public Optional<Vendor> findVendorByPhoneNumber(PhoneNumber phoneNumber, User user) {
@@ -135,7 +139,7 @@ public class VendorService {
 
     @Transactional
     public void removeSkillFromVendors(Integer skillId, User user) {
-        List<Vendor> vendors = vendorRepository.findBySkillsIdAndUser(skillId, user);
+        List<Vendor> vendors = vendorRepository.findBySkillIdAndUser(skillId, user);
 
         for (Vendor vendor : vendors) {
             vendor.getSkills().removeIf(skill -> skill.getId().equals(skillId));

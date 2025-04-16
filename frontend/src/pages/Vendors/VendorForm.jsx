@@ -62,7 +62,11 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
         try {
           const response = await skillApi.getAllSkills();
           if (response.data) {
-            setSkills(response.data);
+            const formattedSkills = response.data.map((skill) => ({
+              value: skill.id,
+              label: skill.name,
+            }));
+            setSkills(formattedSkills);
           }
         } catch (error) {
           console.error("Error fetching skills:", error);
@@ -132,59 +136,56 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
 
 
     const handleCreateSkill = async (inputValue) => {
-        try {
-          const response = await skillApi.createSkill({ name: inputValue });
-          const createdSkill = response.data;
+      try {
+        const response = await skillApi.createSkill({ name: inputValue });
+        const newOption = {
+          value: response.data.id,
+          label: response.data.name,
+        };
 
-          const newOption = {
-            value: createdSkill.id,
-            label: createdSkill.name,
-          };
-
-          setSkills((prev) => [...prev, createdSkill]);
-
-          setFormData((prev) => ({
-            ...prev,
-            skills: [...prev.skills, newOption],
-          }));
-        } catch (error) {
-          console.error("Error creating skill:", error);
-          setErrors((prev) => ({
-            ...prev,
-            skills: "Failed to create new skill. Try again later.",
-          }));
-        }
-      };
+        setSkills((prev) => [...prev, newOption]);
+        setFormData((prev) => ({
+          ...prev,
+          skills: [...prev.skills, newOption],
+        }));
+      } catch (error) {
+        console.error("Error creating skill:", error);
+        setErrors((prev) => ({
+          ...prev,
+          skills: "Failed to create new skill. Try again later.",
+        }));
+      }
+    };
 
 
-      const handleSkillChange = (selectedOptions) => {
-              setFormData((prev) => ({
-                ...prev,
-                skills: selectedOptions || [],
-              }));
+    const handleSkillChange = (selectedOptions) => {
+      setFormData((prev) => ({
+        ...prev,
+        skills: selectedOptions || [],
+      }));
 
-              if (errors.skills) {
-                setErrors((prev) => ({ ...prev, skills: undefined }));
-              }
-      };
+      if (errors.skills) {
+        setErrors((prev) => ({ ...prev, skills: undefined }));
+      }
+    };
 
 
       const handleEditSkill = async (id, newName) => {
         try {
           const response = await skillApi.updateSkill(id, { name: newName });
+          const updatedSkill = {
+            value: id,
+            label: response.data.name,
+          };
 
           setSkills((prev) =>
-            prev.map((skill) =>
-              skill.id === id ? { ...skill, name: response.data.name } : skill
-            )
+            prev.map((skill) => (skill.value === id ? updatedSkill : skill))
           );
 
           setFormData((prev) => ({
             ...prev,
             skills: prev.skills.map((s) =>
-              s.value === id || s.id === id
-                ? { ...s, label: response.data.name }
-                : s
+              s.value === id ? updatedSkill : s
             ),
           }));
         } catch (error) {
@@ -194,15 +195,17 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
             skills: "Failed to update skill.",
           }));
         }
-      };
+    };
 
     const handleDeleteSkill = async (id) => {
       try {
         await skillApi.deleteSkill(id);
-        setSkills((prev) => prev.filter((skill) => skill.id !== id));
+
+        setSkills((prev) => prev.filter((skill) => skill.value !== id));
+
         setFormData((prev) => ({
           ...prev,
-          skills: prev.skills.filter((s) => s.value !== id && s.id !== id),
+          skills: prev.skills.filter((s) => s.value !== id),
         }));
       } catch (error) {
         console.error("Error deleting skill:", error);
@@ -224,7 +227,7 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
               phoneNumber: formData.phoneNumber.phoneNumber,
             },
             skills: formData.skills.map((skill) => ({
-              id: skill.value ?? skill.id,
+              id: skill.value,
             })),
             notes: formData.notes,
           };
@@ -308,21 +311,23 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
     const [inputValue, setInputValue] = useState("");
 
     useEffect(() => {
-      if (props.selectProps?.inputValue) {
+      if (props.selectProps?.inputValue !== undefined) {
         setInputValue(props.selectProps.inputValue);
       }
     }, [props.selectProps?.inputValue]);
 
+    const isDisabled = !inputValue || inputValue.trim() === "";
+
     const handleCreate = () => {
-      if (inputValue && inputValue.trim() !== "") {
+      if (!isDisabled) {
         onCreateOption(inputValue);
 
-        // Clear the internal input value of the select
+        // Clear the input value of the select
         if (props.selectProps?.onInputChange) {
           props.selectProps.onInputChange("", { action: "input-change" });
         }
 
-        setInputValue(""); // local cleanup just in case
+        setInputValue("");
       }
     };
 
@@ -336,21 +341,6 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
             textAlign: "center",
           }}
         >
-          <button
-            type="button"
-            onClick={handleCreate}
-            style={{
-              background: "#007bff",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              padding: "6px 10px",
-              fontSize: "0.9rem",
-              cursor: "pointer",
-            }}
-          >
-            ➕ Add New Skill: "{inputValue}"
-          </button>
         </div>
       </components.MenuList>
     );
@@ -430,10 +420,11 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
               <CreatableSelect
                 isMulti
                 name="skills"
-                options={skillOptions}
+                options={skills}
                 value={formData.skills}
                 onChange={handleSkillChange}
                 onCreateOption={handleCreateSkill}
+                placeholder="Type to enter new skill, search or select existing"
                 components={{
                   Option: CustomSkillOption,
                   MenuList: (menuProps) => (
@@ -441,6 +432,9 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
                   ),
                 }}
                 classNamePrefix="react-select"
+                filterOption={(option, inputValue) =>
+                    option.label.toLowerCase().includes(inputValue.toLowerCase())
+                }
               />
               {errors.skills && <div className="error-text">{errors.skills}</div>}
             </div>

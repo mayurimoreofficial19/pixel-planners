@@ -20,7 +20,9 @@ public interface VendorRepository extends JpaRepository<Vendor, Integer> {
 
     Optional<Vendor> findByLocationAndUser(String location, User user);
 
-    List<Vendor> findBySkillsIdAndUser(Integer skillId, User user);
+    List<Vendor> findBySkillIdAndUser(Integer skillId, User user);
+
+    List<Vendor> findBySkillNameAndUser(String skillName, User user);
 
     Optional<Vendor> findByPhoneNumberAndUser(PhoneNumber phoneNumber, User user);
 

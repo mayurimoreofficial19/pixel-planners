@@ -26,7 +26,7 @@ const VendorSearch = ({
 
             <option value="name">Name</option>
             <option value="location">Location</option>
-            <option value="skill">Skills</option>
+            <option value="skills">Skill</option>
             <option value="phone">Phone</option>
             <option value="email">Email</option>
           </select>
