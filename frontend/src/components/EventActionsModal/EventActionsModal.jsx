@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { eventApi } from "../../services/api";
+import React, { useState, useEffect } from "react";
+import { eventApi, venueApi, vendorApi } from "../../services/api";
 import styles from "./EventActionsModal.module.css";
 
 const EventActionsModal = ({ event, onClose, onEventUpdated }) => {
@@ -15,6 +15,27 @@ const EventActionsModal = ({ event, onClose, onEventUpdated }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [venues, setVenues] = useState([]);
+  const [vendors, setVendors] = useState([]);
+
+  useEffect(() => {
+    const fetchVenuesAndVendors = async () => {
+      try {
+        const [venuesResponse, vendorsResponse] = await Promise.all([
+          venueApi.getAllVenues(),
+          vendorApi.getAllVendors(),
+        ]);
+        setVenues(venuesResponse.data || []);
+        setVendors(vendorsResponse.data || []);
+      } catch (err) {
+        console.error("Error fetching venues and vendors:", err);
+      }
+    };
+
+    if (action === "rebook") {
+      fetchVenuesAndVendors();
+    }
+  }, [action]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,11 +54,14 @@ const EventActionsModal = ({ event, onClose, onEventUpdated }) => {
   };
 
   const handleVendorChange = (e) => {
-    const selectedVendor = { id: parseInt(e.target.value) };
-    setFormData((prev) => ({
-      ...prev,
-      vendors: [...prev.vendors, selectedVendor],
-    }));
+    const vendorId = parseInt(e.target.value);
+    if (vendorId && !formData.vendors.some((v) => v.id === vendorId)) {
+      const selectedVendor = vendors.find((v) => v.id === vendorId);
+      setFormData((prev) => ({
+        ...prev,
+        vendors: [...prev.vendors, { id: vendorId, name: selectedVendor.name }],
+      }));
+    }
   };
 
   const removeVendor = (vendorId) => {
@@ -84,15 +108,13 @@ const EventActionsModal = ({ event, onClose, onEventUpdated }) => {
     setLoading(true);
     setError(null);
     try {
-      // Create a new event object for rebooking, keeping original venue and vendors
       const rebookData = {
         name: formData.name,
         date: formData.date,
         time: formData.time,
         notes: formData.notes || "",
-        // Keep the original venue and vendors
-        venue: event.venue ? { id: event.venue.id } : null,
-        vendors: event.vendors ? event.vendors.map((v) => ({ id: v.id })) : [],
+        venue: formData.venue,
+        vendors: formData.vendors.map((v) => ({ id: v.id })),
       };
 
       console.log("Rebooking with data:", rebookData);
@@ -264,18 +286,56 @@ const EventActionsModal = ({ event, onClose, onEventUpdated }) => {
         />
       </div>
       <div className={styles.formGroup}>
-        <label>Current Venue</label>
-        <div className={styles.currentSelection}>
-          {event.venue ? event.venue.name : "No venue selected"}
-        </div>
+        <label>Venue</label>
+        <select
+          name="venue"
+          value={formData.venue?.id || ""}
+          onChange={handleVenueChange}
+          className={styles.input}
+        >
+          <option value="">Select a venue (optional)</option>
+          {venues.map((venue) => (
+            <option key={venue.id} value={venue.id}>
+              {venue.name}
+            </option>
+          ))}
+        </select>
       </div>
       <div className={styles.formGroup}>
-        <label>Current Vendors</label>
-        <div className={styles.currentSelection}>
-          {event.vendors && event.vendors.length > 0
-            ? event.vendors.map((v) => v.name).join(", ")
-            : "No vendors selected"}
-        </div>
+        <label>Vendors</label>
+        <select
+          name="vendors"
+          value=""
+          onChange={handleVendorChange}
+          className={styles.input}
+        >
+          <option value="">Select vendors (optional)</option>
+          {vendors
+            .filter(
+              (vendor) => !formData.vendors.some((v) => v.id === vendor.id)
+            )
+            .map((vendor) => (
+              <option key={vendor.id} value={vendor.id}>
+                {vendor.name}
+              </option>
+            ))}
+        </select>
+        {formData.vendors.length > 0 && (
+          <div className={styles.selectedVendors}>
+            {formData.vendors.map((vendor) => (
+              <div key={vendor.id} className={styles.selectedVendor}>
+                <span>{vendor.name}</span>
+                <button
+                  type="button"
+                  onClick={() => removeVendor(vendor.id)}
+                  className={styles.removeVendor}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       <div className={styles.formGroup}>
         <label>Notes</label>
