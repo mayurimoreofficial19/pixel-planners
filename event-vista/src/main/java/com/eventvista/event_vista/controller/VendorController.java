@@ -60,7 +60,7 @@ public class VendorController {
     @GetMapping("/find/skills/id/{skillId}")
     public ResponseEntity<List<Vendor>> getVendorBySkillId(@PathVariable("skillId") Integer skillId) {
         User user = authUtil.getUserFromAuthentication();
-        return ResponseEntity.ok(vendorService.findVendorBySkill(skillId, user));
+        return ResponseEntity.ok(vendorService.findVendorBySkillId(skillId, user));
     }
 
     // Search vendors by skill name
