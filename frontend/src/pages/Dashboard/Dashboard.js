@@ -6,6 +6,7 @@ import UpcomingEvents from "../../components/UpcomingEvents/UpcomingEvents";
 import { eventApi } from "../../services/api";
 import "../../styles/components.css";
 import { useNavigate } from "react-router-dom";
+import Sidebar from "./Sidebar";
 
 const Dashboard = () => {
   const { user, logout, token } = useAuth();
@@ -83,7 +84,17 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="dashboard-container">
+
+    <div className="dashboard-layout" style={{ display: "flex", minHeight: "100vh" }}>
+      {/* Left Sidebar */}
+      <Sidebar />
+        {/* Main Content */}
+    <div className="dashboard-container" style={{
+      marginLeft: "200px", // same as sidebar width
+      padding: "1rem",
+      width: "100%",
+      boxSizing: "border-box"
+      }}>
       <nav className="card">
         <div className="container">
           <div
@@ -149,6 +160,7 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

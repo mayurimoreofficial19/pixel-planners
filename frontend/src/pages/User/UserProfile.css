@@ -6,6 +6,9 @@
 .user-profile-container {
   max-width: 600px;
   margin: 3rem auto;
+  width: 100%;
+  marginLeft: "500px";
+  box-sizing: border-box;
   padding: 2rem;
   background-color: #fdfaf4; /* A light cream color to mimic the screenshot background */
   border-radius: 8px;
@@ -296,3 +299,5 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
+

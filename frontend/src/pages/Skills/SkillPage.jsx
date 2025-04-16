@@ -7,6 +7,7 @@ import SkillForm from "./SkillForm";
 import SkillSearch from "./SkillSearch";
 import SkillSearchResults from "./SkillSearchResults";
 import Modal from "../../components/common/Modal/Modal";
+import Sidebar from "../Dashboard/Sidebar";
 
 const SkillPage = () => {
     const [skills, setSkills] = useState([]);
@@ -185,7 +186,9 @@ const SkillPage = () => {
     }
 
     return (
-        <div className="container" style={{ padding: "2rem" }}>
+       <div style={{ display: "flex", minHeight: "100vh" }}>
+         <Sidebar />
+        <div className="container" style={{ padding: "2rem", marginLeft: "200px", flex: 1, boxSizing: "border-box" }}>
           <div className="dashboard-header">
             <h2 className="dashboard-title">Skills</h2>
             <p className="dashboard-subtitle">Manage your event skills</p>
@@ -228,6 +231,7 @@ const SkillPage = () => {
               />
             </Modal>
           )}
+        </div>
         </div>
     );
 };

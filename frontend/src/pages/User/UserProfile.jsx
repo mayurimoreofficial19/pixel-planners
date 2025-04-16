@@ -3,6 +3,7 @@ import { userApi, authApi } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import "../User/UserProfile.css";
 import pencilIcon from "./pencil-icon.png";
+import Sidebar from "../Dashboard/Sidebar";
 
 const UserProfile = () => {
   const [formData, setFormData] = useState({
@@ -185,6 +186,8 @@ const UserProfile = () => {
   }
 
   return (
+      <div className="profile-layout" style={{ display: "flex", minHeight: "100vh" }}>
+          <Sidebar />
     <div className="user-profile-container">
       <h1>{formData.name ? `${formData.name}'s Profile` : 'User Profile'}</h1>
       {errorMessage && <div className="error-message">{errorMessage}</div>}
@@ -347,16 +350,17 @@ const UserProfile = () => {
         </button>
       </div>
 
-          <div className="back-to-dashboard">
-            <button
-              type="button"
-              className="back-to-dashboard-button"
-              onClick={() => navigate("/dashboard")}
-            >
-              ← Back to Dashboard
-            </button>
-          </div>
+{/*           <div className="back-to-dashboard"> */}
+{/*             <button */}
+{/*               type="button" */}
+{/*               className="back-to-dashboard-button" */}
+{/*               onClick={() => navigate("/dashboard")} */}
+{/*             > */}
+{/*               ← Back to Dashboard */}
+{/*             </button> */}
+{/*           </div> */}
 
+    </div>
     </div>
   );
 
