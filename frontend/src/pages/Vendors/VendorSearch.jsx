@@ -9,6 +9,13 @@ const VendorSearch = ({
     onSearch,
     }) => {
 
+    // Trigger search when the user presses Enter
+        const handleKeyPress = (e) => {
+          if (e.key === "Enter") {
+            onSearch();
+          }
+        };
+
     return (
         <div className="search-container" style={{ marginBottom: "1rem" }}>
           <select
@@ -19,7 +26,7 @@ const VendorSearch = ({
 
             <option value="name">Name</option>
             <option value="location">Location</option>
-            <option value="skills">Skills</option>
+            <option value="skill">Skills</option>
             <option value="phone">Phone</option>
             <option value="email">Email</option>
           </select>
@@ -27,6 +34,7 @@ const VendorSearch = ({
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleKeyPress} // Trigger search on Enter key press
             placeholder={`Search by ${searchType}...`}
             className="search-input"
           />

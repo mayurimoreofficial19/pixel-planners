@@ -26,7 +26,12 @@ public class Vendor extends AbstractEntity implements Serializable {
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String location;
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,  CascadeType.REMOVE })
+    @JoinTable(
+            name = "vendor_skills",
+            joinColumns = @JoinColumn(name = "vendor_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id")
+    )
     private List<Skill> skills = new ArrayList<>();
 
     @NotNull(message ="Field must have valid venue phone number entered")

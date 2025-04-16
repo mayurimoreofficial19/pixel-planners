@@ -185,6 +185,12 @@ const VenuePage = () => {
     }
   };
 
+  const handleViewAll = () => {
+      setSearchTerm("");
+      setSearchType("name");
+      setSearchResults(venues);
+  };
+
   if (!isAuthenticated || !token) {
     return null; // Will redirect in useEffect
   }
@@ -219,6 +225,13 @@ const VenuePage = () => {
           style={{ marginTop: "1rem" }}
         >
           Add New Venue
+        </button>
+         <button
+            className="button button-secondary"
+            onClick={handleViewAll}
+            style={{ marginTop: "1rem", marginLeft: "1rem" }}
+          >
+            View All
         </button>
       </div>
 

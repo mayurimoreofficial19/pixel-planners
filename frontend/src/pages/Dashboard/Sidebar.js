@@ -12,7 +12,6 @@ const Sidebar = () => {
         <NavLink to="/vendors" className="sidebar-link">Vendors</NavLink>
         <NavLink to="/venues" className="sidebar-link">Venues</NavLink>
         <NavLink to="/clients" className="sidebar-link">Clients</NavLink>
-        <NavLink to="/skills" className="sidebar-link">Skills</NavLink>
       </nav>
     </div>
   );

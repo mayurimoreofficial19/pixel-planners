@@ -235,6 +235,12 @@ const VendorPage = () => {
         }
     };
 
+    const handleViewAll = () => {
+            setSearchTerm("");
+            setSearchType("name");
+            setSearchResults(vendors);
+    };
+
     if (!isAuthenticated || !token) {
         return null; // Will redirect in useEffect
     }
@@ -269,6 +275,13 @@ const VendorPage = () => {
               style={{ marginTop: "1rem" }}
             >
               Add New Vendor
+            </button>
+            <button
+                className="button button-secondary"
+                onClick={handleViewAll}
+                style={{ marginTop: "1rem", marginLeft: "1rem" }}
+            >
+                View All
             </button>
           </div>
 

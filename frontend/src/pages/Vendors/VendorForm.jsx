@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
+import { components } from "react-select";
 import { useAuth } from "../../context/AuthContext";
 import { vendorApi, skillApi } from "../../services/api";
 import "../../styles/components.css";
@@ -129,15 +130,87 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
             }
     };
 
-    const handleSkillChange = (selectedOptions) => {
+
+    const handleCreateSkill = async (inputValue) => {
+        try {
+          const response = await skillApi.createSkill({ name: inputValue });
+          const createdSkill = response.data;
+
+          const newOption = {
+            value: createdSkill.id,
+            label: createdSkill.name,
+          };
+
+          setSkills((prev) => [...prev, createdSkill]);
+
+          setFormData((prev) => ({
+            ...prev,
+            skills: [...prev.skills, newOption],
+          }));
+        } catch (error) {
+          console.error("Error creating skill:", error);
+          setErrors((prev) => ({
+            ...prev,
+            skills: "Failed to create new skill. Try again later.",
+          }));
+        }
+      };
+
+
+      const handleSkillChange = (selectedOptions) => {
+              setFormData((prev) => ({
+                ...prev,
+                skills: selectedOptions || [],
+              }));
+
+              if (errors.skills) {
+                setErrors((prev) => ({ ...prev, skills: undefined }));
+              }
+      };
+
+
+      const handleEditSkill = async (id, newName) => {
+        try {
+          const response = await skillApi.updateSkill(id, { name: newName });
+
+          setSkills((prev) =>
+            prev.map((skill) =>
+              skill.id === id ? { ...skill, name: response.data.name } : skill
+            )
+          );
+
+          setFormData((prev) => ({
+            ...prev,
+            skills: prev.skills.map((s) =>
+              s.value === id || s.id === id
+                ? { ...s, label: response.data.name }
+                : s
+            ),
+          }));
+        } catch (error) {
+          console.error("Error updating skill:", error);
+          setErrors((prev) => ({
+            ...prev,
+            skills: "Failed to update skill.",
+          }));
+        }
+      };
+
+    const handleDeleteSkill = async (id) => {
+      try {
+        await skillApi.deleteSkill(id);
+        setSkills((prev) => prev.filter((skill) => skill.id !== id));
         setFormData((prev) => ({
           ...prev,
-          skills: selectedOptions || [],
+          skills: prev.skills.filter((s) => s.value !== id && s.id !== id),
         }));
-
-        if (errors.skills) {
-          setErrors((prev) => ({ ...prev, skills: undefined }));
-        }
+      } catch (error) {
+        console.error("Error deleting skill:", error);
+        setErrors((prev) => ({
+          ...prev,
+          skills: "Failed to delete skill. It might be in use by vendors.",
+        }));
+      }
     };
 
 
@@ -168,6 +241,111 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
         }
     };
 
+    const CustomSkillOption = (props) => {
+    const { data, innerRef, innerProps, isFocused } = props;
+
+    return (
+      <div
+        ref={innerRef}
+        {...innerProps}
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          backgroundColor: isFocused ? "#f0f0f0" : "#fff",
+          padding: "8px 12px",
+          borderBottom: "1px solid #eee",
+          cursor: "pointer",
+        }}
+      >
+        <span>{data.label}</span>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              const newName = prompt("Edit skill name:", data.label);
+              if (newName && newName !== data.label) {
+                handleEditSkill(data.value, newName);
+              }
+            }}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "0.9rem",
+              color: "#007bff",
+            }}
+          >
+            ✏️
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (window.confirm(`Delete "${data.label}"?`)) {
+                handleDeleteSkill(data.value);
+              }
+            }}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "0.9rem",
+              color: "red",
+            }}
+          >
+            ❌
+          </button>
+        </div>
+      </div>
+    );
+    };
+
+  // "Add New Skill" button
+  const CustomMenuList = (props) => {
+    const { children } = props;
+    const [inputValue, setInputValue] = useState("");
+
+    useEffect(() => {
+      if (props.selectProps && props.selectProps.inputValue) {
+        setInputValue(props.selectProps.inputValue);
+      }
+    }, [props.selectProps.inputValue]);
+
+    return (
+      <components.MenuList {...props}>
+        {children}
+        <div
+          style={{
+            padding: "8px 12px",
+            borderTop: "1px solid #ddd",
+            textAlign: "center",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => {
+              if (inputValue && inputValue.trim() !== "") {
+                props.selectProps.onCreateOption(inputValue);
+              }
+            }}
+            style={{
+              background: "#007bff",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              padding: "6px 10px",
+              fontSize: "0.9rem",
+              cursor: "pointer",
+            }}
+          >
+            ➕ Add New Skill: "{inputValue}"
+          </button>
+        </div>
+      </components.MenuList>
+    );
+  };
 
     return (
         <div className="form-container">
@@ -240,12 +418,17 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
 
             <div className="form-group">
               <label className="form-label">Skills</label>
-              <Select
+              <CreatableSelect
                 isMulti
                 name="skills"
                 options={skillOptions}
                 value={formData.skills}
                 onChange={handleSkillChange}
+                onCreateOption={handleCreateSkill}
+                components={{
+                  Option: CustomSkillOption,
+                  MenuList: CustomMenuList,
+                }}
                 classNamePrefix="react-select"
               />
               {errors.skills && <div className="error-text">{errors.skills}</div>}

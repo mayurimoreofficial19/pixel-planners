@@ -2,8 +2,11 @@ package com.eventvista.event_vista.service;
 
 import com.eventvista.event_vista.data.SkillRepository;
 
+import com.eventvista.event_vista.data.VendorRepository;
 import com.eventvista.event_vista.model.Skill;
 import com.eventvista.event_vista.model.User;
+import com.eventvista.event_vista.model.Vendor;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +20,15 @@ import java.util.Set;
 public class SkillService {
 
     private final SkillRepository skillRepository;
+    private final VendorRepository vendorRepository;
+    private final VendorService vendorService;
 
     // Constructor
     @Autowired
-    public SkillService(SkillRepository skillRepository) {
+    public SkillService(SkillRepository skillRepository, VendorRepository vendorRepository, VendorService vendorService) {
         this.skillRepository = skillRepository;
+        this.vendorRepository = vendorRepository;
+        this.vendorService = vendorService;
     }
 
     // Query methods
@@ -58,8 +65,9 @@ public class SkillService {
 
     }
 
-    public boolean deleteSkill(Integer id, User user) {
-        Optional<Skill> skill = skillRepository.findByIdAndUser(id, user);
+    @Transactional
+    public boolean deleteSkill(Integer skillId, User user) {
+        Optional<Skill> skill = skillRepository.findByIdAndUser(skillId, user);
         if (skill.isPresent()) {
             skillRepository.delete(skill.get());
             return true;
