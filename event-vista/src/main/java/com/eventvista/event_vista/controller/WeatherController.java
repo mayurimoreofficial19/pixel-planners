@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/weather")
@@ -25,13 +26,21 @@ public class WeatherController {
     }
 
     @GetMapping
-    public ResponseEntity<WeatherData> getWeather(
+    public ResponseEntity<?> getWeather(
             @RequestParam String location,
             @RequestParam String date) {
         try {
             validateParams(location, date);
             LocalDate eventDate = LocalDate.parse(date);
             WeatherData weatherData = weatherService.getWeatherData(location, eventDate);
+
+            if (weatherData == null) {
+                return ResponseEntity.ok(Map.of(
+                        "message", "Weather data not available for this date",
+                        "available", false
+                ));
+            }
+
             return ResponseEntity.ok(weatherData);
         } catch (DateTimeParseException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,

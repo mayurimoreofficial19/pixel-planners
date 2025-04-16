@@ -27,8 +27,13 @@ const getWeatherEmoji = (icon) => {
 };
 
 const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", { month: "long", day: "numeric" });
+  const date = new Date(dateString + "T00:00:00");
+  return date.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 };
 
 const UpcomingEvents = ({ events = [] }) => {
@@ -38,17 +43,26 @@ const UpcomingEvents = ({ events = [] }) => {
 
   useEffect(() => {
     if (events.length > 0) {
+      console.log("Initial events:", events);
+
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
       const upcoming = events
         .filter((event) => {
-          const eventDate = new Date(event.date);
+          const eventDate = new Date(event.date + "T00:00:00");
+          console.log("Event date comparison:", {
+            event: event.name,
+            date: event.date,
+            parsedDate: eventDate,
+            isUpcoming: eventDate >= today,
+          });
           return eventDate >= today;
         })
         .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      // Fetch weather data for each event
+      console.log("Filtered upcoming events:", upcoming);
+
       const fetchWeatherData = async () => {
         setLoading(true);
         try {
@@ -61,6 +75,12 @@ const UpcomingEvents = ({ events = [] }) => {
             upcoming.map(async (event) => {
               if (event.venue && event.venue.location) {
                 try {
+                  console.log("Fetching weather for:", {
+                    event: event.name,
+                    location: event.venue.location,
+                    date: event.date,
+                  });
+
                   const response = await axios.get(
                     "http://localhost:8080/api/weather",
                     {
@@ -73,6 +93,21 @@ const UpcomingEvents = ({ events = [] }) => {
                       },
                     }
                   );
+
+                  console.log("Weather response:", {
+                    event: event.name,
+                    weatherData: response.data,
+                  });
+
+                  if (response.data.available === false) {
+                    return {
+                      ...event,
+                      weatherIcon: null,
+                      weatherDescription: "Weather data not available",
+                      temperature: "N/A",
+                    };
+                  }
+
                   return {
                     ...event,
                     weatherIcon: response.data.icon,
@@ -80,18 +115,26 @@ const UpcomingEvents = ({ events = [] }) => {
                     temperature: response.data.temperature,
                   };
                 } catch (weatherError) {
-                  console.warn(
+                  console.error(
                     `Weather fetch failed for ${event.venue.location}:`,
                     weatherError
                   );
-                  return event;
+                  return {
+                    ...event,
+                    weatherIcon: null,
+                    weatherDescription: "Weather data not available",
+                    temperature: "N/A",
+                  };
                 }
               }
               return event;
             })
           );
+
+          console.log("Final events with weather:", eventsWithWeather);
           setUpcomingEvents(eventsWithWeather);
         } catch (err) {
+          console.error("Error in fetchWeatherData:", err);
           setError(
             "Failed to fetch weather data: " + (err.message || "Unknown error")
           );
@@ -128,15 +171,27 @@ const UpcomingEvents = ({ events = [] }) => {
       <div className={styles.eventsList}>
         {upcomingEvents.map((event) => (
           <div key={event.id} className={styles.eventCard}>
-            <div className={styles.eventDate}>🗓️ {formatDate(event.date)}</div>
+            <div className={styles.eventDate}>📅 {formatDate(event.date)}</div>
             <div className={styles.eventName}>{event.name}</div>
             <div className={styles.eventLocation}>
-              {event.venue ? event.venue.name : "No venue set"}
+              📍 {event.venue ? event.venue.name : "No venue set"}
             </div>
-            {event.weatherIcon && (
+            {event.vendors && event.vendors.length > 0 && (
+              <div className={styles.eventVendors}>
+                👥 {event.vendors.map((vendor) => vendor.name).join(", ")}
+              </div>
+            )}
+            {event.weatherIcon ? (
               <div className={styles.eventWeather}>
                 {getWeatherEmoji(event.weatherIcon)} {event.weatherDescription},{" "}
-                {event.temperature}
+                {event.temperature}°F
+                {event.date === new Date().toISOString().split("T")[0]
+                  ? " (Current)"
+                  : " (Forecast)"}
+              </div>
+            ) : (
+              <div className={styles.eventWeather}>
+                {event.weatherDescription}
               </div>
             )}
           </div>
