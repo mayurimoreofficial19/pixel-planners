@@ -2,7 +2,6 @@ package com.eventvista.event_vista.model.dto;
 
 import com.eventvista.event_vista.model.Event;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

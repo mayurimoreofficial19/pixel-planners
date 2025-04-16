@@ -1,12 +1,18 @@
 package com.eventvista.event_vista.controller;
 
 import com.eventvista.event_vista.model.*;
+import com.eventvista.event_vista.service.SkillService;
 import com.eventvista.event_vista.service.VendorService;
 import com.eventvista.event_vista.utilities.AuthUtil;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/vendors")
@@ -14,11 +20,13 @@ import java.util.List;
 public class VendorController {
 
     private final VendorService vendorService;
+    private final SkillService skillService;
     private final AuthUtil authUtil;
 
     // Constructor
-    public VendorController(VendorService vendorService, AuthUtil authUtil) {
+    public VendorController(VendorService vendorService, SkillService skillService, AuthUtil authUtil) {
         this.vendorService = vendorService;
+        this.skillService = skillService;
         this.authUtil = authUtil;
     }
 
@@ -26,7 +34,8 @@ public class VendorController {
     @GetMapping("/all")
     public ResponseEntity<List<Vendor>> getAllVendors () {
         User user = authUtil.getUserFromAuthentication();
-        return ResponseEntity.ok(vendorService.findAllVendors(user));
+        List<Vendor> vendors = vendorService.findAllVendors(user);
+        return ResponseEntity.ok(vendors);
     }
 
     @GetMapping("/find/{id}")
@@ -47,8 +56,8 @@ public class VendorController {
         return ResponseEntity.of(vendorService.findVendorByLocation(location, user));
     }
 
-    @GetMapping("/find/skill/{skillId}")
-    public ResponseEntity<List<Vendor>> getVendorBySkill (@PathVariable("skillId") Integer skillId) {
+    @GetMapping("/find/skills/{skillId}")
+    public ResponseEntity<List<Vendor>> getVendorsBySkill (@PathVariable("skillId") Integer skillId) {
         User user = authUtil.getUserFromAuthentication();
         return ResponseEntity.ok(vendorService.findVendorBySkill(skillId, user));
     }
@@ -66,26 +75,79 @@ public class VendorController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Vendor> addVendor (@RequestBody Vendor vendor) {
-        User user = authUtil.getUserFromAuthentication();
-        Vendor savedVendor = vendorService.addVendor(vendor, user);
-        return ResponseEntity.ok(savedVendor);
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Vendor> updateVendor(@PathVariable("id") Integer id, @RequestBody Vendor vendor) {
-        User user = authUtil.getUserFromAuthentication();
+    public ResponseEntity<?> addVendor (@Valid @RequestBody Vendor vendor, BindingResult bindingResult) {
         try {
-            return ResponseEntity.ok(vendorService.updateVendor(id, vendor, user));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            if (bindingResult.hasErrors()) {
+                Map<String, String> errors = new HashMap<>();
+                bindingResult.getFieldErrors().forEach(error -> {
+                    errors.put(error.getField(), error.getDefaultMessage());
+                });
+                return ResponseEntity.badRequest().body(errors);
+            }
+
+            User user = authUtil.getUserFromAuthentication();
+            Vendor newVendor = vendorService.addVendor(vendor, user);
+            return ResponseEntity.ok(newVendor);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Error creating vendor: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateVendor(@PathVariable("id") Integer id, @Valid @RequestBody Vendor updatedVendor, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(errors);
+        }
+        try {
+            User user = authUtil.getUserFromAuthentication();
+            return vendorService.updateVendor(id, updatedVendor, user)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Error updating vendor: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteVendor (@PathVariable("id") Integer id) {
+    public ResponseEntity<?> deleteVendor(@PathVariable("id") Integer id) {
+        try {
+            User user = authUtil.getUserFromAuthentication();
+            boolean isDeleted = vendorService.deleteVendor(id, user);
+
+            if (isDeleted) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Error deleting vendor: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @DeleteMapping("/delete/skills/{skillId}")
+    @Transactional
+    public ResponseEntity<?> removeSkillFromVendors(@PathVariable Integer skillId) {
         User user = authUtil.getUserFromAuthentication();
-        boolean deleted = vendorService.deleteVendor(id, user);
-        return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+        try {
+            vendorService.removeSkillFromVendors(skillId, user);
+            boolean deleted = skillService.deleteSkill(skillId, user);
+
+            return deleted
+                    ? ResponseEntity.ok("Skill removed from vendors and deleted.")
+                    : ResponseEntity.notFound().build();
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

@@ -4,6 +4,9 @@ package com.eventvista.event_vista.service;
 import com.eventvista.event_vista.data.SkillRepository;
 import com.eventvista.event_vista.data.VendorRepository;
 import com.eventvista.event_vista.model.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +30,13 @@ public class VendorService {
 
 
     // Query methods
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public void flushChanges() {
+        entityManager.flush();
+    }
+
     public Vendor addVendor(Vendor vendor, User user) {
         // Set the user
         vendor.setUser(user);
@@ -55,11 +65,14 @@ public class VendorService {
     }
 
     public Optional<Vendor> findVendorByName(String name, User user) {
-        return vendorRepository.findByNameAndUser(name, user);
+        return vendorRepository.findByNameAndUser(name, user)
+                .filter(vendor -> vendor.getUser().getId().equals(user.getId()));
     }
 
     public Optional<Vendor> findVendorByLocation(String location, User user) {
-        return vendorRepository.findByLocationAndUser(location, user);
+        return vendorRepository.findByLocationAndUser(location, user)
+                .filter(vendor -> vendor.getUser().getId().equals(user.getId()));
+
     }
 
     public List<Vendor> findVendorBySkill(Integer skillId, User user) {
@@ -67,19 +80,21 @@ public class VendorService {
     }
 
     public Optional<Vendor> findVendorByPhoneNumber(PhoneNumber phoneNumber, User user) {
-        return vendorRepository.findByPhoneNumberAndUser(phoneNumber, user);
+        return vendorRepository.findByPhoneNumberAndUser(phoneNumber, user)
+                .filter(vendor -> vendor.getUser().getId().equals(user.getId()));
     }
 
     public Optional<Vendor> findVendorByEmailAddress(String emailAddress, User user) {
-        return vendorRepository.findByEmailAddressAndUser(emailAddress, user);
+        return vendorRepository.findByEmailAddressAndUser(emailAddress, user)
+                .filter(vendor -> vendor.getUser().getId().equals(user.getId()));
     }
 
     public List<Vendor> findAllVendors(User user) {
         return vendorRepository.findAllByUser(user);
     }
 
-    public Vendor updateVendor(Integer id, Vendor updatedVendor, User user) {
-        return vendorRepository.findByIdAndUser(id, user)
+    public Optional<Vendor> updateVendor(Integer id, Vendor updatedVendor, User user) {
+        return Optional.ofNullable(vendorRepository.findByIdAndUser(id, user)
                 .map(existingVendor -> {
                     // Update basic fields
                     existingVendor.setName(updatedVendor.getName());
@@ -106,7 +121,7 @@ public class VendorService {
 
                     return vendorRepository.save(existingVendor);
                 })
-                .orElseThrow(() -> new RuntimeException("Vendor not found"));
+                .orElseThrow(() -> new RuntimeException("Vendor not found")));
     }
 
     public boolean deleteVendor(Integer id, User user) {
@@ -118,5 +133,14 @@ public class VendorService {
         return false;
     }
 
+    @Transactional
+    public void removeSkillFromVendors(Integer skillId, User user) {
+        List<Vendor> vendors = vendorRepository.findBySkillsIdAndUser(skillId, user);
 
+        for (Vendor vendor : vendors) {
+            vendor.getSkills().removeIf(skill -> skill.getId().equals(skillId));
+            vendorRepository.save(vendor);
+        }
+        entityManager.flush();
+    }
 }

@@ -4,7 +4,6 @@ import com.eventvista.event_vista.model.*;
 import com.eventvista.event_vista.service.VenueService;
 import com.eventvista.event_vista.utilities.AuthUtil;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
