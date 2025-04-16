@@ -75,7 +75,7 @@ const VendorPage = () => {
               console.log("Location search result:", result);
               break;
             case "skills":
-                      result = await vendorApi.getVendorBySkill(searchTerm);
+                      result = await vendorApi.getVendorBySkillName(searchTerm);
                       console.log("Skill search result:", result);
                       break;
             case "phone":

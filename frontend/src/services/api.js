@@ -84,8 +84,10 @@ export const vendorApi = {
   getAllVendors: () => axiosInstance.get("/api/vendors/all"),
   getVendorById: (id) => axiosInstance.get(`/api/vendors/find/${id}`),
   getVendorByName: (name) => axiosInstance.get(`/api/vendors/find/name/${name}`),
-  getVendorsBySkill: (skillId) =>
-    axiosInstance.get(`/api/vendors/find/skills/${skillId}`),
+  getVendorBySkillId: (skillId) =>
+    axiosInstance.get(`/api/vendors/find/skills/id/${skillId}`),
+  getVendorBySkillName: (skillName) =>
+    axiosInstance.get(`/api/vendors/find/skills/name/${encodeURIComponent(skillName)}`),
   removeSkillFromVendors: (skillId) =>
       axiosInstance.delete(`/api/vendors/delete/skills/${skillId}`),
   getVendorByLocation: (location) =>

@@ -56,10 +56,18 @@ public class VendorController {
         return ResponseEntity.of(vendorService.findVendorByLocation(location, user));
     }
 
-    @GetMapping("/find/skills/{skillId}")
-    public ResponseEntity<List<Vendor>> getVendorsBySkill (@PathVariable("skillId") Integer skillId) {
+    // Search vendors by skill ID
+    @GetMapping("/find/skills/id/{skillId}")
+    public ResponseEntity<List<Vendor>> getVendorBySkillId(@PathVariable("skillId") Integer skillId) {
         User user = authUtil.getUserFromAuthentication();
-        return ResponseEntity.ok(vendorService.findVendorBySkill(skillId, user));
+        return ResponseEntity.ok(vendorService.findVendorsBySkill(skillId, user));
+    }
+
+    // Search vendors by skill name
+    @GetMapping("/find/skills/name/{skillName}")
+    public ResponseEntity<List<Vendor>> getVendorBySkillName(@PathVariable("skillName") String skillName) {
+        User user = authUtil.getUserFromAuthentication();
+        return ResponseEntity.ok(vendorService.findVendorsBySkillName(skillName, user));
     }
 
     @GetMapping("/find/phone/{phoneNumber}")
