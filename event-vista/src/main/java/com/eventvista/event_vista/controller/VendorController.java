@@ -60,14 +60,14 @@ public class VendorController {
     @GetMapping("/find/skills/id/{skillId}")
     public ResponseEntity<List<Vendor>> getVendorBySkillId(@PathVariable("skillId") Integer skillId) {
         User user = authUtil.getUserFromAuthentication();
-        return ResponseEntity.ok(vendorService.findVendorsBySkill(skillId, user));
+        return ResponseEntity.ok(vendorService.findVendorBySkill(skillId, user));
     }
 
     // Search vendors by skill name
     @GetMapping("/find/skills/name/{skillName}")
     public ResponseEntity<List<Vendor>> getVendorBySkillName(@PathVariable("skillName") String skillName) {
         User user = authUtil.getUserFromAuthentication();
-        return ResponseEntity.ok(vendorService.findVendorsBySkillName(skillName, user));
+        return ResponseEntity.ok(vendorService.findVendorBySkillName(skillName, user));
     }
 
     @GetMapping("/find/phone/{phoneNumber}")
