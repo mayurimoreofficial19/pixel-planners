@@ -1,7 +1,6 @@
 package com.eventvista.event_vista.data;
 
 import com.eventvista.event_vista.model.PhoneNumber;
-import com.eventvista.event_vista.model.Skill;
 import com.eventvista.event_vista.model.User;
 import com.eventvista.event_vista.model.Vendor;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
 public interface VendorRepository extends JpaRepository<Vendor, Integer> {

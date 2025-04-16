@@ -1,22 +1,13 @@
 package com.eventvista.event_vista.controller;
 
 import com.eventvista.event_vista.model.Calendar;
-import com.eventvista.event_vista.model.Event;
 import com.eventvista.event_vista.model.User;
-import com.eventvista.event_vista.data.CalendarRepository;
-import com.eventvista.event_vista.data.EventRepository;
-import com.eventvista.event_vista.data.UserRepository;
 import com.eventvista.event_vista.service.CalendarService;
 import com.eventvista.event_vista.utilities.AuthUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/calendars")

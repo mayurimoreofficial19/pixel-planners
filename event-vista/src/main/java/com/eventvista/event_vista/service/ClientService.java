@@ -1,11 +1,9 @@
 package com.eventvista.event_vista.service;
 
 import com.eventvista.event_vista.data.ClientRepository;
-import com.eventvista.event_vista.data.VenueRepository;
 import com.eventvista.event_vista.model.Client;
 import com.eventvista.event_vista.model.PhoneNumber;
 import com.eventvista.event_vista.model.User;
-import com.eventvista.event_vista.model.Venue;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

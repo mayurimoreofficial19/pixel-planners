@@ -5,16 +5,12 @@ import com.eventvista.event_vista.data.SkillRepository;
 import com.eventvista.event_vista.data.VendorRepository;
 import com.eventvista.event_vista.model.Skill;
 import com.eventvista.event_vista.model.User;
-import com.eventvista.event_vista.model.Vendor;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class SkillService {
