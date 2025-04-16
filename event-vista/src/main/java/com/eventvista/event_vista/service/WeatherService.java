@@ -11,6 +11,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class WeatherService {
@@ -28,62 +31,81 @@ public class WeatherService {
         this.objectMapper = new ObjectMapper();
     }
 
-    public WeatherData getWeatherData(String location, LocalDate date) {
+    public WeatherData getWeatherData(String location, LocalDate eventDate) {
         try {
             // Validate inputs
             if (!StringUtils.hasText(location)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Location cannot be empty");
             }
 
-            if (date == null) {
+            if (eventDate == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date cannot be null");
             }
 
-            // Call OpenWeatherMap API
-            String url = String.format("%s?q=%s&appid=%s&units=imperial", weatherApiUrl, location, apiKey);
+            LocalDate today = LocalDate.now();
+            long daysBetween = ChronoUnit.DAYS.between(today, eventDate);
 
-            String response = restTemplate.getForObject(url, String.class);
-            JsonNode root = objectMapper.readTree(response);
-
-            // Extract weather data
-            String icon = root.path("weather").get(0).path("icon").asText();
-            double temp = root.path("main").path("temp").asDouble();
-            String description = root.path("weather").get(0).path("description").asText();
-
-            return new WeatherData(
-                    icon,
-                    String.format("%.1f°F", temp),
-                    description
-            );
+            // If event is today, use current weather
+            if (daysBetween == 0) {
+                return getCurrentWeather(location);
+            }
+            // If event is within 5 days, use forecast
+            else if (daysBetween > 0 && daysBetween <= 5) {
+                return getForecastWeather(location, eventDate);
+            }
+            // If event is more than 5 days away, return null
+            else {
+                return null;
+            }
         } catch (ResponseStatusException e) {
-            throw e; // Re-throw validation exceptions
+            throw e;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error fetching weather data: " + e.getMessage());
         }
     }
 
-    private String getMockIconForDate(LocalDate date) {
-        int month = date.getMonthValue();
-        if (month >= 3 && month <= 5) return "01d"; // Spring
-        if (month >= 6 && month <= 8) return "02d"; // Summer
-        if (month >= 9 && month <= 11) return "03d"; // Fall
-        return "04d"; // Winter
+    private WeatherData getCurrentWeather(String location) throws Exception {
+        String url = String.format("%s/data/2.5/weather?q=%s&appid=%s&units=imperial", weatherApiUrl, location, apiKey);
+        String response = restTemplate.getForObject(url, String.class);
+        JsonNode root = objectMapper.readTree(response);
+
+        return extractWeatherData(root);
     }
 
-    private String getMockTemperatureForDate(LocalDate date) {
-        int month = date.getMonthValue();
-        if (month >= 3 && month <= 5) return "68°F"; // Spring
-        if (month >= 6 && month <= 8) return "86°F"; // Summer
-        if (month >= 9 && month <= 11) return "59°F"; // Fall
-        return "41°F"; // Winter
+    private WeatherData getForecastWeather(String location, LocalDate targetDate) throws Exception {
+        String url = String.format("%s/data/2.5/forecast?q=%s&appid=%s&units=imperial", weatherApiUrl, location, apiKey);
+        String response = restTemplate.getForObject(url, String.class);
+        JsonNode root = objectMapper.readTree(response);
+        JsonNode list = root.path("list");
+
+        // Format for comparing dates from the API response
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String targetDateStr = targetDate.toString();
+
+        // Find the forecast closest to the target date
+        for (JsonNode forecast : list) {
+            String dtTxt = forecast.path("dt_txt").asText();
+            LocalDateTime forecastDateTime = LocalDateTime.parse(dtTxt, formatter);
+
+            if (forecastDateTime.toLocalDate().equals(targetDate)) {
+                return extractWeatherData(forecast);
+            }
+        }
+
+        // If no exact match found, return null
+        return null;
     }
 
-    private String getMockDescriptionForDate(LocalDate date) {
-        int month = date.getMonthValue();
-        if (month >= 3 && month <= 5) return "Mild Spring Weather";
-        if (month >= 6 && month <= 8) return "Hot Summer Weather";
-        if (month >= 9 && month <= 11) return "Cool Fall Weather";
-        return "Cold Winter Weather";
+    private WeatherData extractWeatherData(JsonNode weatherNode) {
+        String icon = weatherNode.path("weather").get(0).path("icon").asText();
+        double temp = weatherNode.path("main").path("temp").asDouble();
+        String description = weatherNode.path("weather").get(0).path("description").asText();
+
+        return new WeatherData(
+                icon,
+                String.format("%.1f°F", temp),
+                description
+        );
     }
 }

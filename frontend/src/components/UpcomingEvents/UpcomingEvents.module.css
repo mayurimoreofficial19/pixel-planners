@@ -60,3 +60,14 @@
   padding: 40px;
   color: #666;
 }
+
+.eventVendors {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.eventVendors::before {
+  content: "👥";
+  margin-right: 0.5rem;
+}
