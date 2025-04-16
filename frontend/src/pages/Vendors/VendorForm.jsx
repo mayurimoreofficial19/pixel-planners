@@ -352,7 +352,7 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
             <h2 className="form-title">
               {initialData ? "Edit Vendor" : "Add New Vendor"}
             </h2>
-            <p className="form-subtitle">Enter the venue details below</p>
+            <p className="form-subtitle">Enter the vendor details below</p>
           </div>
 
           <form onSubmit={handleSubmit}>
