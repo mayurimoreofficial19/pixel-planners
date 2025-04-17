@@ -7,6 +7,7 @@ import ClientForm from "./ClientForm";
 import ClientSearch from "./ClientSearch";
 import ClientSearchResults from "./ClientSearchResults";
 import Modal from "../../components/common/Modal/Modal";
+import Sidebar from "../Dashboard/Sidebar";
 
 const ClientPage = () => {
   const [clients, setClients] = useState([]);
@@ -195,7 +196,9 @@ const ClientPage = () => {
   }
 
   return (
-    <div className="container" style={{ padding: "2rem" }}>
+            <div className="profile-layout" style={{ display: "flex", minHeight: "100vh" }}>
+                <Sidebar />
+    <div className="container" style={{ padding: "2rem", marginLeft: "200px", flex: 1, boxSizing: "border-box" }}>
       <div className="dashboard-header">
         <h2 className="dashboard-title">Clients</h2>
         <p className="dashboard-subtitle">Manage your clients</p>
@@ -239,6 +242,8 @@ const ClientPage = () => {
         </Modal>
       )}
     </div>
+            </div>
+
   );
 };
 

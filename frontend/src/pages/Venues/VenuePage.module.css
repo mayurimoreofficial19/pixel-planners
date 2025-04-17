@@ -33,8 +33,10 @@
 
 .searchContainer {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   margin-bottom: 2rem;
+  align-items: center;
+    justify-content: center;
 }
 
 .searchSelect {
@@ -49,6 +51,8 @@
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 
 .searchButton {
@@ -59,6 +63,8 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  margin-left: 10px;
+    flex-shrink: 0;
 }
 
 .searchButton:hover {
