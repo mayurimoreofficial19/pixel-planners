@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../User/UserProfile.css";
 import pencilIcon from "./pencil-icon.png";
 import Sidebar from "../Dashboard/Sidebar";
+import { useAuth } from "../../context/AuthContext";
 
 const UserProfile = () => {
   const [formData, setFormData] = useState({
@@ -28,6 +29,7 @@ const UserProfile = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { setUser } = useAuth(); // Get user from AuthContext
 
   const fileInputRef = useRef(null); // Create a ref for file input
 
@@ -106,6 +108,7 @@ const UserProfile = () => {
         setSuccessMessage("Profile updated successfully!");
         setErrorMessage("");
         setLoading(false);
+        setUser(updatedData); // Update user in AuthContext
         // Exit edit mode after update
         setEditMode({
         name: false,
