@@ -148,13 +148,26 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
           ...prev,
           skills: [...prev.skills, newOption],
         }));
-      } catch (error) {
-        console.error("Error creating skill:", error);
-        setErrors((prev) => ({
-          ...prev,
-          skills: "Failed to create new skill. Try again later.",
-        }));
-      }
+        } catch (error) {
+           console.error("Error saving skill:", error);
+
+           const serverError = error?.response?.data?.error;
+
+           if (typeof serverError === "string") {
+             const lowerError = serverError.toLowerCase();
+             const fieldErrors = {};
+
+             if (lowerError.includes("skill")) {
+               fieldErrors.skill = serverError;
+             } else {
+               fieldErrors.submit = serverError;
+             }
+             setErrors(fieldErrors);
+           } else {
+             // Fallback generic error
+             setErrors({ submit: "Failed to save skill. Please try again." });
+           }
+       }
     };
 
 
@@ -235,11 +248,29 @@ const VendorForm = ({ initialData, onSubmit, onCancel }) => {
           try {
             await onSubmit(cleanedVendorData);
           } catch (error) {
-            console.error("Error saving vendor:", error);
-            setErrors((prev) => ({
-              ...prev,
-              submit: "Failed to save vendor. Please try again.",
-            }));
+              console.error("Error saving vendor:", error);
+
+              const serverError = error?.response?.data?.error;
+
+              if (typeof serverError === "string") {
+                const lowerError = serverError.toLowerCase();
+                const fieldErrors = {};
+
+                if (lowerError.includes("email")) {
+                  fieldErrors.emailAddress = serverError;
+                } else if (lowerError.includes("phone")) {
+                  fieldErrors.phoneNumber = serverError;
+                } else if (lowerError.includes("name")) {
+                  fieldErrors.name = serverError;
+                } else {
+                  fieldErrors.submit = serverError;
+                }
+
+                setErrors(fieldErrors);
+              } else {
+                // Fallback generic error
+                setErrors({ submit: "Failed to save vendor. Please try again." });
+              }
           }
         }
     };

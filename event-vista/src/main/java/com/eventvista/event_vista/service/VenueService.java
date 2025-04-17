@@ -53,6 +53,21 @@ public class VenueService {
 
     public Venue addVenue(Venue venue, User user) {
         venue.setUser(user);
+
+        // Check for duplicate name
+        if (venueRepository.existsByNameIgnoreCase(venue.getName())) {
+            throw new IllegalArgumentException("A venue with the name '" + venue.getName() + "' already exists.");
+        }
+
+        // Check for duplicate email
+        if (venueRepository.existsByEmailAddressIgnoreCase(venue.getEmailAddress())) {
+            throw new IllegalArgumentException("A vendor with the email '" + venue.getEmailAddress() + "' already exists.");
+        }
+
+        // Check for duplicate phone number
+        if (venueRepository.existsByPhoneNumber(venue.getPhoneNumber())) {
+            throw new IllegalArgumentException("A venue with the phone number '" + venue.getPhoneNumber() + "' already exists.");
+        }
         return venueRepository.save(venue);
     }
 

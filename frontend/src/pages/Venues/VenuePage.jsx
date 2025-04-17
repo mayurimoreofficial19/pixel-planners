@@ -176,13 +176,15 @@ const VenuePage = () => {
       setSelectedVenue(null);
       setError(null);
     } catch (err) {
-      console.error("Error saving venue:", err);
-      if (err.response?.status === 401 || err.response?.status === 403) {
-        await handleAuthError();
-      } else {
-        setError("Failed to save venue. Please try again.");
+          console.error("Error saving venue:", err);
+
+          if (err.response?.status === 401 || err.response?.status === 403) {
+            await handleAuthError();
+          } else {
+            // Rethrow the error so VenueForm can handle and display it
+            throw err;
+          }
       }
-    }
   };
 
   const handleViewAll = () => {

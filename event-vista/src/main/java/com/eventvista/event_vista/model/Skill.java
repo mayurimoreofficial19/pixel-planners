@@ -1,11 +1,8 @@
 package com.eventvista.event_vista.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -21,6 +18,7 @@ public class Skill extends AbstractEntity implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(unique = true)
     @NotBlank(message = "Field must have valid service or skill name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String name;

@@ -90,15 +90,33 @@ const VenueForm = ({ initialData, onSubmit, onCancel }) => {
           phoneNumber: formData.phoneNumber.phoneNumber,
         };
         console.log("Submitting venue data:", venueData);
-        onSubmit(venueData);
-      } catch (error) {
-        console.error("Error saving venue:", error);
-        setErrors((prev) => ({
-          ...prev,
-          submit: "Failed to save venue. Please try again.",
-        }));
+        await onSubmit(venueData); // await and catch
+        } catch (error) {
+          console.error("Error saving venue:", error);
+
+          const serverError = error?.response?.data?.error;
+
+          if (typeof serverError === "string") {
+            const lowerError = serverError.toLowerCase();
+            const fieldErrors = {};
+
+            if (lowerError.includes("email")) {
+              fieldErrors.emailAddress = serverError;
+            } else if (lowerError.includes("phone")) {
+              fieldErrors.phoneNumber = serverError;
+            } else if (lowerError.includes("name")) {
+              fieldErrors.name = serverError;
+            } else {
+              fieldErrors.submit = serverError;
+            }
+
+            setErrors(fieldErrors);
+          } else {
+            // Fallback generic error
+            setErrors({ submit: "Failed to save venue. Please try again." });
+          }
+        }
       }
-    }
   };
 
   return (

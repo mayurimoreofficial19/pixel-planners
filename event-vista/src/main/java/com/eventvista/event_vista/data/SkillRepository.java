@@ -19,4 +19,6 @@ public interface SkillRepository extends JpaRepository<Skill, Integer> {
     Optional<Skill> findByNameAndUser(String name, User user);
 
     Set<Skill> findAllByIdInAndUser(Set<Integer> ids, User user);
+
+    boolean existsByNameIgnoreCase(String name);
 }

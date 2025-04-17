@@ -27,4 +27,10 @@ public interface VendorRepository extends JpaRepository<Vendor, Integer> {
     Optional<Vendor> findByPhoneNumberAndUser(PhoneNumber phoneNumber, User user);
 
     Optional<Vendor> findByEmailAddressAndUser(String emailAddress, User user);
+    
+    boolean existsByNameIgnoreCase(String name);
+
+    boolean existsByEmailAddressIgnoreCase(String emailAddress);
+
+    boolean existsByPhoneNumber(PhoneNumber phoneNumber);
 }

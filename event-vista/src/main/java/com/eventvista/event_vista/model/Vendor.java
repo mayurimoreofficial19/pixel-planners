@@ -18,6 +18,7 @@ public class Vendor extends AbstractEntity implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(unique = true)
     @NotBlank(message = "Field must have valid vendor name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String name;
@@ -34,10 +35,12 @@ public class Vendor extends AbstractEntity implements Serializable {
     )
     private List<Skill> skills = new ArrayList<>();
 
+    @Column(unique = true)
     @NotNull(message ="Field must have valid venue phone number entered")
     @Embedded
     private PhoneNumber phoneNumber;
 
+    @Column(unique = true)
     @NotBlank(message ="Field must have valid vendor email entered")
     @Email(message = "Field must have valid email entered")
     private String emailAddress;
