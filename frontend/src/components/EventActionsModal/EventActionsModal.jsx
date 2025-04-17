@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { eventApi, venueApi, vendorApi } from "../../services/api";
+import Modal from "../common/Modal/Modal";
 import styles from "./EventActionsModal.module.css";
 
 const EventActionsModal = ({ event, onClose, onEventUpdated }) => {
   const [action, setAction] = useState("view"); // 'view', 'edit', 'rebook'
   const [formData, setFormData] = useState({
-    name: event.name,
-    date: event.date,
-    time: event.time,
-    venue: event.venue,
+    name: event.name || "",
+    date: event.date || "",
+    time: event.time || "",
+    venue: event.venue || null,
     vendors: event.vendors || [],
     notes: event.notes || "",
   });
@@ -17,9 +18,10 @@ const EventActionsModal = ({ event, onClose, onEventUpdated }) => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [venues, setVenues] = useState([]);
   const [vendors, setVendors] = useState([]);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const fetchVenuesAndVendors = async () => {
+    const fetchData = async () => {
       try {
         const [venuesResponse, vendorsResponse] = await Promise.all([
           venueApi.getAllVenues(),
@@ -28,21 +30,21 @@ const EventActionsModal = ({ event, onClose, onEventUpdated }) => {
         setVenues(venuesResponse.data || []);
         setVendors(vendorsResponse.data || []);
       } catch (err) {
-        console.error("Error fetching venues and vendors:", err);
+        console.error("Error fetching data:", err);
       }
     };
 
-    if (action === "rebook") {
-      fetchVenuesAndVendors();
+    if (action !== "view") {
+      fetchData();
     }
   }, [action]);
 
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
   };
 
   const handleVenueChange = (e) => {
@@ -71,89 +73,74 @@ const EventActionsModal = ({ event, onClose, onEventUpdated }) => {
     }));
   };
 
-  const handleEdit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Event name is required";
+    }
+    if (!formData.date) {
+      newErrors.date = "Date is required";
+    }
+    if (!formData.time) {
+      newErrors.time = "Time is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     setLoading(true);
-    setError(null);
     try {
-      await eventApi.updateEvent(event.id, formData);
-      setSuccessMessage("Event updated successfully!");
+      if (action === "edit") {
+        await eventApi.updateEvent(event.id, formData);
+      } else if (action === "rebook") {
+        await eventApi.rebookEvent(event.id, formData);
+      }
       onEventUpdated();
       setAction("view");
     } catch (err) {
-      setError("Failed to update event: " + (err.message || "Unknown error"));
+      console.error("Error saving event:", err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this event?")) {
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      await eventApi.deleteEvent(event.id);
-      setSuccessMessage("Event deleted successfully!");
-      onEventUpdated();
-      onClose();
-    } catch (err) {
-      setError("Failed to delete event: " + (err.message || "Unknown error"));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRebook = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const rebookData = {
-        name: formData.name,
-        date: formData.date,
-        time: formData.time,
-        notes: formData.notes || "",
-        venue: formData.venue,
-        vendors: formData.vendors.map((v) => ({ id: v.id })),
-      };
-
-      console.log("Rebooking with data:", rebookData);
-
-      const response = await eventApi.rebookEvent(event.id, rebookData);
-      console.log("Rebook response:", response);
-
-      setSuccessMessage("Event rebooked successfully!");
-      onEventUpdated();
-      onClose();
-    } catch (err) {
-      console.error("Rebook error:", err);
-      setError(
-        "Failed to rebook event: " +
-          (err.response?.data?.message || err.message || "Unknown error")
-      );
-    } finally {
-      setLoading(false);
+    if (window.confirm("Are you sure you want to delete this event?")) {
+      setLoading(true);
+      try {
+        await eventApi.deleteEvent(event.id);
+        onEventUpdated();
+        onClose();
+      } catch (err) {
+        console.error("Error deleting event:", err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   const renderViewMode = () => (
     <div className={styles.viewMode}>
-      <h2>{event.name}</h2>
       <div className={styles.eventDetails}>
+        <h2>{event.name}</h2>
         <p>
-          <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}
+          <strong>Date:</strong> {event.date}
         </p>
         <p>
           <strong>Time:</strong> {event.time}
         </p>
         {event.venue && (
           <p>
-            <strong>Venue:</strong> {event.venue.name}
+            <strong>Venue:</strong> 📍 {event.venue.name}
           </p>
         )}
         {event.vendors && event.vendors.length > 0 && (
           <p>
-            <strong>Vendors:</strong>{" "}
+            <strong>Vendors:</strong> 👥{" "}
             {event.vendors.map((v) => v.name).join(", ")}
           </p>
         )}
@@ -163,58 +150,75 @@ const EventActionsModal = ({ event, onClose, onEventUpdated }) => {
           </p>
         )}
       </div>
-      <div className={styles.actionButtons}>
-        <button onClick={() => setAction("edit")} className={styles.button}>
+      <div className={styles.buttonGroup}>
+        <button
+          type="button"
+          className={styles.submitButton}
+          onClick={() => setAction("edit")}
+        >
           Edit
         </button>
-        <button onClick={() => setAction("rebook")} className={styles.button}>
+        <button
+          type="button"
+          className={styles.submitButton}
+          onClick={() => setAction("rebook")}
+        >
           Rebook
         </button>
         <button
+          type="button"
+          className={styles.deleteButton}
           onClick={handleDelete}
-          className={`${styles.button} ${styles.deleteButton}`}
         >
           Delete
+        </button>
+        <button type="button" className={styles.cancelButton} onClick={onClose}>
+          Cancel
         </button>
       </div>
     </div>
   );
 
-  const renderEditMode = () => (
-    <div className={styles.editMode}>
-      <h2>Edit Event</h2>
+  const renderForm = () => (
+    <form onSubmit={handleSubmit} className={styles.form}>
       <div className={styles.formGroup}>
-        <label>Event Name</label>
+        <label className={styles.label}>Event Name</label>
         <input
           type="text"
           name="name"
           value={formData.name}
-          onChange={handleInputChange}
-          className={styles.input}
+          onChange={handleChange}
+          className={`${styles.input} ${errors.name ? styles.error : ""}`}
         />
+        {errors.name && <div className={styles.errorText}>{errors.name}</div>}
       </div>
+
       <div className={styles.formGroup}>
-        <label>Date</label>
+        <label className={styles.label}>Date</label>
         <input
           type="date"
           name="date"
           value={formData.date}
-          onChange={handleInputChange}
-          className={styles.input}
+          onChange={handleChange}
+          className={`${styles.input} ${errors.date ? styles.error : ""}`}
         />
+        {errors.date && <div className={styles.errorText}>{errors.date}</div>}
       </div>
+
       <div className={styles.formGroup}>
-        <label>Time</label>
+        <label className={styles.label}>Time</label>
         <input
           type="time"
           name="time"
           value={formData.time}
-          onChange={handleInputChange}
-          className={styles.input}
+          onChange={handleChange}
+          className={`${styles.input} ${errors.time ? styles.error : ""}`}
         />
+        {errors.time && <div className={styles.errorText}>{errors.time}</div>}
       </div>
+
       <div className={styles.formGroup}>
-        <label>Venue</label>
+        <label className={styles.label}>Venue</label>
         <select
           name="venue"
           value={formData.venue?.id || ""}
@@ -222,78 +226,6 @@ const EventActionsModal = ({ event, onClose, onEventUpdated }) => {
           className={styles.input}
         >
           <option value="">Select a venue</option>
-          {/* Add venue options here */}
-        </select>
-      </div>
-      <div className={styles.formGroup}>
-        <label>Notes</label>
-        <textarea
-          name="notes"
-          value={formData.notes}
-          onChange={handleInputChange}
-          className={styles.textarea}
-        />
-      </div>
-      <div className={styles.actionButtons}>
-        <button
-          onClick={handleEdit}
-          className={styles.button}
-          disabled={loading}
-        >
-          {loading ? "Saving..." : "Save Changes"}
-        </button>
-        <button onClick={() => setAction("view")} className={styles.button}>
-          Cancel
-        </button>
-      </div>
-    </div>
-  );
-
-  const renderRebookMode = () => (
-    <div className={styles.rebookMode}>
-      <h2>Rebook Event</h2>
-      <div className={styles.formGroup}>
-        <label>Event Name</label>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleInputChange}
-          className={styles.input}
-          placeholder="Enter new event name"
-        />
-      </div>
-      <div className={styles.formGroup}>
-        <label>New Date</label>
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
-          onChange={handleInputChange}
-          className={styles.input}
-          required
-        />
-      </div>
-      <div className={styles.formGroup}>
-        <label>New Time</label>
-        <input
-          type="time"
-          name="time"
-          value={formData.time}
-          onChange={handleInputChange}
-          className={styles.input}
-          required
-        />
-      </div>
-      <div className={styles.formGroup}>
-        <label>Venue</label>
-        <select
-          name="venue"
-          value={formData.venue?.id || ""}
-          onChange={handleVenueChange}
-          className={styles.input}
-        >
-          <option value="">Select a venue (optional)</option>
           {venues.map((venue) => (
             <option key={venue.id} value={venue.id}>
               {venue.name}
@@ -301,15 +233,16 @@ const EventActionsModal = ({ event, onClose, onEventUpdated }) => {
           ))}
         </select>
       </div>
+
       <div className={styles.formGroup}>
-        <label>Vendors</label>
+        <label className={styles.label}>Vendors</label>
         <select
           name="vendors"
           value=""
           onChange={handleVendorChange}
           className={styles.input}
         >
-          <option value="">Select vendors (optional)</option>
+          <option value="">Select vendors</option>
           {vendors
             .filter(
               (vendor) => !formData.vendors.some((v) => v.id === vendor.id)
@@ -337,46 +270,69 @@ const EventActionsModal = ({ event, onClose, onEventUpdated }) => {
           </div>
         )}
       </div>
+
       <div className={styles.formGroup}>
-        <label>Notes</label>
+        <label className={styles.label}>Notes</label>
         <textarea
           name="notes"
           value={formData.notes}
-          onChange={handleInputChange}
+          onChange={handleChange}
           className={styles.textarea}
-          placeholder="Add any notes about the rebooked event"
         />
       </div>
-      <div className={styles.actionButtons}>
+
+      <div className={styles.buttonGroup}>
         <button
-          onClick={handleRebook}
-          className={styles.button}
+          type="submit"
+          className={styles.submitButton}
           disabled={loading}
         >
-          {loading ? "Rebooking..." : "Rebook Event"}
+          {loading
+            ? "Saving..."
+            : action === "edit"
+            ? "Save Changes"
+            : "Rebook Event"}
         </button>
-        <button onClick={() => setAction("view")} className={styles.button}>
+        <button
+          type="button"
+          className={styles.cancelButton}
+          onClick={() => setAction("view")}
+          disabled={loading}
+        >
           Cancel
         </button>
       </div>
-    </div>
+    </form>
   );
 
   return (
-    <div className={styles.modalOverlay}>
+    <Modal onClose={onClose}>
       <div className={styles.modalContent}>
-        <button className={styles.closeButton} onClick={onClose}>
-          ×
-        </button>
+        <div className={styles.modalHeader}>
+          <h2 className={styles.modalTitle}>
+            {action === "view"
+              ? "Event Details"
+              : action === "edit"
+              ? "Edit Event"
+              : "Rebook Event"}
+          </h2>
+          <p className={styles.modalSubtitle}>
+            {action === "view"
+              ? "View and manage event details"
+              : action === "edit"
+              ? "Update the event details below"
+              : "Enter new details for the rebooked event"}
+          </p>
+        </div>
+
         {error && <div className={styles.error}>{error}</div>}
         {successMessage && (
           <div className={styles.success}>{successMessage}</div>
         )}
-        {action === "view" && renderViewMode()}
-        {action === "edit" && renderEditMode()}
-        {action === "rebook" && renderRebookMode()}
+
+        {action === "view" ? renderViewMode() : renderForm()}
       </div>
-    </div>
+    </Modal>
   );
 };
 

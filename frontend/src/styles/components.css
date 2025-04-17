@@ -143,7 +143,6 @@
   color: white;
 }
 
-
 /* Dashboard Styles */
 .dashboard-container {
   padding: var(--spacing-xl);
@@ -298,78 +297,6 @@
   margin-top: 0.25rem;
 }
 
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 1rem;
-}
-
-.modal-container {
-  background-color: white;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-lg);
-  position: relative;
-  width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: modal-appear 0.3s ease;
-}
-
-.modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: var(--text-secondary);
-  cursor: pointer;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-}
-
-.modal-close:hover {
-  background-color: var(--hover-color);
-  color: var(--text-primary);
-}
-
-@keyframes modal-appear {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-.modal-container::-webkit-scrollbar {
-  display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.modal-container {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
 /* Empty State Styles */
 .empty-state {
   text-align: center;
@@ -385,14 +312,12 @@
   margin: 0;
 }
 
-
 /* Event Form select vendors styling*/
 .selected-vendors {
   margin-top: 8px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-
 }
 
 .selected-vendor {
@@ -419,46 +344,3 @@
   color: #ff4444;
 }
 
-
-/* Vendor Styles */
-.vendor-card {
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-  background-color: white;
-  transition: all 0.2s ease;
-}
-
-.vendor-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
-
-.vendor-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-sm);
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.vendor-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
-}
-
-.vendor-details {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-}
-
-.vendor-details p {
-  margin: 0.5rem 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}

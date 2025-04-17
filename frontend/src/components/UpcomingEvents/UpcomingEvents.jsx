@@ -178,7 +178,7 @@ const UpcomingEvents = ({ events = [] }) => {
             </div>
             {event.vendors && event.vendors.length > 0 && (
               <div className={styles.eventVendors}>
-                👥 {event.vendors.map((vendor) => vendor.name).join(", ")}
+                {event.vendors.map((vendor) => vendor.name).join(", ")}
               </div>
             )}
             {event.weatherIcon ? (
