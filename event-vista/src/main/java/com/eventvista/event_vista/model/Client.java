@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class Client extends AbstractEntity {
     @Email(message = "Please provide a valid email address")
     private String emailAddress;
 
-    @NotBlank(message ="Field must have valid client phone number entered")
+    @NotNull(message ="Field must have valid client phone number entered")
     @Embedded
     private PhoneNumber phoneNumber;
 

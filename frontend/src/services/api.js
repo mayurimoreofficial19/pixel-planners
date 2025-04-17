@@ -118,17 +118,20 @@ export const skillApi = {
 //    deleteGuest:
 //};
 
-//export const clientApi = {
-//    getAllClients:
-//    getClientById:
-//    getClientByName:
-//    getClientByLocation:
-//    getClientByPhoneNumber:
-//    getClientByEmail:
-//    createClient:
-//    updateClient:
-//    deleteClient:
-//};
+export const clientApi = {
+  getAllClients: () => axiosInstance.get("/api/clients/all"),
+  getClientById: (id) => axiosInstance.get(`/api/clients/find/${id}`),
+  getClientByName: (name) => axiosInstance.get(`/api/clients/find/name/${name}`),
+  getClientByLocation: (location) =>
+  axiosInstance.get(`/api/clients/find/location/${location}`),
+  getClientByPhoneNumber: (phoneNumber) =>
+  axiosInstance.get(`/api/clients/find/phone/${phoneNumber}`),
+  getClientByEmail: (emailAddress) =>
+  axiosInstance.get(`/api/clients/find/email/${emailAddress}`),
+  createClient: (data) => axiosInstance.post("/api/clients/add", data),
+  updateClient: (id, data) => axiosInstance.put(`/api/clients/update/${id}`, data),
+  deleteClient: (id) => axiosInstance.delete(`/api/clients/delete/${id}`),
+};
 
 //export const calendarApi = {
 //    getCalendarByUser: (userId) =>
