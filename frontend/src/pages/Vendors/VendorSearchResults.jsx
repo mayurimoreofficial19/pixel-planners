@@ -37,11 +37,7 @@ const VendorSearchResults = ({ vendors, onEdit, onDelete }) => {
                   ⚙️ Skills:{" "}
                   {Array.isArray(vendor.skills) && vendor.skills.length > 0 ? (
                     <span className="skill-badges">
-                      {vendor.skills.map((skill) => (
-                        <span key={skill.id} className="skill-badge">
-                          {skill.name + " "}
-                        </span>
-                      ))}
+                      {vendor.skills.map((skill) => skill.name).join(", ")}
                     </span>
                   ) : (
                     "None"
