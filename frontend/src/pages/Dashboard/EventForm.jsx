@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { eventApi, venueApi, vendorApi } from "../../services/api";
 import "../../styles/components.css";
+import styles from "./EventForm.module.css";
+import Modal from "../../components/common/Modal/Modal";
 
 const EventForm = ({ onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -77,7 +79,6 @@ const EventForm = ({ onSubmit, onCancel }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -150,136 +151,150 @@ const EventForm = ({ onSubmit, onCancel }) => {
   }
 
   return (
-    <div className="form-container">
-      <div className="form-header">
-        <h2 className="form-title">Add New Event</h2>
-        <p className="form-subtitle">Enter the event details below</p>
-      </div>
-
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="form-label">Event Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className={`form-input ${errors.name ? "error" : ""}`}
-            required
-          />
-          {errors.name && <div className="error-text">{errors.name}</div>}
+    <Modal onClose={onCancel}>
+      <div className="form-container">
+        <div className="form-header">
+          <h2 className="form-title">Add New Event</h2>
+          <p className="form-subtitle">Enter the event details below</p>
         </div>
 
-        <div className="form-group">
-          <label className="form-label">Date</label>
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            className={`form-input ${errors.date ? "error" : ""}`}
-            required
-          />
-          {errors.date && <div className="error-text">{errors.date}</div>}
-        </div>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.formGroup}>
+            <label className="form-label">Event Name</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className={`form-input ${errors.name ? styles.error : ""}`}
+              required
+            />
+            {errors.name && (
+              <div className={styles.errorText}>{errors.name}</div>
+            )}
+          </div>
 
-        <div className="form-group">
-          <label className="form-label">Time</label>
-          <input
-            type="time"
-            name="time"
-            value={formData.time}
-            onChange={handleChange}
-            className={`form-input ${errors.time ? "error" : ""}`}
-            required
-          />
-          {errors.time && <div className="error-text">{errors.time}</div>}
-        </div>
+          <div className={styles.formGroup}>
+            <label className="form-label">Date</label>
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              className={`form-input ${errors.date ? styles.error : ""}`}
+              required
+            />
+            {errors.date && (
+              <div className={styles.errorText}>{errors.date}</div>
+            )}
+          </div>
 
-        <div className="form-group">
-          <label className="form-label">Venue</label>
-          <select
-            name="venue"
-            value={formData.venue?.id || ""}
-            onChange={handleVenueChange}
-            className={`form-input ${errors.venue ? "error" : ""}`}
-          >
-            <option value="">Select a venue (optional)</option>
-            {venues.map((venue) => (
-              <option key={venue.id} value={venue.id}>
-                {venue.name}
-              </option>
-            ))}
-          </select>
-          {errors.venue && <div className="error-text">{errors.venue}</div>}
-        </div>
+          <div className={styles.formGroup}>
+            <label className="form-label">Time</label>
+            <input
+              type="time"
+              name="time"
+              value={formData.time}
+              onChange={handleChange}
+              className={`form-input ${errors.time ? styles.error : ""}`}
+              required
+            />
+            {errors.time && (
+              <div className={styles.errorText}>{errors.time}</div>
+            )}
+          </div>
 
-        <div className="form-group">
-          <label className="form-label">Vendors</label>
-          <select
-            name="vendors"
-            value=""
-            onChange={handleVendorChange}
-            className={`form-input ${errors.vendor ? "error" : ""}`}
-          >
-            <option value="">Select a vendor (optional)</option>
-            {vendors
-              .filter(
-                (vendor) => !formData.vendors.some((v) => v.id === vendor.id)
-              )
-              .map((vendor) => (
-                <option key={vendor.id} value={vendor.id}>
-                  {vendor.name}
+          <div className={styles.formGroup}>
+            <label className="form-label">Venue</label>
+            <select
+              name="venue"
+              value={formData.venue?.id || ""}
+              onChange={handleVenueChange}
+              className={`form-input ${errors.venue ? styles.error : ""}`}
+            >
+              <option value="">Select a venue (optional)</option>
+              {venues.map((venue) => (
+                <option key={venue.id} value={venue.id}>
+                  {venue.name}
                 </option>
               ))}
-          </select>
-          {errors.vendor && <div className="error-text">{errors.vendor}</div>}
+            </select>
+            {errors.venue && (
+              <div className={styles.errorText}>{errors.venue}</div>
+            )}
+          </div>
 
-          {formData.vendors.length > 0 && (
-            <div className="selected-vendors">
-              {formData.vendors.map((vendor) => (
-                <div key={vendor.id} className="selected-vendor">
-                  <span>{vendor.name}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeVendor(vendor.id)}
-                    className="remove-vendor"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
+          <div className={styles.formGroup}>
+            <label className="form-label">Vendors</label>
+            <select
+              name="vendors"
+              value=""
+              onChange={handleVendorChange}
+              className={`form-input ${errors.vendor ? styles.error : ""}`}
+            >
+              <option value="">Select a vendor (optional)</option>
+              {vendors
+                .filter(
+                  (vendor) => !formData.vendors.some((v) => v.id === vendor.id)
+                )
+                .map((vendor) => (
+                  <option key={vendor.id} value={vendor.id}>
+                    {vendor.name}
+                  </option>
+                ))}
+            </select>
+            {errors.vendor && (
+              <div className={styles.errorText}>{errors.vendor}</div>
+            )}
+
+            {formData.vendors.length > 0 && (
+              <div className={styles.selectedVendors}>
+                {formData.vendors.map((vendor) => (
+                  <div key={vendor.id} className={styles.selectedVendor}>
+                    <span>{vendor.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeVendor(vendor.id)}
+                      className={styles.removeVendor}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className="form-label">Notes</label>
+            <textarea
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
+              className="form-input"
+              rows="4"
+            />
+          </div>
+
+          {errors.submit && (
+            <div className={styles.errorMessage}>{errors.submit}</div>
           )}
-        </div>
 
-        <div className="form-group">
-          <label className="form-label">Notes</label>
-          <textarea
-            name="notes"
-            value={formData.notes}
-            onChange={handleChange}
-            className="form-input"
-            rows="4"
-          />
-        </div>
-
-        {errors.submit && <div className="error-message">{errors.submit}</div>}
-
-        <div className="flex" style={{ gap: "1rem", marginTop: "2rem" }}>
-          <button type="submit" className="button button-primary">
-            Create Event
-          </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="button button-secondary"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    </div>
+          <div className="flex" style={{ gap: "1rem", marginTop: "2rem" }}>
+            <button type="submit" className="button button-primary">
+              Create Event
+            </button>
+            <button
+              type="button"
+              onClick={onCancel}
+              className="button button-secondary"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </Modal>
   );
 };
 

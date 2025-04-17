@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import "../../../styles/components.css";
+import styles from "./Modal.module.css";
 
 const Modal = ({ children, onClose }) => {
   const modalRef = useRef();
@@ -31,9 +31,9 @@ const Modal = ({ children, onClose }) => {
   }, [onClose]);
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container" ref={modalRef}>
-        <button className="modal-close" onClick={onClose}>
+    <div className={styles.modalOverlay}>
+      <div className={styles.modalContainer} ref={modalRef}>
+        <button className={styles.modalClose} onClick={onClose}>
           ×
         </button>
         {children}
