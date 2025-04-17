@@ -153,3 +153,8 @@
   white-space: nowrap;
   border-width: 0;
 }
+
+.back-to-welcome {
+  text-align: center;
+  margin-top: 2rem;
+}
