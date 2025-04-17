@@ -226,12 +226,14 @@ const VendorPage = () => {
             setSelectedVendor(null);
             setError(null);
         } catch (err) {
-        console.error("Error saving vendor:", err);
-        if (err.response?.status === 401 || err.response?.status === 403) {
-          await handleAuthError();
-        } else {
-            setError("Failed to save vendor. Please try again.");
-        }
+            console.error("Error saving vendor:", err);
+
+            if (err.response?.status === 401 || err.response?.status === 403) {
+              await handleAuthError();
+            } else {
+              // Rethrow the error so VendorForm can handle and display it
+              throw err;
+            }
         }
     };
 

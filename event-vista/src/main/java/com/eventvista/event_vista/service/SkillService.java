@@ -31,6 +31,11 @@ public class SkillService {
     public Skill addSkill(Skill skill, User user) {
         // Set user
         skill.setUser(user);
+
+        // Check for duplicate name
+        if (skillRepository.existsByNameIgnoreCase(skill.getName())) {
+            throw new IllegalArgumentException("A skill with the name '" + skill.getName() + "' already exists.");
+        }
         return skillRepository.save(skill);
     }
 

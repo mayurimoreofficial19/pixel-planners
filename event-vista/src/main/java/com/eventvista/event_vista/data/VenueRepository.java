@@ -31,5 +31,9 @@ public interface VenueRepository extends JpaRepository<Venue, Integer> {
 
     Optional<Venue> findByPhoneNumberAndUser(PhoneNumber phoneNumber, User user);
 
+    boolean existsByNameIgnoreCase(String name);
 
+    boolean existsByEmailAddressIgnoreCase(String emailAddress);
+
+    boolean existsByPhoneNumber(PhoneNumber phoneNumber);
 }

@@ -41,6 +41,21 @@ public class VendorService {
         // Set the user
         vendor.setUser(user);
 
+        // Check for duplicate name
+        if (vendorRepository.existsByNameIgnoreCase(vendor.getName())) {
+            throw new IllegalArgumentException("A vendor with the name '" + vendor.getName() + "' already exists.");
+        }
+
+        // Check for duplicate email
+        if (vendorRepository.existsByEmailAddressIgnoreCase(vendor.getEmailAddress())) {
+            throw new IllegalArgumentException("A vendor with the email '" + vendor.getEmailAddress() + "' already exists.");
+        }
+
+        // Check for duplicate phone number
+        if (vendorRepository.existsByPhoneNumber(vendor.getPhoneNumber())) {
+            throw new IllegalArgumentException("A vendor with the phone number '" + vendor.getPhoneNumber() + "' already exists.");
+        }
+
         // Handle Skill relationship
         List<Skill> incomingSkills = vendor.getSkills();
         if (incomingSkills != null && !incomingSkills.isEmpty()) {

@@ -15,6 +15,7 @@ import java.util.List;
 @Entity
 public class Venue extends AbstractEntity {
 
+    @Column(unique = true)
     @NotBlank(message = "Field must have valid venue name entered")
     @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String name;
@@ -26,11 +27,12 @@ public class Venue extends AbstractEntity {
     @NotNull(message ="Field must have valid venue capacity entered")
     private Integer capacity;
 
+    @Column(unique = true)
     @NotNull(message ="Field must have valid venue phone number entered")
     @Embedded
     private PhoneNumber phoneNumber;
 
-
+    @Column(unique = true)
     @NotBlank(message ="Field must have valid venue email entered")
     @Email(message = "Field must have valid email entered")
     private String emailAddress;
