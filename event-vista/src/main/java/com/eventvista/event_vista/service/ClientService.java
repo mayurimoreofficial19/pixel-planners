@@ -11,7 +11,9 @@ import java.util.Optional;
 
 @Service
 public class ClientService {
+
     private final ClientRepository clientRepository;
+
 
     public ClientService(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
@@ -21,6 +23,7 @@ public class ClientService {
     public List<Client> findAllClients(User user) {
         return clientRepository.findAllByUser(user);
     }
+
 
     public Optional<Client> findClientById(Integer id, User user) {
         return clientRepository.findByIdAndUser(id, user)
