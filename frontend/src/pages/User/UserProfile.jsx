@@ -228,7 +228,7 @@ const UserProfile = () => {
       {/* Profile Details Section */}
       <div className="profile-details">
         <div className="form-group">
-          <label htmlFor="name">Name:</label>
+          <label htmlFor="name"><b>Name:</b></label>
           {editMode.name ? (
             <>
               <input
@@ -262,7 +262,7 @@ const UserProfile = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="emailAddress">Email Address:</label>
+          <label htmlFor="emailAddress"><b>Email Address:</b></label>
           {editMode.email ? (
             <>
               <input
@@ -299,7 +299,7 @@ const UserProfile = () => {
       {/* Password Reset Section with Inline Edit */}
       <div className="profile-password-reset">
         <div className="form-group">
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password"><b>Password:</b></label>
           {editMode.password ? (
             <>
               <input
@@ -342,10 +342,10 @@ const UserProfile = () => {
 
       {/* Account Actions Section: Update Profile, Delete Account, and Back to Dashboard */}
       <div className="user-profile-actions">
-        <button type="button" onClick={handleUpdate} className="save-button">
+        <button type="button" onClick={handleUpdate} className="button button-outline">
           Update Profile
         </button>
-        <button type="button" onClick={handleDelete} className="delete-button">
+        <button type="button" onClick={handleDelete} className="button button-secondary">
           Delete Account
         </button>
       </div>
