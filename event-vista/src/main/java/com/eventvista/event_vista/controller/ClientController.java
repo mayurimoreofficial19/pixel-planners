@@ -1,177 +1,115 @@
 package com.eventvista.event_vista.controller;
 
-import com.eventvista.event_vista.data.ClientRepository;
-import com.eventvista.event_vista.data.UserRepository;
-import com.eventvista.event_vista.model.Client;
-import com.eventvista.event_vista.model.User;
-import com.eventvista.event_vista.security.CustomUserPrincipal;
+import com.eventvista.event_vista.model.*;
+import com.eventvista.event_vista.service.ClientService;
+import com.eventvista.event_vista.utilities.AuthUtil;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
-@RequestMapping("/api/client")
+@RequestMapping("/api/clients")
 @CrossOrigin(origins = "http://localhost:3000")
 public class ClientController {
-    @Autowired
-    private ClientRepository clientRepository;
 
-    @Autowired
-    private UserRepository userRepository;
 
-    private User getUserFromAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail;
+    private final ClientService clientService;
+    private final AuthUtil authUtil;
 
-        if (authentication.getPrincipal() instanceof CustomUserPrincipal) {
-            CustomUserPrincipal userPrincipal = (CustomUserPrincipal) authentication.getPrincipal();
-            return userPrincipal.getUser();
-        } else if (authentication.getPrincipal() instanceof org.springframework.security.core.userdetails.User) {
-            userEmail = ((org.springframework.security.core.userdetails.User) authentication.getPrincipal()).getUsername();
-            return userRepository.findByEmailAddress(userEmail)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-        } else {
-            throw new RuntimeException("Unexpected principal type: " + authentication.getPrincipal().getClass());
-        }
+    public ClientController(ClientService clientService, AuthUtil authUtil) {
+        this.clientService = clientService;
+        this.authUtil = authUtil;
     }
 
-    @GetMapping
-    public ResponseEntity<?> getAllClients() {
-        try {
-            System.out.println("Getting all clients...");
-            User user = getUserFromAuthentication();
-            System.out.println("User found: " + user.getEmailAddress());
-            List<Client> clients = clientRepository.findByUser(user);
-            System.out.println("Found " + clients.size() + " clients");
-            return ResponseEntity.ok(clients);
-        } catch (Exception e) {
-            System.err.println("Error in getAllclients: " + e.getMessage());
-            e.printStackTrace();
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "Error fetching client: " + e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
+    @GetMapping("/all")
+    public ResponseEntity<List<Client>> getAllClients () {
+        User user = authUtil.getUserFromAuthentication();
+        List<Client> clients = clientService.findAllClients(user);
+        return ResponseEntity.ok(clients);
     }
 
-    @GetMapping("/{clientId}")
-    public ResponseEntity<?> getClient(@PathVariable int clientId) {
-        try {
-            User user = getUserFromAuthentication();
-
-            return clientRepository.findById(clientId)
-                    .map(client -> {
-                        if (client.getUser().getId().equals(user.getId())) {
-                            return ResponseEntity.ok(client);
-                        }
-                        return ResponseEntity.status(403).body(Map.of("error", "You do not have permission to access this client"));
-                    })
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (Exception e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "Error fetching client: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(response);
-        }
+    @GetMapping("/find/{id}")
+    public ResponseEntity<Client> getClientById (@PathVariable("id") Integer id) {
+        User user = authUtil.getUserFromAuthentication();
+        return ResponseEntity.of(clientService.findClientById(id, user));
     }
 
-    @PostMapping
-    public ResponseEntity<?> createClient(@Valid @RequestBody Client client, BindingResult bindingResult) {
-        try {
-            System.out.println("Creating new client...");
-            System.out.println("Client data received: " + client);
+    @GetMapping("/find/name/{name}")
+    public ResponseEntity<Client> getClientByName (@PathVariable("name") String name) {
+        User user = authUtil.getUserFromAuthentication();
+        return ResponseEntity.of(clientService.findClientByName(name, user));
+    }
 
+    @GetMapping("/find/phone/{phoneNumber}")
+    public ResponseEntity<Client> getClientByPhoneNumber (@PathVariable("phoneNumber") PhoneNumber phoneNumber) {
+        User user = authUtil.getUserFromAuthentication();
+        return ResponseEntity.of(clientService.findClientByPhoneNumber(phoneNumber, user));
+    }
+
+
+    @GetMapping("/find/email/{emailAddress}")
+    public ResponseEntity<Client> getClientByEmailAddress (@PathVariable("emailAddress") String emailAddress) {
+        User user = authUtil.getUserFromAuthentication();
+        return ResponseEntity.of(clientService.findClientByEmailAddress(emailAddress, user));
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<?> addClient (@Valid @RequestBody Client client, BindingResult bindingResult) {
+        try {
             if (bindingResult.hasErrors()) {
                 Map<String, String> errors = new HashMap<>();
                 bindingResult.getFieldErrors().forEach(error -> {
-                    System.err.println("Validation error - Field: " + error.getField() + ", Message: " + error.getDefaultMessage());
                     errors.put(error.getField(), error.getDefaultMessage());
                 });
                 return ResponseEntity.badRequest().body(errors);
             }
 
-            User user = getUserFromAuthentication();
-            System.out.println("User found: " + user.getEmailAddress());
-
-            client.setUser(user);
-            Client savedClient = clientRepository.save(client);
-            System.out.println("Client saved successfully with ID: " + savedClient.getId());
-            return ResponseEntity.ok(savedClient);
+            User user = authUtil.getUserFromAuthentication();
+            Client newClient = clientService.addClient(client, user);
+            return ResponseEntity.ok(newClient);
         } catch (Exception e) {
-            System.err.println("Error in createClient: " + e.getMessage());
-            e.printStackTrace();
             Map<String, String> response = new HashMap<>();
             response.put("error", "Error creating client: " + e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
     }
 
-    @PutMapping("/{ClientId}")
-    public ResponseEntity<?> updateClient(@PathVariable int clientId, @Valid @RequestBody Client updatedClient, BindingResult bindingResult) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateClient(@PathVariable("id") Integer id, @Valid @RequestBody Client updatedClient, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(errors);
+        }
         try {
-            System.out.println("Updating client with ID: " + clientId);
-            if (bindingResult.hasErrors()) {
-                Map<String, String> errors = new HashMap<>();
-                bindingResult.getFieldErrors().forEach(error -> {
-                    System.err.println("Validation error - Field: " + error.getField() + ", Message: " + error.getDefaultMessage());
-                    errors.put(error.getField(), error.getDefaultMessage());
-                });
-                return ResponseEntity.badRequest().body(errors);
-            }
-
-            User user = getUserFromAuthentication();
-            System.out.println("User found: " + user.getEmailAddress());
-
-            return clientRepository.findById(clientId)
-                    .map(client -> {
-                        if (!client.getUser().getId().equals(user.getId())) {
-                            return ResponseEntity.status(403).body(Map.of("error", "You do not have permission to update this client"));
-                        }
-                        client.setName(updatedClient.getName());
-                        client.setEmailAddress(updatedClient.getEmailAddress());
-                        client.setNotes(updatedClient.getNotes());
-                        client.setPhoneNumber(updatedClient.getPhoneNumber());
-                        Client saved = clientRepository.save(client);
-                        System.out.println("Client updated successfully");
-                        return ResponseEntity.ok(saved);
-                    })
+            User user = authUtil.getUserFromAuthentication();
+            return clientService.updateClient(id, updatedClient, user)
+                    .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
-            System.err.println("Error in updateClient: " + e.getMessage());
-            e.printStackTrace();
             Map<String, String> response = new HashMap<>();
             response.put("error", "Error updating client: " + e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
     }
 
-    @DeleteMapping("/{clientId}")
-    public ResponseEntity<?> deleteClient(@PathVariable int clientId) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteClient(@PathVariable("id") Integer id) {
         try {
-            System.out.println("Deleting client with ID: " + clientId);
-            User user = getUserFromAuthentication();
-            System.out.println("User found: " + user.getEmailAddress());
+            User user = authUtil.getUserFromAuthentication();
+            boolean isDeleted = clientService.deleteClient(id, user);
 
-            return clientRepository.findById(clientId)
-                    .map(client -> {
-                        if (!client.getUser().getId().equals(user.getId())) {
-                            return ResponseEntity.status(403).body(Map.of("error", "You do not have permission to delete this client"));
-                        }
-                        clientRepository.delete(client);
-                        System.out.println("Client deleted successfully");
-                        return ResponseEntity.ok().build();
-                    })
-                    .orElse(ResponseEntity.notFound().build());
+            if (isDeleted) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (Exception e) {
-            System.err.println("Error in deleteClient: " + e.getMessage());
-            e.printStackTrace();
             Map<String, String> response = new HashMap<>();
             response.put("error", "Error deleting client: " + e.getMessage());
             return ResponseEntity.badRequest().body(response);
