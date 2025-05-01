@@ -4,27 +4,37 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class GuestList extends AbstractEntity{
 
-    @NotBlank
-    @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters")
-    public String name;
+    @NotBlank(message = "Guest name is required")
+    @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")
+    private String name;
 
     @OneToOne
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
     @OneToMany(mappedBy = "guestList", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Guest> guests;
+    private List<Guest> guests = new ArrayList<>();
 
-    public @NotBlank @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters") String getName() {
+    public GuestList() {}
+
+    public GuestList(String name, Event event) {
+        this.name = name;
+        this.event = event;
+    }
+
+    // Getters and setters
+
+    public String getName() {
         return name;
     }
 
-    public void setName(@NotBlank @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters") String name) {
+    public void setName(String name) {
         this.name = name;
     }
 

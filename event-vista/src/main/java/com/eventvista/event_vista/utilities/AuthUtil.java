@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AuthUtil {
+public class  AuthUtil {
     private final UserService userService;
 
     public AuthUtil(UserService userService) {
