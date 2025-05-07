@@ -1,78 +1,96 @@
 package com.eventvista.event_vista.controller;
 
-
-import com.eventvista.event_vista.model.*;
+import com.eventvista.event_vista.model.Client;
+import com.eventvista.event_vista.model.Guest;
+import com.eventvista.event_vista.model.PhoneNumber;
+import com.eventvista.event_vista.model.User;
+import com.eventvista.event_vista.service.ClientService;
 import com.eventvista.event_vista.service.GuestService;
-import com.eventvista.event_vista.service.GuestListService;
 import com.eventvista.event_vista.utilities.AuthUtil;
 import jakarta.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import javax.naming.AuthenticationException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/guests")
 @CrossOrigin(origins = "http://localhost:3000")
 public class GuestController {
     private final GuestService guestService;
-    private final GuestListService guestListService;
-    private final AuthUtil authUtil;
+    private final AuthUtil authUtil ;
 
-    public GuestController(GuestService guestService,GuestListService guestListService ,AuthUtil authUtil) {
+    public GuestController(GuestService guestService, AuthUtil authUtil) {
         this.guestService = guestService;
-        this.guestListService = guestListService;
         this.authUtil = authUtil;
     }
 
-    @GetMapping("/all/{guestListId}")
-    public ResponseEntity<List<Guest>> getAllGuests(@PathVariable("guestListId") Integer guestListId) {
+    @GetMapping("/all")
+    public ResponseEntity<List<Guest>> getAllGuests () {
         User user = authUtil.getUserFromAuthentication();
-        Optional<GuestList> guestListOpt = guestListService.findByIdAndUser(guestListId, user);
-
-        return guestListOpt.map(guestList -> {
-            List<Guest> guests = guestService.findAllGuestsByGuestList(guestList);
-            return ResponseEntity.ok(guests);
-        }).orElse(ResponseEntity.notFound().build());
+        List<Guest> guests = guestService.findAllGuests(user);
+        return ResponseEntity.ok(guests);
     }
 
-    @GetMapping("/find/{id}/list/{guestListId}")
-    public ResponseEntity<Guest> getGuestById(@PathVariable("id") Integer id, @PathVariable("guestListId") Integer guestListId) {
+    @GetMapping("/find/{id}")
+    public ResponseEntity<Guest> getGuestById (@PathVariable("id") Integer id) {
         User user = authUtil.getUserFromAuthentication();
-        return guestListService.findByIdAndUser(guestListId, user)
-                .flatMap(guestList -> guestService.findGuestById(id, guestList))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.of(guestService.findGuestById(id, user));
     }
 
-    @GetMapping("/find/email/{email}/list/{guestListId}")
-    public ResponseEntity<Guest> getGuestByEmail(@PathVariable("email") String email, @PathVariable("guestListId") Integer guestListId) {
+    @GetMapping("/find/name/{name}")
+    public ResponseEntity<Guest> getGuestByName (@PathVariable("name") String name) {
         User user = authUtil.getUserFromAuthentication();
-        return guestListService.findByIdAndUser(guestListId, user)
-                .flatMap(guestList -> guestService.findGuestByEmail(email, guestList))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.of(guestService.findGuestByName(name, user));
     }
 
-    @PostMapping("/add/{guestListId}")
-    public ResponseEntity<?> addGuest(@PathVariable("guestListId") Integer guestListId, @Valid @RequestBody Guest guest, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(errors);
-        }
+    @GetMapping("/find/email/{emailAddress}")
+    public ResponseEntity<Guest> getGuestByEmailAddress (@PathVariable("emailAddress") String emailAddress) {
+        User user = authUtil.getUserFromAuthentication();
+        return ResponseEntity.of(guestService.findGuestByEmailAddress(emailAddress, user));
+    }
 
+    @GetMapping("/find/status/{status}")
+    public ResponseEntity<?> getGuestsByRsvpStatus(@PathVariable("status") String status) {
         try {
             User user = authUtil.getUserFromAuthentication();
-            Optional<GuestList> guestListOpt = guestListService.findByIdAndUser(guestListId, user);
+            List<Guest> guests = guestService.findGuestsByRsvpStatus(status.toUpperCase(), user);
+            return ResponseEntity.ok(guests);
+        } catch (IllegalArgumentException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Invalid RSVP status: " + status);
+            return ResponseEntity.badRequest().body(error);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Failed to retrieve guests: " + e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
 
-            if (guestListOpt.isEmpty()) {
-                return ResponseEntity.notFound().build();
+    @PostMapping("/add")
+    public ResponseEntity<?> addGuest (@Valid @RequestBody Guest guest, BindingResult bindingResult) {
+        try {
+            if (bindingResult.hasErrors()) {
+                Map<String, String> errors = new HashMap<>();
+                bindingResult.getFieldErrors().forEach(error -> {
+                    errors.put(error.getField(), error.getDefaultMessage());
+                });
+                return ResponseEntity.badRequest().body(errors);
             }
 
-            Guest newGuest = guestService.addGuest(guest, guestListOpt.get());
+            User user = authUtil.getUserFromAuthentication();
+            Guest newGuest = guestService.addGuest(guest, user);
             return ResponseEntity.ok(newGuest);
+        } catch (DataIntegrityViolationException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Duplicate name or email address");
+            return ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();
             response.put("error", "Error creating guest: " + e.getMessage());
@@ -80,26 +98,17 @@ public class GuestController {
         }
     }
 
-    @PutMapping("/update/{id}/list/{guestListId}")
-    public ResponseEntity<?> updateGuest(@PathVariable("id") Integer id,
-                                         @PathVariable("guestListId") Integer guestListId,
-                                         @Valid @RequestBody Guest updatedGuest,
-                                         BindingResult bindingResult) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateGuest(@PathVariable("id") Integer id, @Valid @RequestBody Guest updatedGuest, BindingResult bindingResult) {
+
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(errors);
         }
-
         try {
             User user = authUtil.getUserFromAuthentication();
-            Optional<GuestList> guestListOpt = guestListService.findByIdAndUser(guestListId, user);
-
-            if (guestListOpt.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            return guestService.updateGuest(id, updatedGuest, guestListOpt.get())
+            return guestService.updateGuest(id, updatedGuest, user)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -109,23 +118,17 @@ public class GuestController {
         }
     }
 
-    @DeleteMapping("/delete/{id}/list/{guestListId}")
-    public ResponseEntity<?> deleteGuest(@PathVariable("id") Integer id, @PathVariable("guestListId") Integer guestListId) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteGuest(@PathVariable("id") Integer id) {
         try {
             User user = authUtil.getUserFromAuthentication();
-            Optional<GuestList> guestListOpt = guestListService.findByIdAndUser(guestListId, user);
+            boolean isDeleted = guestService.deleteGuest(id, user);
 
-            if (guestListOpt.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            boolean deleted = guestService.deleteGuest(id, guestListOpt.get());
-            if (deleted) {
+            if (isDeleted) {
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.notFound().build();
             }
-
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();
             response.put("error", "Error deleting guest: " + e.getMessage());

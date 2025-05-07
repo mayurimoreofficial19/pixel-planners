@@ -1,45 +1,56 @@
 package com.eventvista.event_vista.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Guest extends AbstractEntity{
 
-    @NotBlank(message = "Guest name is required")
-    @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")
+    @Column(unique = true)
+    @NotBlank(message = "Field must have valid guest name entered")
+    @Size(min = 3, max = 100, message = "Field must be between 3 and 100 characters")
     private String name;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Please provide a valid email address")
-    @Column(name = "email_address")
+    @Column(unique = true)
+    @NotBlank(message ="Field must have valid guest email entered")
+    @Email(message = "Field must have valid email entered")
     private String emailAddress;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "rsvp_status")
     private RSVPStatus rsvpStatus = RSVPStatus.PENDING;
 
+    @Size(max = 500, message = "Field must be less than 500 characters")
     private String notes;
 
     @ManyToOne
-    @JoinColumn(name = "guest_list_id", nullable = false)
-    private GuestList guestList;
+    @JsonIgnore
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Guest() {}
+//    @ManyToOne
+//    @JoinColumn(name = "guest_list_id", nullable = false)
+//    private GuestList guestList;
 
-    public Guest(String name, String emailAddress, GuestList guestList, String notes,RSVPStatus rsvpStatus) {
+    public Guest() {
+    }
+
+    public Guest(String name, String emailAddress, String notes,RSVPStatus rsvpStatus) {
         this.name = name;
         this.emailAddress = emailAddress;
-        this.guestList = guestList;
         this.notes = notes;
         this.rsvpStatus = rsvpStatus;
     }
 
-    // Optional constructor with default RSVPStatus
-    public Guest(String name, String emailAddress, GuestList guestList, String notes) {
-        this(name, emailAddress, guestList, notes, RSVPStatus.PENDING);
+    public Guest(String name, String emailAddress, String notes) {
+        this(name, emailAddress, notes, RSVPStatus.PENDING);
     }
 
     public String getName() {
@@ -74,13 +85,16 @@ public class Guest extends AbstractEntity{
         this.notes = notes;
     }
 
-    public GuestList getGuestList() {
-        return guestList;
+    @Override
+    public String toString() {
+        return name;
     }
 
-    public void setGuestList(GuestList guestList) {
-        this.guestList = guestList;
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
-
-
